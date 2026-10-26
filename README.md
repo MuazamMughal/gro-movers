@@ -1,0 +1,68 @@
+# Lone Star Movers: Website & Admin
+
+SEO-first marketing site for a US moving company.
+- **Public site:** Laravel (Blade) renders it on the server and caches it as static HTML.
+- **Admin panel:** Vue 3 + Inertia, at `/admin`.
+
+Specs:
+- [docs/01-requirements-and-feasibility.md](docs/01-requirements-and-feasibility.md): requirements and decisions
+- [docs/02-build-prompt.md](docs/02-build-prompt.md): build spec and task list (T0–T18)
+
+## Stack
+- **Backend:** Laravel 13 · PHP 8.3 · MySQL 8.0
+- **Admin:** Inertia 3 · Vue 3 · Tailwind CSS 4
+- **Development:** Laravel Sail (Docker)
+- **Production:** cPanel (Apache, no Docker or Node on the server)
+
+## Requirements
+Docker Desktop is the only requirement. You do not need PHP, Composer or MySQL on your machine.
+
+Optional shell alias:
+```bash
+alias sail='sh $([ -f sail ] && echo sail || echo vendor/bin/sail)'
+```
+
+## First-time setup
+```bash
+cp .env.example .env                       # then set ADMIN_PASSWORD
+docker run --rm -v "$PWD":/app -w /app composer:2 composer install
+make up                                    # app, mysql, mailpit, queue, scheduler
+./vendor/bin/sail artisan key:generate
+./vendor/bin/sail artisan migrate --seed
+./vendor/bin/sail artisan storage:link
+./vendor/bin/sail npm install
+make dev                                   # Vite with hot reload
+```
+
+## URLs
+| What | URL |
+|---|---|
+| Public site | http://localhost |
+| Admin | http://localhost/admin (login at `/admin/login`) |
+| Mailpit (caught emails) | http://localhost:8025 |
+| Apache / `.htaccess` test (`make apache`) | http://localhost:8080 |
+| MySQL | `127.0.0.1:3306` (user `sail`, password `password`, DB `movers`) |
+
+## Common commands
+| Command | Does |
+|---|---|
+| `make up` / `make down` | Start / stop all containers |
+| `make fresh` | Drop all tables, migrate and seed |
+| `make test` | Run the test suite (MySQL `testing` database) |
+| `make dev` / `make build` | Vite dev server / production build |
+| `make shell` | Shell inside the app container |
+| `make apache` | Start the cPanel-like Apache container |
+| `make rebuild-static` | Regenerate the static HTML cache (from T14) |
+
+## Containers
+| Service | Purpose |
+|---|---|
+| `laravel.test` | PHP 8.3 app and Node 24 for Vite |
+| `mysql` | MySQL 8.0, matching the cPanel host |
+| `mailpit` | Catches all outgoing mail |
+| `queue` | `queue:work`, for lead emails and static rebuilds |
+| `scheduler` | `schedule:work`, mirroring the cPanel cron |
+| `apache` (profile) | `php:8.3-apache`, for testing `public/.htaccess` |
+
+## Deployment
+cPanel. See `docs/deploy-cpanel.md` (written in T17).
