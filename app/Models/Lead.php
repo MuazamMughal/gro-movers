@@ -1,0 +1,57 @@
+<?php
+
+namespace App\Models;
+
+use App\Enums\LeadStatus;
+use Database\Factories\LeadFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+#[Fillable([
+    'full_name', 'email', 'phone',
+    'from_address', 'from_city', 'from_state', 'from_zip', 'from_lat', 'from_lng',
+    'to_address', 'to_city', 'to_state', 'to_zip', 'to_lat', 'to_lng',
+    'move_date', 'move_type_id', 'move_type_name', 'status',
+    'source_url', 'referrer', 'utm', 'ip', 'user_agent', 'read_at',
+])]
+class Lead extends Model
+{
+    /** @use HasFactory<LeadFactory> */
+    use HasFactory, SoftDeletes;
+
+    protected function casts(): array
+    {
+        return [
+            'move_date' => 'date',
+            'status' => LeadStatus::class,
+            'utm' => 'array',
+            'from_lat' => 'decimal:7',
+            'from_lng' => 'decimal:7',
+            'to_lat' => 'decimal:7',
+            'to_lng' => 'decimal:7',
+            'read_at' => 'datetime',
+        ];
+    }
+
+    #[Scope]
+    protected function unread(Builder $query): void
+    {
+        $query->whereNull('read_at');
+    }
+
+    public function moveType(): BelongsTo
+    {
+        return $this->belongsTo(MoveType::class);
+    }
+
+    public function notes(): HasMany
+    {
+        return $this->hasMany(LeadNote::class)->latest();
+    }
+}

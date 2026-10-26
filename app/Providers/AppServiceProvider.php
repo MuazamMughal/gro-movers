@@ -2,7 +2,15 @@
 
 namespace App\Providers;
 
+use App\Models\Area;
+use App\Models\AreaServicePage;
+use App\Models\Category;
+use App\Models\Page;
+use App\Models\Post;
+use App\Models\Service;
+use App\Models\User;
 use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
@@ -24,6 +32,23 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        $this->configureMorphMap();
+    }
+
+    /**
+     * Store short, stable type names in polymorphic columns (seo_meta, sections, faqables).
+     */
+    protected function configureMorphMap(): void
+    {
+        Relation::enforceMorphMap([
+            'page' => Page::class,
+            'service' => Service::class,
+            'area' => Area::class,
+            'area_service_page' => AreaServicePage::class,
+            'category' => Category::class,
+            'post' => Post::class,
+            'user' => User::class,
+        ]);
     }
 
     /**
