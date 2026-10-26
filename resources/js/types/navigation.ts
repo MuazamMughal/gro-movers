@@ -11,4 +11,13 @@ export type NavItem = {
     href: NonNullable<InertiaLinkProps['href']>;
     icon?: LucideIcon;
     isActive?: boolean;
+    /** Module not built yet: shown greyed out with a "Soon" badge. */
+    disabled?: boolean;
+    /** Only highlight on an exact URL match (e.g. the dashboard at /admin). */
+    exact?: boolean;
+};
+
+export type NavGroup = {
+    label: string;
+    items: NavItem[];
 };

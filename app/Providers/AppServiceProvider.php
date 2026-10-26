@@ -9,10 +9,12 @@ use App\Models\Page;
 use App\Models\Post;
 use App\Models\Service;
 use App\Models\User;
+use App\Support\MailSettings;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -33,6 +35,18 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureDefaults();
         $this->configureMorphMap();
+        $this->configureMail();
+    }
+
+    /**
+     * Use the admin Email settings. The long-running queue worker re-reads them
+     * between jobs so changes apply without restarting it.
+     */
+    protected function configureMail(): void
+    {
+        MailSettings::apply();
+
+        Queue::looping(fn () => MailSettings::refresh());
     }
 
     /**

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
+import { Badge } from '@/components/ui/badge';
 import {
     SidebarGroup,
     SidebarGroupLabel,
@@ -11,20 +12,38 @@ import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import type { NavItem } from '@/types';
 
 defineProps<{
+    label: string;
     items: NavItem[];
 }>();
 
-const { isCurrentUrl } = useCurrentUrl();
+const { isCurrentUrl, isCurrentOrParentUrl } = useCurrentUrl();
 </script>
 
 <template>
     <SidebarGroup class="px-2 py-0">
-        <SidebarGroupLabel>Platform</SidebarGroupLabel>
+        <SidebarGroupLabel>{{ label }}</SidebarGroupLabel>
         <SidebarMenu>
             <SidebarMenuItem v-for="item in items" :key="item.title">
                 <SidebarMenuButton
+                    v-if="item.disabled"
+                    aria-disabled="true"
+                    class="cursor-default opacity-50 hover:bg-transparent"
+                    :tooltip="`${item.title} (coming soon)`"
+                >
+                    <component :is="item.icon" />
+                    <span>{{ item.title }}</span>
+                    <Badge variant="outline" class="ml-auto text-[10px]">
+                        Soon
+                    </Badge>
+                </SidebarMenuButton>
+                <SidebarMenuButton
+                    v-else
                     as-child
-                    :is-active="isCurrentUrl(item.href)"
+                    :is-active="
+                        item.exact
+                            ? isCurrentUrl(item.href)
+                            : isCurrentOrParentUrl(item.href)
+                    "
                     :tooltip="item.title"
                 >
                     <Link :href="item.href">

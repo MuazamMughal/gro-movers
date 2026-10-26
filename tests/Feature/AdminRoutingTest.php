@@ -29,11 +29,11 @@ class AdminRoutingTest extends TestCase
         $this->get('/dashboard')->assertNotFound();
     }
 
-    public function test_settings_index_redirects_to_the_admin_profile_page()
+    public function test_account_index_redirects_to_the_profile_page()
     {
         $this->actingAs(User::factory()->create());
 
-        $this->get('/admin/settings')->assertRedirect('/admin/settings/profile');
+        $this->get('/admin/account')->assertRedirect('/admin/account/profile');
     }
 
     public function test_public_home_page_renders()

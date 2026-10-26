@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Settings;
+namespace Tests\Feature\Account;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -28,7 +28,7 @@ class SecurityTest extends TestCase
             ->withSession(['auth.password_confirmed_at' => time()])
             ->get(route('security.edit'))
             ->assertInertia(fn (Assert $page) => $page
-                ->component('settings/Security')
+                ->component('account/Security')
                 ->where('canManageTwoFactor', true)
                 ->where('twoFactorEnabled', false),
             );
@@ -64,7 +64,7 @@ class SecurityTest extends TestCase
             ->get(route('security.edit'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->component('settings/Security')
+                ->component('account/Security')
                 ->where('canManageTwoFactor', false)
                 ->missing('twoFactorEnabled')
                 ->missing('requiresConfirmation'),

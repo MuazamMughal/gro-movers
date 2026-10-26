@@ -3,8 +3,11 @@
 namespace App\Support;
 
 use App\Models\Setting;
+use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Crypt;
 
 /**
  * Read/write access to the key/value `settings` table, cached forever.
@@ -26,10 +29,36 @@ class Settings
      */
     public static function all(): array
     {
-        return Cache::rememberForever(
-            static::CACHE_KEY,
-            fn () => Setting::query()->pluck('value', 'key')->all(),
-        );
+        try {
+            return Cache::rememberForever(
+                static::CACHE_KEY,
+                fn () => Setting::query()->pluck('value', 'key')->all(),
+            );
+        } catch (QueryException) {
+            // Table not migrated yet (fresh install, early boot): behave as empty, cache nothing.
+            return [];
+        }
+    }
+
+    /** Decrypted value of a secret setting (stored with setSecret), or null. */
+    public static function secret(string $key): ?string
+    {
+        $value = static::get($key);
+
+        if (blank($value)) {
+            return null;
+        }
+
+        try {
+            return Crypt::decryptString($value);
+        } catch (DecryptException) {
+            return null;
+        }
+    }
+
+    public static function setSecret(string $key, ?string $plain): void
+    {
+        static::set($key, blank($plain) ? null : Crypt::encryptString($plain));
     }
 
     /**

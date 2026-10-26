@@ -9,11 +9,20 @@ import { defineConfig, lazyPlugins } from 'vite-plus';
 export default defineConfig({
     plugins: lazyPlugins(() => [
         laravel({
-            input: ['resources/css/app.css', 'resources/js/app.ts'],
+            input: [
+                'resources/css/app.css',
+                'resources/js/app.ts',
+                'resources/css/site.css',
+            ],
             refresh: true,
             fonts: [
+                // Admin panel.
                 bunny('Instrument Sans', {
                     weights: [400, 500, 600],
+                }),
+                // Public site. Downloaded at build time and served from /build (self-hosted).
+                bunny('Inter', {
+                    weights: [400, 500, 600, 700, 800],
                 }),
             ],
         }),

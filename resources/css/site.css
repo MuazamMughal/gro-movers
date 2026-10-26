@@ -1,0 +1,45 @@
+/*
+ * Public website styles (Tailwind CSS 4). Kept separate from the admin CSS so
+ * visitors only download what the public pages use.
+ */
+@import 'tailwindcss' source(none);
+
+@source '../views/site';
+@source '../views/components/site';
+@source '../views/sections';
+@source '../views/layouts';
+@source '../js/site';
+
+/*
+ * Brand tokens. The values here are defaults only: the admin Theme settings are
+ * printed as :root variables (<x-site.theme-vars />) and override them.
+ * Usage: bg-primary, text-secondary, bg-tertiary, bg-muted, border-border …
+ */
+@theme {
+    --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+    --color-primary: #ffffff;
+    --color-secondary: #0d1b2a;
+    --color-tertiary: #f4632a;
+    --color-muted: #f1f4f7;
+    --color-border: #e1e7ee;
+
+    /* Derived shades follow the admin colors automatically. */
+    --color-tertiary-hover: color-mix(in oklab, var(--color-tertiary) 86%, black);
+    --color-tertiary-soft: color-mix(in oklab, var(--color-tertiary) 12%, white);
+    --color-secondary-light: color-mix(in oklab, var(--color-secondary) 72%, white);
+    --color-secondary-dark: color-mix(in oklab, var(--color-secondary) 80%, black);
+}
+
+@layer base {
+    html {
+        @apply bg-primary text-secondary antialiased;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    *,
+    ::before,
+    ::after {
+        border-color: var(--color-border);
+    }
+}
