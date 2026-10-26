@@ -108,7 +108,7 @@ class SettingsTest extends TestCase
         Settings::set('theme.secondary', 'red;}body{display:none');
 
         $this->get('/')
-            ->assertSee('--color-secondary:#0D1B2A', false)
+            ->assertSee('--color-secondary:'.config('settings.defaults')['theme.secondary'], false)
             ->assertDontSee('display:none', false);
     }
 

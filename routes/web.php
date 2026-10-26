@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
@@ -15,6 +16,16 @@ Route::prefix('admin')->group(function () {
 
         Route::name('admin.')->group(function () {
             Route::resource('users', UserController::class)->except('show');
+
+            Route::get('media', [MediaController::class, 'index'])->name('media.index');
+            Route::get('media/browse', [MediaController::class, 'browse'])->name('media.browse');
+            Route::post('media', [MediaController::class, 'store'])->middleware('throttle:60,1')->name('media.store');
+            Route::get('media/{media}', [MediaController::class, 'show'])->name('media.show');
+            Route::patch('media/{media}', [MediaController::class, 'update'])->name('media.update');
+            Route::post('media/{media}/crop', [MediaController::class, 'crop'])->name('media.crop');
+            Route::post('media/{media}/derive', [MediaController::class, 'derive'])->name('media.derive');
+            Route::post('media/{media}/replace', [MediaController::class, 'replace'])->name('media.replace');
+            Route::delete('media/{media}', [MediaController::class, 'destroy'])->name('media.destroy');
 
             Route::get('settings', fn () => to_route('admin.settings.edit', 'general'))->name('settings.index');
             Route::post('settings/email/test', [SettingsController::class, 'testEmail'])

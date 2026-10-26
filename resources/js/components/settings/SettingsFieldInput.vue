@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import MediaPicker from '@/components/media/MediaPicker.vue';
 import SocialLinksInput from './SocialLinksInput.vue';
 import type { HoursRow, SettingsField } from './types';
 
@@ -222,13 +223,12 @@ const charCount = computed(() => String(model.value ?? '').length);
             :error-prefix="field.key"
         />
 
-        <p
+        <MediaPicker
             v-else-if="field.type === 'media'"
-            class="rounded-md border border-dashed px-3 py-4 text-sm text-muted-foreground"
-        >
-            Image upload with cropping becomes available here once the media
-            library is built.
-        </p>
+            v-model="model"
+            :preset="field.preset ?? 'card'"
+            :label="field.label"
+        />
 
         <p v-if="field.help" class="text-xs text-muted-foreground">
             {{ field.help }}

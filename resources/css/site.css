@@ -19,10 +19,10 @@
     --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
     --color-primary: #ffffff;
-    --color-secondary: #0d1b2a;
-    --color-tertiary: #f4632a;
-    --color-muted: #f1f4f7;
-    --color-border: #e1e7ee;
+    --color-secondary: #0a2e5c;
+    --color-tertiary: #f66419;
+    --color-muted: #f1f5fa;
+    --color-border: #dce4ee;
 
     /* Derived shades follow the admin colors automatically. */
     --color-tertiary-hover: color-mix(in oklab, var(--color-tertiary) 86%, black);

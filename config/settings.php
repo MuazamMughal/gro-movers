@@ -16,8 +16,8 @@ return [
 
     'defaults' => [
         // General
-        'general.company_name' => 'Lone Star Movers',
-        'general.legal_name' => 'Lone Star Movers LLC',
+        'general.company_name' => 'Grosolve Moving Network',
+        'general.legal_name' => 'Grosolve Moving Network LLC',
         'general.phone' => '(214) 555-0100',
         'general.email' => 'info@example.com',
         'general.address_street' => '1234 Commerce St',
@@ -52,10 +52,10 @@ return [
 
         // Theme colors (CSS variables)
         'theme.primary' => '#FFFFFF',
-        'theme.secondary' => '#0D1B2A',
-        'theme.tertiary' => '#F4632A',
-        'theme.muted' => '#F1F4F7',
-        'theme.border' => '#E1E7EE',
+        'theme.secondary' => '#0A2E5C', // logo navy
+        'theme.tertiary' => '#F66419', // logo orange ("MOVING")
+        'theme.muted' => '#F1F5FA',
+        'theme.border' => '#DCE4EE',
 
         // Email (SMTP fields override .env when filled)
         'email.smtp_host' => null,
@@ -63,7 +63,7 @@ return [
         'email.smtp_username' => null,
         'email.smtp_password' => null, // stored encrypted (T2)
         'email.smtp_encryption' => 'tls',
-        'email.from_name' => 'Lone Star Movers',
+        'email.from_name' => 'Grosolve Moving Network',
         'email.from_address' => 'no-reply@example.com',
         'email.lead_recipients' => ['admin@example.com'],
         'email.auto_reply_enabled' => true,
@@ -87,7 +87,7 @@ return [
         'forms.success_message' => 'Thank you! We received your request and will contact you shortly.',
 
         // SEO
-        'seo.title_suffix' => '| Lone Star Movers',
+        'seo.title_suffix' => '| Grosolve Moving Network',
         'seo.default_description' => 'Licensed and insured movers in Dallas, Plano and Irving, TX. Local and long-distance moving, packing and storage. Get a free quote today.',
         'seo.default_og_image_id' => null,
         'seo.canonical_host' => null, // e.g. "example.com" (no www); null = APP_URL host

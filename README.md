@@ -1,4 +1,4 @@
-# Lone Star Movers: Website & Admin
+# Grosolve Moving Network: Website & Admin
 
 SEO-first marketing site for a US moving company.
 - **Public site:** Laravel (Blade) renders it on the server and caches it as static HTML.

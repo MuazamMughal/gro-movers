@@ -96,10 +96,10 @@
     | Token | Default | Use |
     |---|---|---|
     | `--color-primary` | `#FFFFFF` (white) | Page backgrounds and cards |
-    | `--color-secondary` | `#0D1B2A` (navy) | Text, headings, header/footer, dark sections |
-    | `--color-tertiary` | `#F4632A` (orange accent) | Buttons, CTAs, highlights, links |
-    | `--color-muted` | `#F1F4F7` | Alternating section backgrounds |
-    | `--color-border` | `#E1E7EE` | Borders and inputs |
+    | `--color-secondary` | `#0A2E5C` (logo navy) | Text, headings, header/footer, dark sections |
+    | `--color-tertiary` | `#F66419` (logo orange) | Buttons, CTAs, highlights, links |
+    | `--color-muted` | `#F1F5FA` | Alternating section backgrounds |
+    | `--color-border` | `#DCE4EE` | Borders and inputs |
     - Font: **Inter** (self-hosted).
     - Tailwind maps `primary`, `secondary` and `tertiary` to these variables, so a color change in admin updates the whole site after a cache rebuild.
 12. **Single company only.** The site belongs to one moving company. There are **no mover accounts, no mover listings and no lead selling or distribution**, unlike the reference site.

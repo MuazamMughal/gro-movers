@@ -110,7 +110,7 @@ class SettingsTabs
                 'label' => 'SEO',
                 'description' => 'Defaults used when a page has no custom SEO values.',
                 'fields' => [
-                    ['key' => 'seo.title_suffix', 'type' => 'text', 'label' => 'Title suffix', 'help' => 'Appended to fallback titles, e.g. "| Lone Star Movers".', 'rules' => ['nullable', 'string', 'max:60']],
+                    ['key' => 'seo.title_suffix', 'type' => 'text', 'label' => 'Title suffix', 'help' => 'Appended to fallback titles, e.g. "| Grosolve Moving Network".', 'rules' => ['nullable', 'string', 'max:60']],
                     ['key' => 'seo.default_description', 'type' => 'textarea', 'label' => 'Default meta description', 'help' => 'Aim for 120–160 characters.', 'max' => 160, 'rules' => ['nullable', 'string', 'max:170']],
                     ['key' => 'seo.default_og_image_id', 'type' => 'media', 'label' => 'Default social share image', 'preset' => 'blog', 'rules' => ['nullable', 'integer', 'exists:media,id']],
                     ['key' => 'seo.canonical_host', 'type' => 'text', 'label' => 'Canonical host', 'help' => 'e.g. example.com (no www, no https://). Empty = use the site URL.', 'rules' => ['nullable', 'regex:/^(?!-)[a-z0-9-]+(\.[a-z0-9-]+)+$/i', 'max:150']],

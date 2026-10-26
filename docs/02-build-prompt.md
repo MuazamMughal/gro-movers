@@ -99,10 +99,10 @@ The style follows https://www.movinglead.co: a clean white layout, navy text, or
 ```css
 :root{
   --color-primary:#FFFFFF;   /* backgrounds, cards */
-  --color-secondary:#0D1B2A; /* navy: text, header/footer, dark sections */
-  --color-tertiary:#F4632A;  /* orange accent: buttons, links, highlights */
-  --color-muted:#F1F4F7;     /* alternating section bg */
-  --color-border:#E1E7EE;
+  --color-secondary:#0A2E5C; /* logo navy: text, header/footer, dark sections */
+  --color-tertiary:#F66419;  /* logo orange ("MOVING"): buttons, links, highlights */
+  --color-muted:#F1F5FA;     /* alternating section bg */
+  --color-border:#DCE4EE;
 }
 ```
 - Tailwind 4 `@theme` maps `primary`, `secondary`, `tertiary`, `muted` and `border` to these variables, so `bg-tertiary` and `text-secondary` work.
@@ -541,7 +541,7 @@ RewriteRule ^(.*)$ static/$1/index.html [L]
 
 Write **original, US-English, SEO-oriented placeholder copy**. No lorem ipsum. Each text is 150–600 words, as appropriate, with sensible H2s, and uses the company name token.
 
-- **Settings:** Company "Lone Star Movers" (placeholder), Dallas address, phone `(214) 555-0100`, theme defaults (§2), and lead recipient `admin@example.com`.
+- **Settings:** Company "Grosolve Moving Network" (from the client logo), Dallas address, phone `(214) 555-0100`, theme defaults (§2), and lead recipient `admin@example.com`.
 - **Admin user** from `.env` (`ADMIN_EMAIL`, `ADMIN_PASSWORD`). There are no hardcoded credentials.
 - **Services (6):** Local Moving, Long-Distance Moving, Residential Moving, Commercial Moving, Packing Services, Storage Services. Each gets a hero, 3–4 sections, 4 FAQs and SEO meta.
 - **Areas (3):** Dallas TX, Plano TX, Irving TX. Each has lat/lng, ZIPs, all 6 services, the other two as neighbors, local copy, FAQs and SEO meta.

@@ -42,6 +42,13 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            // Crop presets for the image picker and cropper (config/media.php).
+            'mediaPresets' => fn () => collect(config('media.presets'))->map(fn (array $p) => [
+                'label' => $p['label'],
+                'width' => $p['width'],
+                'height' => $p['height'],
+                'svg' => $p['svg'] ?? false,
+            ]),
         ];
     }
 }

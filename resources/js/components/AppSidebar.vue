@@ -33,6 +33,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard, home } from '@/routes';
+import { index as mediaIndex } from '@/routes/admin/media';
 import { index as settingsIndex } from '@/routes/admin/settings';
 import { index as usersIndex } from '@/routes/admin/users';
 import type { NavGroup, NavItem } from '@/types';
@@ -55,7 +56,7 @@ const navGroups: NavGroup[] = [
             { title: 'Blog', href: '#', icon: Newspaper, disabled: true },
             { title: 'Reviews', href: '#', icon: Star, disabled: true },
             { title: 'FAQs', href: '#', icon: CircleHelp, disabled: true },
-            { title: 'Media Library', href: '#', icon: Image, disabled: true },
+            { title: 'Media Library', href: mediaIndex(), icon: Image },
         ],
     },
     {

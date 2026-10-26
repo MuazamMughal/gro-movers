@@ -102,6 +102,7 @@ class SettingsController extends Controller
     {
         return match ($field['type']) {
             'toggle' => (bool) $value,
+            'media' => $value ? (int) $value : null,
             'number' => $value === null || $value === '' ? null : $value + 0,
             'color' => strtoupper((string) $value),
             'email_list' => array_values(array_unique(array_map('strtolower', array_filter($value ?? [])))),
