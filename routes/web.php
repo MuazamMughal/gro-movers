@@ -1,13 +1,20 @@
 <?php
 
+use App\Enums\SystemPage;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\UserController;
+use App\Models\Page;
+use App\Support\Seo;
 use Illuminate\Support\Facades\Route;
 
 // Public site (Blade, server-rendered). Real templates arrive in T11.
-Route::view('/', 'site.placeholder')->name('home');
+Route::get('/', fn () => view('site.placeholder', [
+    'seo' => ($home = Page::system(SystemPage::Home))
+        ? Seo::for($home, '/')
+        : Seo::make(title: 'Home', path: '/'),
+]))->name('home');
 
 // Admin panel (Inertia + Vue). Fortify auth routes share the same /admin prefix.
 Route::prefix('admin')->group(function () {

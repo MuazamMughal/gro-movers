@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\SeoForm;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -42,6 +43,8 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            // Title suffix, limits and site URL for the SEO panel on every content form.
+            'seoDefaults' => fn () => $request->user() ? SeoForm::defaults() : null,
             // Crop presets for the image picker and cropper (config/media.php).
             'mediaPresets' => fn () => collect(config('media.presets'))->map(fn (array $p) => [
                 'label' => $p['label'],

@@ -8,6 +8,7 @@ use App\Models\Concerns\HasFaqs;
 use App\Models\Concerns\HasSections;
 use App\Models\Concerns\HasSeo;
 use App\Models\Concerns\HasSlugRedirect;
+use App\Support\Settings;
 use Database\Factories\PageFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -50,6 +51,19 @@ class Page extends Model
     public function publicPath(): ?string
     {
         return $this->pathForSlug($this->slug);
+    }
+
+    protected function seoFallbackTitle(): string
+    {
+        // "Home | Company" says nothing to searchers; lead with what and where instead.
+        if ($this->system_key === SystemPage::Home) {
+            $city = Settings::get('general.address_city');
+            $state = Settings::get('general.address_state');
+
+            return $city ? "Movers in {$city}, {$state}" : $this->title;
+        }
+
+        return $this->title;
     }
 
     public function pathForSlug(string $slug): ?string

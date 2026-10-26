@@ -105,4 +105,9 @@ class Service extends Model
 
         return $pairs;
     }
+
+    protected function seoImageFallback(): ?Media
+    {
+        return $this->hero ?? $this->image;
+    }
 }

@@ -108,4 +108,14 @@ class Post extends Model
     {
         return $this->excerpt ?: $this->content;
     }
+
+    protected function seoImageFallback(): ?Media
+    {
+        return $this->featuredImage;
+    }
+
+    public function seoOgType(): string
+    {
+        return 'article';
+    }
 }
