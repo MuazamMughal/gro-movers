@@ -43,6 +43,22 @@ return [
             'AutoFormat.RemoveEmpty' => true,
             'AutoFormat.AutoParagraph' => false,
         ],
+        // Blog posts: rich_text plus tables, library images (data-media-id is
+        // swapped for a responsive <picture> on render) and YouTube embeds.
+        'blog' => [
+            'HTML.Doctype' => 'HTML 4.01 Transitional',
+            'HTML.Allowed' => 'p,br,strong,b,em,i,u,s,a[href|title|target|rel],ul,ol,li,h2,h3,h4,blockquote,hr,code,'
+                .'table,thead,tbody,tr,th[colspan|rowspan],td[colspan|rowspan],'
+                .'img[src|alt|width|height|data-media-id],div,iframe[src|width|height|title|allowfullscreen]',
+            'HTML.TargetBlank' => false,
+            'HTML.SafeIframe' => true,
+            'URI.SafeIframeRegexp' => '%^https://(www\.)?(youtube\.com|youtube-nocookie\.com)/embed/%',
+            'Attr.AllowedFrameTargets' => ['_blank'],
+            'Attr.AllowedRel' => ['nofollow', 'noopener', 'noreferrer', 'sponsored', 'ugc'],
+            'URI.AllowedSchemes' => ['http' => true, 'https' => true, 'mailto' => true, 'tel' => true],
+            'AutoFormat.RemoveEmpty' => true,
+            'AutoFormat.AutoParagraph' => false,
+        ],
         'test' => [
             'Attr.EnableID' => 'true',
         ],
@@ -52,7 +68,7 @@ return [
         ],
         'custom_definition' => [
             'id' => 'html5-definitions',
-            'rev' => 1,
+            'rev' => 2,
             'debug' => false,
             'elements' => [
                 // http://developers.whatwg.org/sections.html
@@ -100,6 +116,7 @@ return [
             ],
             'attributes' => [
                 ['iframe', 'allowfullscreen', 'Bool'],
+                ['img', 'data-media-id', HTMLPurifier_AttrDef_Integer::class],
                 ['table', 'height', 'Text'],
                 ['td', 'border', 'Text'],
                 ['th', 'border', 'Text'],

@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 #[Fillable([
     'category_id', 'author_id', 'title', 'slug', 'excerpt', 'content',
@@ -25,6 +26,9 @@ class Post extends Model
     use HasFactory, HasSeo, HasSlugRedirect, SoftDeletes;
 
     public const WORDS_PER_MINUTE = 200;
+
+    /** Slugs that would clash with /blog/page/N and /blog/category/… */
+    public const RESERVED_SLUGS = ['page', 'category', 'feed'];
 
     protected static function booted(): void
     {
@@ -65,6 +69,38 @@ class Post extends Model
     protected function latestFirst(Builder $query): void
     {
         $query->orderByDesc('published_at')->orderByDesc('id');
+    }
+
+    /** Set to publish later: shown on the site once published_at passes. */
+    public function isScheduled(): bool
+    {
+        return $this->status === PostStatus::Scheduled && $this->published_at?->isFuture();
+    }
+
+    /** draft, scheduled (waiting) or published (live). */
+    public function state(): string
+    {
+        return match (true) {
+            $this->isLive() => 'published',
+            $this->isScheduled() => 'scheduled',
+            default => 'draft',
+        };
+    }
+
+    /** Card / meta text: the excerpt, else the start of the body. */
+    public function summary(int $limit = 160): string
+    {
+        $text = $this->excerpt ?: html_entity_decode(strip_tags((string) $this->content), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        return Str::limit(Str::squish($text), $limit, '…', preserveWords: true);
+    }
+
+    #[Scope]
+    protected function search(Builder $query, ?string $term): void
+    {
+        $query->when(filled($term), fn (Builder $q) => $q->where(fn (Builder $q) => $q
+            ->where('title', 'like', '%'.addcslashes((string) $term, '%_\\').'%')
+            ->orWhere('slug', 'like', '%'.addcslashes((string) $term, '%_\\').'%')));
     }
 
     public function isLive(): bool

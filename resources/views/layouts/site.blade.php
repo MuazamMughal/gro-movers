@@ -1,7 +1,8 @@
 {{--
     Public site layout. Header, footer, top contact bar and the mobile sticky
     Call / Quote bar are added in T11; this is the document shell.
-    Expects: $seo (App\Support\SeoData). Optional: $preview (bool) for admin previews.
+    Expects: $seo (App\Support\SeoData). Optional: $preview (bool) for admin previews,
+    $previewNotice (string) to replace the preview banner text.
 --}}
 <!DOCTYPE html>
 <html lang="en">
@@ -21,7 +22,7 @@
 <body class="font-sans">
     @if ($preview ?? false)
         <div class="sticky top-0 z-50 bg-amber-400 px-4 py-2 text-center text-sm font-semibold text-black" role="status">
-            Preview of unsaved changes — this is not the live page.
+            {{ $previewNotice ?? 'Preview of unsaved changes — this is not the live page.' }}
         </div>
     @endif
 

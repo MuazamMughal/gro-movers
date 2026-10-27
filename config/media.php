@@ -29,6 +29,8 @@ return [
         'card' => ['label' => 'Card', 'width' => 600, 'height' => 400],
         'blog' => ['label' => 'Blog / social share', 'width' => 1200, 'height' => 630],
         'square' => ['label' => 'Square', 'width' => 600, 'height' => 600],
+        // Images inside blog posts: any shape, up to the article width.
+        'content' => ['label' => 'In-article image (free crop)', 'width' => null, 'height' => null, 'max_width' => 1200],
         // Free crop, keeps transparency, SVG allowed.
         'logo' => ['label' => 'Logo (free crop)', 'width' => null, 'height' => null, 'max_width' => 1200, 'svg' => true],
     ],

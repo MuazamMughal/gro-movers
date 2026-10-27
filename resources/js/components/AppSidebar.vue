@@ -4,6 +4,7 @@ import {
     CircleHelp,
     ExternalLink,
     FileText,
+    FolderOpen,
     Grid3x3,
     Image,
     Inbox,
@@ -16,7 +17,9 @@ import {
     Search,
     Settings,
     Star,
+    Tags,
     Truck,
+    UserRound,
     Users,
 } from '@lucide/vue';
 import AppLogo from '@/components/AppLogo.vue';
@@ -35,11 +38,15 @@ import {
 import { dashboard, home } from '@/routes';
 import { index as areaServicesIndex } from '@/routes/admin/area-services';
 import { index as areasIndex } from '@/routes/admin/areas';
+import { index as authorsIndex } from '@/routes/admin/authors';
+import { index as blogCategoriesIndex } from '@/routes/admin/blog-categories';
 import { index as mediaIndex } from '@/routes/admin/media';
 import { index as moveTypesIndex } from '@/routes/admin/move-types';
 import { index as pagesIndex } from '@/routes/admin/pages';
+import { index as postsIndex } from '@/routes/admin/posts';
 import { index as servicesIndex } from '@/routes/admin/services';
 import { index as settingsIndex } from '@/routes/admin/settings';
+import { index as tagsIndex } from '@/routes/admin/tags';
 import { index as usersIndex } from '@/routes/admin/users';
 import type { NavGroup, NavItem } from '@/types';
 
@@ -58,10 +65,18 @@ const navGroups: NavGroup[] = [
             { title: 'Services', href: servicesIndex(), icon: Truck },
             { title: 'Service Areas', href: areasIndex(), icon: MapPin },
             { title: 'Area × Service', href: areaServicesIndex(), icon: Grid3x3 },
-            { title: 'Blog', href: '#', icon: Newspaper, disabled: true },
             { title: 'Reviews', href: '#', icon: Star, disabled: true },
             { title: 'FAQs', href: '#', icon: CircleHelp, disabled: true },
             { title: 'Media Library', href: mediaIndex(), icon: Image },
+        ],
+    },
+    {
+        label: 'Blog',
+        items: [
+            { title: 'Posts', href: postsIndex(), icon: Newspaper },
+            { title: 'Categories', href: blogCategoriesIndex(), icon: FolderOpen },
+            { title: 'Authors', href: authorsIndex(), icon: UserRound },
+            { title: 'Tags', href: tagsIndex(), icon: Tags },
         ],
     },
     {

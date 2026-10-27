@@ -58,6 +58,12 @@ class AppServiceProvider extends ServiceProvider
                 'field' => (config("sections.types.{$section->type}.label") ?? $section->type).' section',
             ])
             ->all());
+
+        MediaUsage::resolveUsing('post_content', fn (Media $media) => Post::withTrashed()
+            ->where('content', 'like', '%data-media-id="'.$media->id.'"%')
+            ->get(['id', 'title'])
+            ->map(fn (Post $post) => ['label' => 'Post: '.$post->title, 'field' => 'Image in the article'])
+            ->all());
     }
 
     /**

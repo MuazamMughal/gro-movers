@@ -21,7 +21,11 @@ const props = defineProps<{
     /** Crop preset key from config/media.php (hero, card, blog, square, logo). */
     preset: string;
     label?: string;
+    /** No preview or buttons: the parent opens the dialog with the exposed open(). */
+    bare?: boolean;
 }>();
+
+const emit = defineEmits<{ select: [item: MediaItem] }>();
 
 const model = defineModel<number | null>({ default: null });
 
@@ -111,6 +115,7 @@ function select(item: MediaItem) {
     model.value = item.id;
     dialogOpen.value = false;
     cropperOpen.value = false;
+    emit('select', item);
 
     if (!item.alt) {
         toast.warning('Add alt text to this image in the media library for SEO and accessibility.');
@@ -210,10 +215,12 @@ const clear = () => {
     model.value = null;
     current.value = null;
 };
+
+defineExpose({ open: () => (dialogOpen.value = true) });
 </script>
 
 <template>
-    <div class="flex flex-wrap items-start gap-4">
+    <div v-if="!bare" class="flex flex-wrap items-start gap-4">
         <div
             class="flex h-24 w-40 shrink-0 items-center justify-center overflow-hidden rounded-md border bg-[repeating-conic-gradient(var(--muted)_0_25%,transparent_0_50%)] bg-[length:16px_16px]"
         >

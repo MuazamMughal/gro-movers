@@ -8,6 +8,12 @@
 @source '../views/components/site';
 @source '../views/sections';
 @source '../views/layouts';
+@source '../views/pages';
+@source '../views/services';
+@source '../views/areas';
+@source '../views/blog';
+@source '../views/components/picture.blade.php';
+@source '../../app/Blog';
 @source '../js/site';
 
 /*
@@ -87,6 +93,46 @@
 
         & strong {
             @apply font-bold;
+        }
+
+        & h2[id] {
+            @apply scroll-mt-24;
+        }
+
+        & figure {
+            @apply my-8;
+        }
+
+        & figcaption {
+            @apply mt-2 text-center text-sm text-secondary-light;
+        }
+
+        & .table-wrap {
+            @apply overflow-x-auto rounded-xl border border-border;
+        }
+
+        & table {
+            @apply w-full border-collapse text-left text-base;
+        }
+
+        & th {
+            @apply bg-muted px-4 py-3 font-bold;
+        }
+
+        & td {
+            @apply border-t border-border px-4 py-3 align-top;
+        }
+
+        & :is(th, td) > p {
+            @apply m-0;
+        }
+
+        & .video-embed {
+            @apply aspect-video overflow-hidden rounded-xl bg-secondary;
+
+            & iframe {
+                @apply size-full;
+            }
         }
 
         [data-theme='dark'] & a {

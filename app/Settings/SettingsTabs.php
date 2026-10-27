@@ -2,6 +2,7 @@
 
 namespace App\Settings;
 
+use App\Support\SiteTime;
 use Illuminate\Support\Arr;
 
 /**
@@ -42,6 +43,7 @@ class SettingsTabs
                     ['key' => 'general.mc_number', 'type' => 'text', 'label' => 'MC number', 'width' => 'half', 'rules' => ['nullable', 'regex:/^(MC-?)?\d{1,8}$/i']],
                     ['key' => 'general.founded_year', 'type' => 'number', 'label' => 'Founded year', 'width' => 'half', 'rules' => ['nullable', 'integer', 'min:1900', 'max:'.date('Y')]],
                     ['key' => 'general.price_range', 'type' => 'select', 'label' => 'Price range (schema)', 'width' => 'half', 'options' => ['$' => '$', '$$' => '$$', '$$$' => '$$$', '$$$$' => '$$$$'], 'rules' => ['nullable', 'in:$,$$,$$$,$$$$']],
+                    ['key' => 'general.timezone', 'type' => 'select', 'label' => 'Time zone', 'width' => 'half', 'help' => 'Blog publish times and dates on the website use this zone.', 'options' => SiteTime::ZONES, 'rules' => ['required', 'in:'.implode(',', array_keys(SiteTime::ZONES))]],
                     ['key' => 'general.service_radius_text', 'type' => 'text', 'label' => 'Service area line', 'help' => 'Shown in the top contact bar.', 'rules' => ['nullable', 'string', 'max:150']],
                     ['key' => 'general.social', 'type' => 'social', 'label' => 'Social profiles', 'help' => 'Full URLs. Used for footer icons and schema sameAs.', 'rules' => ['nullable', 'array'], 'item_rules' => ['*' => ['nullable', 'url:https', 'max:255']],
                         'options' => ['facebook' => 'Facebook', 'instagram' => 'Instagram', 'google' => 'Google Business', 'yelp' => 'Yelp', 'youtube' => 'YouTube', 'linkedin' => 'LinkedIn']],

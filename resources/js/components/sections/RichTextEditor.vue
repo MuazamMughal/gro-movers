@@ -93,15 +93,3 @@ const tools: Tool[] = [
         <EditorContent :editor="editor" />
     </div>
 </template>
-
-<style>
-.prose-admin > * + * { margin-top: 0.75em; }
-.prose-admin h2 { font-size: 1.35em; font-weight: 700; }
-.prose-admin h3 { font-size: 1.15em; font-weight: 700; }
-.prose-admin h4 { font-weight: 700; }
-.prose-admin ul { list-style: disc; padding-left: 1.5em; }
-.prose-admin ol { list-style: decimal; padding-left: 1.5em; }
-.prose-admin blockquote { border-left: 3px solid currentColor; padding-left: 1em; opacity: 0.85; }
-.prose-admin a { text-decoration: underline; color: var(--primary); }
-.prose-admin p.is-editor-empty:first-child::before { content: attr(data-placeholder); opacity: 0.5; pointer-events: none; float: left; height: 0; }
-</style>

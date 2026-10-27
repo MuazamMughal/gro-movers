@@ -36,6 +36,7 @@ return [
         'general.founded_year' => 2015,
         'general.service_radius_text' => 'Serving Dallas–Fort Worth and moves nationwide',
         'general.price_range' => '$$',
+        'general.timezone' => 'America/Chicago',
         'general.social' => [
             'facebook' => null,
             'instagram' => null,

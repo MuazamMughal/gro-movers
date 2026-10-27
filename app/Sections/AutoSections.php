@@ -12,6 +12,14 @@ use Illuminate\Support\Collection;
  */
 class AutoSections
 {
+    /** The closing call to action every template page ends with. */
+    public const CTA = [
+        'heading' => 'Ready for a stress-free move?',
+        'text' => 'Get your free, no-obligation quote today.',
+        'button' => ['label' => 'Get a Free Quote', 'url' => '/get-a-quote'],
+        'show_phone' => true,
+    ];
+
     /**
      * @param  iterable<Section>  $sections  the record's visible sections
      * @param  array<string, mixed>  $hero  data for the automatic hero
@@ -32,10 +40,7 @@ class AutoSections
         // Every service, area and post page ends with Call Now + Get a Free Quote.
         if (! $types->contains('cta_banner')) {
             $list->push(static::make('cta_banner', $cta ?? [
-                'heading' => 'Ready for a stress-free move?',
-                'text' => 'Get your free, no-obligation quote today.',
-                'button' => ['label' => 'Get a Free Quote', 'url' => '/get-a-quote'],
-                'show_phone' => true,
+                ...static::CTA,
                 // Navy after a navy section would merge into one block; switch to light.
                 'theme' => static::isDark($list->last()) ? 'light' : 'dark',
             ], -3));

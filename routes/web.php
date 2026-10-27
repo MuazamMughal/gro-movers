@@ -2,15 +2,20 @@
 
 use App\Http\Controllers\Admin\AreaController;
 use App\Http\Controllers\Admin\AreaServiceController;
+use App\Http\Controllers\Admin\AuthorController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\MoveTypeController;
 use App\Http\Controllers\Admin\PageController;
+use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\PreviewController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Site\AreaController as SiteAreaController;
+use App\Http\Controllers\Site\BlogController as SiteBlogController;
 use App\Http\Controllers\Site\PageController as SitePageController;
 use App\Http\Controllers\Site\ServiceController as SiteServiceController;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +29,14 @@ Route::get('service-areas/{area}/{service}', [SiteAreaController::class, 'servic
     ->where(['area' => '[a-z0-9]+(?:-[a-z0-9]+)*', 'service' => '[a-z0-9]+(?:-[a-z0-9]+)*'])
     ->name('areas.service');
 Route::get('services/{slug}', [SiteServiceController::class, 'show'])->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('services.show');
+
+Route::get('blog', [SiteBlogController::class, 'index'])->name('blog.index');
+Route::get('blog/page/{page}', [SiteBlogController::class, 'index'])->whereNumber('page')->name('blog.page');
+Route::get('blog/category/{slug}', [SiteBlogController::class, 'category'])->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('blog.category');
+Route::get('blog/category/{slug}/page/{page}', [SiteBlogController::class, 'category'])
+    ->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->whereNumber('page')
+    ->name('blog.category.page');
+Route::get('blog/{slug}', [SiteBlogController::class, 'show'])->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('blog.show');
 
 // Admin panel (Inertia + Vue). Fortify auth routes share the same /admin prefix.
 Route::prefix('admin')->group(function () {
@@ -49,6 +62,14 @@ Route::prefix('admin')->group(function () {
             Route::patch('area-services/{areaService}/toggle', [AreaServiceController::class, 'toggle'])->name('area-services.toggle');
             Route::get('area-services/{areaService}/edit', [AreaServiceController::class, 'edit'])->name('area-services.edit');
             Route::put('area-services/{areaService}', [AreaServiceController::class, 'update'])->name('area-services.update');
+
+            Route::patch('posts/{post}/featured', [PostController::class, 'toggleFeatured'])->name('posts.featured');
+            Route::get('posts/{post}/preview', [SiteBlogController::class, 'preview'])->name('posts.preview');
+            Route::resource('posts', PostController::class)->except('show');
+            Route::post('blog-categories/reorder', [CategoryController::class, 'reorder'])->name('blog-categories.reorder');
+            Route::resource('blog-categories', CategoryController::class)->except('show')->parameters(['blog-categories' => 'category']);
+            Route::resource('authors', AuthorController::class)->except('show');
+            Route::resource('tags', TagController::class)->only(['index', 'store', 'update', 'destroy']);
 
             Route::post('move-types/reorder', [MoveTypeController::class, 'reorder'])->name('move-types.reorder');
             Route::resource('move-types', MoveTypeController::class)->only(['index', 'store', 'update', 'destroy']);
