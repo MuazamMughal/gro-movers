@@ -85,7 +85,7 @@ return [
 
         // Forms
         'forms.tcpa_text' => 'By submitting this form, you agree that {company} may contact you by phone, text message and email about your move, including with automated technology. Consent is not a condition of purchase. Message and data rates may apply.',
-        'forms.quote_button_label' => 'Get My Free Quote',
+        'forms.quote_button_label' => 'Submit Request',
         'forms.success_message' => 'Thank you! We received your request and will contact you shortly.',
 
         // SEO

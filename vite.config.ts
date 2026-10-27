@@ -13,6 +13,7 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/js/app.ts',
                 'resources/css/site.css',
+                'resources/js/site/site.ts',
             ],
             refresh: true,
             fonts: [

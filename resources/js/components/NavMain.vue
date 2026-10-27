@@ -49,6 +49,9 @@ const { isCurrentUrl, isCurrentOrParentUrl } = useCurrentUrl();
                     <Link :href="item.href">
                         <component :is="item.icon" />
                         <span>{{ item.title }}</span>
+                        <Badge v-if="item.badge" class="ml-auto h-5 min-w-5 justify-center rounded-full px-1.5 text-[10px] tabular-nums" :aria-label="`${item.badge} unread`">
+                            {{ item.badge > 99 ? '99+' : item.badge }}
+                        </Badge>
                     </Link>
                 </SidebarMenuButton>
             </SidebarMenuItem>

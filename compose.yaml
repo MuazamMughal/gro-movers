@@ -36,7 +36,8 @@ services:
         environment:
             WWWUSER: '${WWWUSER}'
             LARAVEL_SAIL: 1
-            SUPERVISOR_PHP_COMMAND: '/usr/bin/php /var/www/html/artisan queue:work --tries=3 --timeout=120'
+            # Loop so `artisan queue:restart` (a clean exit after deploys/code changes) starts a fresh worker.
+            SUPERVISOR_PHP_COMMAND: '/bin/sh -c "while true; do /usr/bin/php /var/www/html/artisan queue:work --tries=3 --timeout=120; sleep 1; done"'
         restart: unless-stopped
 
     # Runs the Laravel scheduler (scheduled posts, backups) - mirrors the cPanel cron.

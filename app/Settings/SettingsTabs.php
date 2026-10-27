@@ -79,7 +79,7 @@ class SettingsTabs
                     ['key' => 'email.from_address', 'type' => 'email', 'label' => 'From address', 'width' => 'half', 'rules' => ['required', 'email', 'max:150']],
                     ['key' => 'email.auto_reply_enabled', 'type' => 'toggle', 'label' => 'Send an auto-reply to the customer', 'rules' => ['boolean']],
                     ['key' => 'email.auto_reply_subject', 'type' => 'text', 'label' => 'Auto-reply subject', 'rules' => ['required_if_accepted:email.auto_reply_enabled', 'nullable', 'string', 'max:150']],
-                    ['key' => 'email.auto_reply_body', 'type' => 'textarea', 'label' => 'Auto-reply message', 'help' => 'Tokens: {name}, {move_date}, {move_type}, {company}, {phone}.', 'rules' => ['required_if_accepted:email.auto_reply_enabled', 'nullable', 'string', 'max:5000']],
+                    ['key' => 'email.auto_reply_body', 'type' => 'textarea', 'label' => 'Auto-reply message', 'help' => 'Tokens: {name}, {first_name}, {move_date}, {move_type}, {company}, {phone}.', 'rules' => ['required_if_accepted:email.auto_reply_enabled', 'nullable', 'string', 'max:5000']],
                     ['key' => 'email.smtp_host', 'type' => 'text', 'label' => 'SMTP host', 'width' => 'half', 'group' => 'SMTP server (optional)', 'rules' => ['nullable', 'string', 'max:150']],
                     ['key' => 'email.smtp_port', 'type' => 'number', 'label' => 'SMTP port', 'width' => 'half', 'rules' => ['nullable', 'integer', 'between:1,65535']],
                     ['key' => 'email.smtp_username', 'type' => 'text', 'label' => 'SMTP username', 'width' => 'half', 'rules' => ['nullable', 'string', 'max:150']],

@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\ContactMessage;
+use App\Models\Lead;
 use App\Support\SeoForm;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -45,6 +47,11 @@ class HandleInertiaRequests extends Middleware
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             // Title suffix, limits and site URL for the SEO panel on every content form.
             'seoDefaults' => fn () => $request->user() ? SeoForm::defaults() : null,
+            // Unread counts for the sidebar badges.
+            'inbox' => fn () => $request->user() ? [
+                'leads' => Lead::query()->unread()->count(),
+                'messages' => ContactMessage::query()->unread()->count(),
+            ] : null,
             // Crop presets for the image picker and cropper (config/media.php).
             'mediaPresets' => fn () => collect(config('media.presets'))->map(fn (array $p) => [
                 'label' => $p['label'],

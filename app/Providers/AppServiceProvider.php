@@ -14,10 +14,13 @@ use App\Models\User;
 use App\Services\Media\MediaUsage;
 use App\Support\MailSettings;
 use Carbon\CarbonImmutable;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -40,6 +43,18 @@ class AppServiceProvider extends ServiceProvider
         $this->configureMorphMap();
         $this->configureMail();
         $this->configureMediaUsage();
+        $this->configureRateLimits();
+    }
+
+    /** Public forms: 5 submissions per IP per 10 minutes, per form. */
+    protected function configureRateLimits(): void
+    {
+        foreach (['quote', 'contact'] as $form) {
+            RateLimiter::for("form-{$form}", fn (Request $request) => Limit::perMinutes(10, 5)->by($form.'|'.$request->ip())
+                ->response(fn (Request $request) => $request->expectsJson()
+                    ? response()->json(['message' => 'Too many requests. Please call us or try again in a few minutes.', 'errors' => ['form' => ['Too many requests. Please call us or try again in a few minutes.']]], 429)
+                    : response('Too many requests. Please call us or try again in a few minutes.', 429)));
+        }
     }
 
     /**

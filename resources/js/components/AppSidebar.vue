@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import {
     CircleHelp,
     ExternalLink,
@@ -41,8 +41,10 @@ import { index as areasIndex } from '@/routes/admin/areas';
 import { index as authorsIndex } from '@/routes/admin/authors';
 import { index as blogCategoriesIndex } from '@/routes/admin/blog-categories';
 import { index as faqsIndex } from '@/routes/admin/faqs';
+import { index as leadsIndex } from '@/routes/admin/leads';
 import { index as mediaIndex } from '@/routes/admin/media';
 import { index as menusIndex } from '@/routes/admin/menus';
+import { index as messagesIndex } from '@/routes/admin/messages';
 import { index as moveTypesIndex } from '@/routes/admin/move-types';
 import { index as pagesIndex } from '@/routes/admin/pages';
 import { index as postsIndex } from '@/routes/admin/posts';
@@ -52,9 +54,13 @@ import { index as settingsIndex } from '@/routes/admin/settings';
 import { index as tagsIndex } from '@/routes/admin/tags';
 import { index as usersIndex } from '@/routes/admin/users';
 import type { NavGroup, NavItem } from '@/types';
+import { computed } from 'vue';
 
 // Modules marked `disabled` are built in later tasks (see docs/02-build-prompt.md §14).
-const navGroups: NavGroup[] = [
+const page = usePage();
+const inbox = computed(() => page.props.inbox as { leads: number; messages: number } | null);
+
+const navGroups = computed<NavGroup[]>(() => [
     {
         label: 'Overview',
         items: [
@@ -85,8 +91,8 @@ const navGroups: NavGroup[] = [
     {
         label: 'Leads',
         items: [
-            { title: 'Quote Requests', href: '#', icon: Inbox, disabled: true },
-            { title: 'Contact Messages', href: '#', icon: Mail, disabled: true },
+            { title: 'Quote Requests', href: leadsIndex(), icon: Inbox, badge: inbox.value?.leads },
+            { title: 'Contact Messages', href: messagesIndex(), icon: Mail, badge: inbox.value?.messages },
         ],
     },
     {
@@ -99,7 +105,7 @@ const navGroups: NavGroup[] = [
             { title: 'Users', href: usersIndex(), icon: Users },
         ],
     },
-];
+]);
 
 const footerNavItems: NavItem[] = [
     { title: 'View website', href: home(), icon: ExternalLink },

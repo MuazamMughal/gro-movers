@@ -20,7 +20,7 @@
         <link rel="apple-touch-icon" href="{{ $favicon->url(480, $favicon->fallbackFormat() ?? 'webp') }}">
     @endif
     @fonts('inter')
-    @vite('resources/css/site.css')
+    @vite(['resources/css/site.css', 'resources/js/site/site.ts'])
     <x-site.theme-vars />
     @stack('head')
 </head>

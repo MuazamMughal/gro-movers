@@ -9,6 +9,7 @@ use App\Sections\AutoSections;
 use App\Sections\SectionRenderer;
 use App\Support\Breadcrumbs;
 use App\Support\Seo;
+use App\Support\Settings;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 
@@ -65,6 +66,29 @@ class PageController extends Controller
         $sections = $page->visibleSections()->get()->values();
         $types = $sections->pluck('type');
         $top = [];
+
+        // Thank-you page before the admin has written one: confirmation and next steps.
+        if ($page->system_key === SystemPage::ThankYou && $sections->isEmpty()) {
+            return collect([
+                AutoSections::make('hero', [
+                    'eyebrow' => 'Request received',
+                    'heading' => 'Thank you!',
+                    'subheading' => (string) Settings::get('forms.success_message', 'We received your request and will contact you shortly.'),
+                    'primary_button' => ['label' => 'Back to the home page', 'url' => '/'],
+                    'secondary_button' => ['label' => 'Read our moving guides', 'url' => '/blog'],
+                    'theme' => 'dark',
+                ], -1),
+                AutoSections::make('steps', [
+                    'heading' => 'What happens next',
+                    'steps' => [
+                        ['title' => 'We review your move', 'text' => 'A move coordinator looks at your addresses, date and type of move.'],
+                        ['title' => 'You get your quote', 'text' => 'We call or email you with a clear, upfront price, usually the same business day.'],
+                        ['title' => 'Book your date', 'text' => 'Happy with the price? Lock in your moving date with no hidden fees.'],
+                    ],
+                    'background' => 'light',
+                ], -8),
+            ]);
+        }
 
         if ($page->system_key === SystemPage::Contact && ! $types->contains('contact_form')) {
             $top[] = AutoSections::make('contact_form', ['heading' => 'Send us a message', 'intro' => 'We reply within one business day. For a price, the quote form is fastest.', 'show_details' => true], -5);

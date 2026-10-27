@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\LeadStatus;
+use App\Support\Phone;
 use Database\Factories\LeadFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -43,6 +44,27 @@ class Lead extends Model
     protected function unread(Builder $query): void
     {
         $query->whereNull('read_at');
+    }
+
+    /** "(214) 555-0100" */
+    public function phoneDisplay(): string
+    {
+        return Phone::display($this->phone);
+    }
+
+    /** Google Maps search link for the "from" or "to" address. */
+    public function mapsUrl(string $side): string
+    {
+        $lat = $this->{"{$side}_lat"};
+        $lng = $this->{"{$side}_lng"};
+        $query = $lat !== null && $lng !== null ? "{$lat},{$lng}" : $this->{"{$side}_address"};
+
+        return 'https://www.google.com/maps/search/?api=1&query='.rawurlencode((string) $query);
+    }
+
+    public function isRead(): bool
+    {
+        return $this->read_at !== null;
     }
 
     public function moveType(): BelongsTo

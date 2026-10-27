@@ -4,8 +4,10 @@ use App\Http\Controllers\Admin\AreaController;
 use App\Http\Controllers\Admin\AreaServiceController;
 use App\Http\Controllers\Admin\AuthorController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ContactMessageController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FaqController;
+use App\Http\Controllers\Admin\LeadController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\MoveTypeController;
@@ -19,6 +21,7 @@ use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Site\AreaController as SiteAreaController;
 use App\Http\Controllers\Site\BlogController as SiteBlogController;
+use App\Http\Controllers\Site\FormController;
 use App\Http\Controllers\Site\PageController as SitePageController;
 use App\Http\Controllers\Site\ReviewController as SiteReviewController;
 use App\Http\Controllers\Site\ServiceController as SiteServiceController;
@@ -35,6 +38,13 @@ Route::get('service-areas/{area}/{service}', [SiteAreaController::class, 'servic
 Route::get('services/{slug}', [SiteServiceController::class, 'show'])->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('services.show');
 
 Route::get('reviews', [SiteReviewController::class, 'index'])->name('reviews.index');
+
+// Public forms (no CSRF: see bootstrap/app.php).
+Route::get('forms/token', [FormController::class, 'token'])->name('forms.token');
+Route::middleware('form.origin')->group(function () {
+    Route::post('forms/quote', [FormController::class, 'quote'])->middleware('throttle:form-quote')->name('forms.quote');
+    Route::post('forms/contact', [FormController::class, 'contact'])->middleware('throttle:form-contact')->name('forms.contact');
+});
 
 Route::get('blog', [SiteBlogController::class, 'index'])->name('blog.index');
 Route::get('blog/page/{page}', [SiteBlogController::class, 'index'])->whereNumber('page')->name('blog.page');
@@ -79,6 +89,12 @@ Route::prefix('admin')->group(function () {
 
             Route::patch('reviews/{review}/toggle', [ReviewController::class, 'toggle'])->name('reviews.toggle');
             Route::resource('reviews', ReviewController::class)->except('show');
+
+            Route::get('leads/export', [LeadController::class, 'export'])->name('leads.export');
+            Route::post('leads/{lead}/notes', [LeadController::class, 'storeNote'])->name('leads.notes.store');
+            Route::delete('leads/{lead}/notes/{note}', [LeadController::class, 'destroyNote'])->name('leads.notes.destroy');
+            Route::resource('leads', LeadController::class)->only(['index', 'show', 'update', 'destroy']);
+            Route::resource('messages', ContactMessageController::class)->only(['index', 'show', 'update', 'destroy']);
 
             Route::get('menus', [MenuController::class, 'index'])->name('menus.index');
             Route::get('menus/{menu}/edit', [MenuController::class, 'edit'])->name('menus.edit');
