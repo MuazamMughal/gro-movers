@@ -161,7 +161,7 @@ class SiteAuditTest extends TestCase
             $html = $this->get($url->path)->assertOk()->getContent();
 
             $this->assertStringContainsString('href="tel:+12145550100"', $html, "{$url->path} has no Call Now link");
-            $this->assertMatchesRegularExpression('#href="(https?://[^"]+)?/get-a-quote"#', $html, "{$url->path} has no Get a Free Quote link");
+            $this->assertMatchesRegularExpression('#href="(https?://[^"]+)?/get-a-quote\#quote-form"#', $html, "{$url->path} has no Get a Free Quote link");
         }
     }
 

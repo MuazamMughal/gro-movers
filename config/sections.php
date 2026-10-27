@@ -215,7 +215,6 @@ return [
                 ['key' => 'text', 'type' => 'textarea', 'label' => 'Text', 'max' => 300],
                 ['key' => 'button', 'type' => 'link', 'label' => 'Button'],
                 ['key' => 'show_phone', 'type' => 'toggle', 'label' => 'Show the Call Now button', 'default' => true],
-                ['key' => 'theme', 'type' => 'select', 'label' => 'Style', 'options' => ['dark' => 'Navy', 'accent' => 'Orange', 'light' => 'Light grey'], 'default' => 'dark'],
             ],
             'defaults' => [
                 'heading' => 'Ready for a stress-free move?',

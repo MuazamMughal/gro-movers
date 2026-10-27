@@ -4,7 +4,9 @@ namespace App\Http\Middleware;
 
 use App\Models\ContactMessage;
 use App\Models\Lead;
+use App\Models\Media;
 use App\Support\SeoForm;
+use App\Support\Settings;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -44,6 +46,8 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            // Company logo and mark for the admin sidebar and the login page.
+            'brand' => fn () => static::brand(),
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             // Title suffix, limits and site URL for the SEO panel on every content form.
             'seoDefaults' => fn () => $request->user() ? SeoForm::defaults() : null,
@@ -59,6 +63,24 @@ class HandleInertiaRequests extends Middleware
                 'height' => $p['height'],
                 'svg' => $p['svg'] ?? false,
             ]),
+        ];
+    }
+
+    /**
+     * @return array{name: string, logo: ?string, logoDark: ?string, icon: string}
+     */
+    public static function brand(): array
+    {
+        $media = Media::query()->with('variants')
+            ->findMany(array_filter([Settings::get('branding.logo_light_id'), Settings::get('branding.logo_dark_id'), Settings::get('branding.favicon_id')]))
+            ->keyBy('id');
+        $url = fn (string $key) => $media->get(Settings::get($key))?->url(480);
+
+        return [
+            'name' => (string) Settings::get('general.company_name', config('app.name')),
+            'logo' => $url('branding.logo_light_id'),
+            'logoDark' => $url('branding.logo_dark_id'),
+            'icon' => $url('branding.favicon_id') ?? '/favicon.png',
         ];
     }
 }

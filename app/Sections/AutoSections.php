@@ -39,29 +39,10 @@ class AutoSections
 
         // Every service, area and post page ends with Call Now + Get a Free Quote.
         if (! $types->contains('cta_banner')) {
-            $list->push(static::make('cta_banner', $cta ?? [
-                ...static::CTA,
-                // Navy after a navy section would merge into one block; switch to light.
-                'theme' => static::isDark($list->last()) ? 'light' : 'dark',
-            ], -3));
+            $list->push(static::make('cta_banner', $cta ?? static::CTA, -3));
         }
 
         return $list;
-    }
-
-    private static function isDark(?Section $section): bool
-    {
-        if ($section === null) {
-            return false;
-        }
-
-        $data = $section->data ?? [];
-
-        return match ($section->type) {
-            'hero' => ($data['theme'] ?? 'dark') === 'dark',
-            'cta_banner' => ($data['theme'] ?? 'dark') === 'dark',
-            default => ($data['background'] ?? null) === 'dark',
-        };
     }
 
     /**

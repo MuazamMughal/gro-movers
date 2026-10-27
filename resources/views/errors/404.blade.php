@@ -15,7 +15,7 @@
             <h1 class="mt-3 text-4xl font-extrabold tracking-tight text-balance md:text-5xl">We couldn’t find that page</h1>
             <p class="mt-5 text-lg text-secondary-light">The link may be old or mistyped. These pages might help, or get your free quote in two minutes.</p>
             <div class="mt-8 flex flex-wrap justify-center gap-3">
-                <x-site.button href="/get-a-quote" label="Get a Free Quote" size="lg" />
+                <x-site.button :href="\App\Support\QuoteLink::href()" label="Get a Free Quote" size="lg" />
                 <x-site.button href="/" label="Go to the home page" variant="outline" size="lg" />
             </div>
         </div>

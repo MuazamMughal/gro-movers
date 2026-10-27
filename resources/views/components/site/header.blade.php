@@ -14,7 +14,7 @@
     $logo = Settings::get('branding.logo_light_id');
     $company = Settings::get('general.company_name');
     $current = '/'.ltrim(request()->path(), '/');
-    $isCurrent = fn (?string $url) => $url !== null && rtrim($url, '/') === rtrim($current, '/');
+    $isCurrent = fn (?string $url) => $url !== null && rtrim(strtok($url, '#'), '/') === rtrim($current, '/');
 @endphp
 <header class="sticky top-0 z-40 border-b border-border bg-primary/95 backdrop-blur supports-[backdrop-filter]:bg-primary/90">
     <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-lg focus:bg-secondary focus:px-4 focus:py-2 focus:text-primary">Skip to content</a>
@@ -67,7 +67,7 @@
             {{-- Call Now is always visible: below 768px in the mobile bar, then here (compact while the menu needs the room). --}}
             <x-site.call-button variant="outline" location="header" class="hidden! md:inline-flex! lg:hidden! xl:inline-flex!" />
             <x-site.call-button variant="outline" location="header" compact class="hidden! lg:inline-flex! xl:hidden!" />
-            <x-site.button href="/get-a-quote" label="Get a Free Quote" class="hidden! sm:inline-flex!" />
+            <x-site.button :href="\App\Support\QuoteLink::href()" label="Get a Free Quote" class="hidden! sm:inline-flex!" />
 
             @if ($mobileItems)
                 <details class="group/drawer lg:hidden" data-drawer>
@@ -100,7 +100,7 @@
                             @endforeach
                         </ul>
                         <div class="mt-4 grid gap-3 sm:hidden">
-                            <x-site.button href="/get-a-quote" label="Get a Free Quote" size="lg" />
+                            <x-site.button :href="\App\Support\QuoteLink::href()" label="Get a Free Quote" size="lg" />
                             <x-site.call-button variant="outline" size="lg" location="mobile_menu" />
                         </div>
                     </nav>

@@ -9,7 +9,7 @@
             <x-site.icon name="phone" class="size-5 text-tertiary" /> Call Now
         </a>
     @endif
-    <a href="/get-a-quote" @class(['flex items-center justify-center gap-2 bg-tertiary-strong font-bold text-white active:bg-tertiary-hover', 'col-span-2' => ! $phone])>
+    <a href="{{ \App\Support\QuoteLink::href() }}" @class(['flex items-center justify-center gap-2 bg-energy font-bold text-white [text-shadow:0_1px_1px_rgb(0_0_0/0.18)] active:brightness-95', 'col-span-2' => ! $phone])>
         Get a Free Quote
     </a>
 </nav>

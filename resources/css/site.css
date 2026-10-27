@@ -40,11 +40,42 @@
     --color-tertiary-soft: color-mix(in oklab, var(--color-tertiary) 12%, white);
     --color-secondary-light: color-mix(in oklab, var(--color-secondary) 72%, white);
     --color-secondary-dark: color-mix(in oklab, var(--color-secondary) 80%, black);
+    /* Brighter blue for the glow on navy sections (white text keeps ≥ 7:1). */
+    --color-secondary-glow: color-mix(in oklab, var(--color-secondary) 55%, #3b82f6);
+    /* Ends of the orange gradient: white text keeps ≥ 4:1 at the bright end. */
+    --color-tertiary-deep: color-mix(in oklab, var(--color-tertiary-strong) 88%, black);
+    --color-tertiary-bright: color-mix(in oklab, var(--color-tertiary-strong) 75%, var(--color-tertiary));
+}
+
+/* Navy with a soft light-blue glow (hero, dark sections, footer, call-to-action boxes). */
+@utility bg-glow-navy {
+    background-color: var(--color-secondary);
+    background-image:
+        radial-gradient(ellipse 70% 60% at 12% 0%, color-mix(in oklab, var(--color-secondary-glow) 75%, transparent), transparent 70%),
+        radial-gradient(ellipse 55% 55% at 100% 100%, color-mix(in oklab, var(--color-secondary-glow) 50%, transparent), transparent 70%);
+}
+
+/* Energetic orange gradient (buttons, accent sections, badges). */
+@utility bg-energy {
+    background-color: var(--color-tertiary-strong);
+    background-image: linear-gradient(135deg, var(--color-tertiary-deep) 0%, var(--color-tertiary-strong) 45%, var(--color-tertiary-bright) 100%);
+}
+
+/* Orange glow under call-to-action buttons. */
+@utility glow-energy {
+    box-shadow:
+        0 10px 28px -10px color-mix(in oklab, var(--color-tertiary) 75%, transparent),
+        inset 0 1px 0 rgb(255 255 255 / 0.22);
 }
 
 @layer base {
     html {
         @apply bg-primary text-secondary antialiased;
+        scroll-behavior: smooth;
+
+        @media (prefers-reduced-motion: reduce) {
+            scroll-behavior: auto;
+        }
         -webkit-tap-highlight-color: transparent;
     }
 
@@ -52,6 +83,40 @@
     ::before,
     ::after {
         border-color: var(--color-border);
+    }
+}
+
+@layer components {
+    /* Primary call-to-action button: gradient that shifts and glows brighter on hover. */
+    .btn-energy {
+        @apply bg-energy glow-energy text-white;
+        background-size: 180% 100%;
+        background-position: 0 0;
+        text-shadow: 0 1px 1px rgb(0 0 0 / 0.18);
+        transition:
+            background-position 0.45s ease,
+            box-shadow 0.25s ease,
+            transform 0.15s ease;
+
+        &:hover {
+            background-position: 100% 0;
+            box-shadow:
+                0 14px 34px -10px color-mix(in oklab, var(--color-tertiary) 95%, transparent),
+                inset 0 1px 0 rgb(255 255 255 / 0.3);
+            transform: translateY(-1px);
+        }
+
+        &:active {
+            transform: translateY(0);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+
+            &:hover {
+                transform: none;
+            }
+        }
     }
 }
 

@@ -4,10 +4,10 @@
     $image = $s['background_image'] ?? null;
     $withForm = (bool) ($s['show_quote_form'] ?? false);
 @endphp
-<section id="{{ $anchor }}" @class(['relative isolate overflow-hidden', 'bg-secondary text-primary' => $dark, 'bg-muted text-secondary' => ! $dark]) data-theme="{{ $dark ? 'dark' : 'muted' }}">
+<section id="{{ $anchor }}" @class(['relative isolate overflow-hidden', 'bg-glow-navy text-primary' => $dark, 'bg-muted text-secondary' => ! $dark]) data-theme="{{ $dark ? 'dark' : 'muted' }}">
     @if ($image)
         <x-picture :media="$image" sizes="100vw" eager class="absolute inset-0 -z-20" img-class="size-full object-cover" alt="" />
-        <div @class(['absolute inset-0 -z-10', 'bg-secondary/80' => $dark, 'bg-white/85' => ! $dark])></div>
+        <div @class(['absolute inset-0 -z-10', 'bg-glow-navy opacity-85' => $dark, 'bg-white/85' => ! $dark])></div>
     @endif
     <div class="mx-auto grid max-w-7xl items-center gap-12 px-4 py-16 sm:px-6 md:py-24 lg:px-8 {{ $withForm ? 'lg:grid-cols-[1.1fr_1fr]' : '' }}">
         <div @class(['max-w-3xl', 'mx-auto text-center' => ! $withForm])>
@@ -33,7 +33,7 @@
                 <x-site.button :link="$s['primary_button'] ?? null" size="lg" />
                 <x-site.button :link="$s['secondary_button'] ?? null" :variant="$dark ? 'outline-light' : 'outline'" size="lg" />
                 @if (empty($s['primary_button']) && empty($s['secondary_button']))
-                    <x-site.button href="/get-a-quote" label="Get a Free Quote" size="lg" />
+                    <x-site.button :href="\App\Support\QuoteLink::href()" label="Get a Free Quote" size="lg" />
                     <x-site.call-button :variant="$dark ? 'outline-light' : 'outline'" size="lg" location="hero" />
                 @endif
             </div>

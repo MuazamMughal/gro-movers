@@ -197,6 +197,6 @@ class BlogController extends Controller
 
     private function cta(): Section
     {
-        return AutoSections::make('cta_banner', [...AutoSections::CTA, 'theme' => 'dark'], -3);
+        return AutoSections::make('cta_banner', AutoSections::CTA, -3);
     }
 }

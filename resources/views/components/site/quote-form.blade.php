@@ -1,4 +1,4 @@
-@props(['moveTypes' => null, 'id' => 'quote-form', 'old' => [], 'errors' => null])
+@props(['moveTypes' => null, 'id' => 'quote', 'old' => [], 'errors' => null])
 {{--
     Quote request form: exactly Full Name, Email Address, Phone Number, Moving From,
     Moving To, Moving Date, Type of Move and the submit button. A plain POST works
@@ -26,6 +26,10 @@
     novalidate
     {{ $attributes->class('relative rounded-2xl bg-white p-6 text-secondary shadow-xl ring-1 ring-black/5 sm:p-8') }}
 >
+    @if (\App\Support\QuoteLink::claimAnchor())
+        {{-- "Get a Free Quote" links jump here; the offset keeps the form clear of the sticky header. --}}
+        <span id="{{ \App\Support\QuoteLink::ANCHOR }}" class="pointer-events-none absolute -top-28 left-0" aria-hidden="true"></span>
+    @endif
     <p class="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm font-semibold text-red-800 empty:hidden" role="alert" data-form-error>{{ $errors?->first('form') }}</p>
 
     <div class="grid gap-4 sm:grid-cols-2">
@@ -47,7 +51,10 @@
         @foreach (['from' => 'Moving From', 'to' => 'Moving To'] as $side => $label)
             <div data-address="{{ $side }}">
                 <label for="{{ $id }}-{{ $side }}" class="{{ $labelClass }}">{{ $label }}</label>
-                <input id="{{ $id }}-{{ $side }}" name="{{ $side }}_address" type="text" required autocomplete="off" minlength="5" maxlength="255" placeholder="Address, city or ZIP" value="{{ $old[$side.'_address'] ?? '' }}" aria-invalid="{{ $invalid($side.'_address') }}" aria-describedby="{{ $id }}-{{ $side }}-error" class="{{ $inputClass }}">
+                <div class="relative">
+                    <x-site.icon :name="$side === 'from' ? 'map-pin' : 'map-pin-check'" class="pointer-events-none absolute top-1/2 left-3.5 size-5 -translate-y-1/2 text-tertiary-strong" />
+                    <input id="{{ $id }}-{{ $side }}" name="{{ $side }}_address" type="text" required autocomplete="off" minlength="5" maxlength="255" placeholder="Address, city or ZIP" value="{{ $old[$side.'_address'] ?? '' }}" aria-invalid="{{ $invalid($side.'_address') }}" aria-describedby="{{ $id }}-{{ $side }}-error" class="{{ $inputClass }} pl-11">
+                </div>
                 @foreach (['city', 'state', 'zip', 'lat', 'lng'] as $part)
                     <input type="hidden" name="{{ $side }}_{{ $part }}" value="{{ $old[$side.'_'.$part] ?? '' }}">
                 @endforeach
@@ -73,7 +80,7 @@
 
     <x-site.form-guard form="quote" :old="$old" challenge-class="data-visible:mt-5" />
 
-    <button type="submit" class="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-tertiary-strong px-6 py-3 text-lg font-bold text-white transition-colors hover:bg-tertiary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary disabled:cursor-wait disabled:opacity-70">
+    <button type="submit" class="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-lg btn-energy px-6 py-3 text-lg font-bold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary disabled:cursor-wait disabled:opacity-70">
         {{ Settings::get('forms.quote_button_label', 'Submit Request') }}
     </button>
 

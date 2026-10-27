@@ -106,7 +106,7 @@ class Menus
             ? (filled($item->url) ? $item->url : null)
             : ($urls[$item->link_type->value][$item->linkable_id] ?? null);
 
-        return ['label' => $item->label, 'url' => $url, 'new_tab' => $item->target_blank, 'children' => []];
+        return ['label' => $item->label, 'url' => QuoteLink::resolve($url), 'new_tab' => $item->target_blank, 'children' => []];
     }
 
     /**

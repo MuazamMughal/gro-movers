@@ -15,7 +15,7 @@
     <ol class="grid gap-8 {{ $stepCols }}">
         @foreach ($s['steps'] ?? [] as $i => $step)
             <li class="relative">
-                <span class="flex size-12 items-center justify-center rounded-full bg-tertiary-strong text-xl font-extrabold text-white" aria-hidden="true">{{ $i + 1 }}</span>
+                <span class="flex size-12 items-center justify-center rounded-full bg-energy glow-energy text-xl font-extrabold text-white" aria-hidden="true">{{ $i + 1 }}</span>
                 <h3 class="mt-4 text-xl font-bold"><span class="sr-only">Step {{ $i + 1 }}: </span>{{ $step['title'] }}</h3>
                 @if ($step['text'] ?? null)
                     <p @class(['mt-2', 'text-primary/80' => $dark, 'text-secondary-light' => ! $dark])>{{ $step['text'] }}</p>

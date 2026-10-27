@@ -25,7 +25,7 @@
     $usdot = Settings::get('general.usdot_number');
     $mc = Settings::get('general.mc_number');
 @endphp
-<footer class="bg-secondary text-primary" data-theme="dark">
+<footer class="bg-glow-navy text-primary" data-theme="dark">
     <div class="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-2 lg:grid-cols-[1.4fr_repeat(4,1fr)] lg:px-8">
         <div class="space-y-4">
             <a href="/" class="inline-block" aria-label="{{ $company }} home">

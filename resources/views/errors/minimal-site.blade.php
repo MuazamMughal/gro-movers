@@ -9,6 +9,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex,nofollow">
     <title>{{ $title }}</title>
+    {{-- Static icons only: this page must render even when the database is down. --}}
+    <link rel="icon" href="/favicon.ico" sizes="48x48">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <style>
         body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 1.5rem; box-sizing: border-box;
                font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; background: #f1f5fa; color: #0a2e5c; }

@@ -6,7 +6,7 @@
     $hours = Contact::hours()[0] ?? null;
     $radius = Settings::get('general.service_radius_text');
 @endphp
-<div class="hidden bg-secondary text-sm text-primary/85 lg:block" data-theme="dark">
+<div class="hidden bg-glow-navy text-sm text-primary/85 lg:block" data-theme="dark">
     <div class="mx-auto flex h-10 max-w-7xl items-center justify-between gap-6 px-8">
         <p class="flex items-center gap-2 truncate">
             @if ($radius)

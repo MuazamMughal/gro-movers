@@ -163,7 +163,7 @@ class LayoutTest extends TestCase
             ->assertSee('We couldn’t find that page')
             ->assertSee('Were you looking for')
             ->assertSee('href="/services/packing-services"', false)
-            ->assertSee('href="/get-a-quote"', false)
+            ->assertSee('href="/get-a-quote#quote-form"', false)
             ->assertSee('<meta name="robots" content="noindex,follow">', false);
         $this->assertSame(1, substr_count($response->getContent(), '<h1'));
     }

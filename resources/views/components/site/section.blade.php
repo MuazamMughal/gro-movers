@@ -2,9 +2,9 @@
 {{-- Section wrapper: background theme, vertical rhythm and the content container. --}}
 @php
     $theme = match ($background) {
-        'dark' => 'bg-secondary text-primary',
+        'dark' => 'bg-glow-navy text-primary',
         'muted' => 'bg-muted text-secondary',
-        'accent' => 'bg-tertiary-strong text-white',
+        'accent' => 'bg-energy text-white',
         default => 'bg-primary text-secondary',
     };
     $container = $width === 'narrow' ? 'max-w-3xl' : 'max-w-7xl';
