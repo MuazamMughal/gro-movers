@@ -1,20 +1,16 @@
 <?php
 
-use App\Enums\SystemPage;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MediaController;
+use App\Http\Controllers\Admin\PageController;
+use App\Http\Controllers\Admin\PreviewController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\UserController;
-use App\Models\Page;
-use App\Support\Seo;
+use App\Http\Controllers\Site\PageController as SitePageController;
 use Illuminate\Support\Facades\Route;
 
-// Public site (Blade, server-rendered). Real templates arrive in T11.
-Route::get('/', fn () => view('site.placeholder', [
-    'seo' => ($home = Page::system(SystemPage::Home))
-        ? Seo::for($home, '/')
-        : Seo::make(title: 'Home', path: '/'),
-]))->name('home');
+// Public site (Blade, server-rendered).
+Route::get('/', [SitePageController::class, 'home'])->name('home');
 
 // Admin panel (Inertia + Vue). Fortify auth routes share the same /admin prefix.
 Route::prefix('admin')->group(function () {
@@ -23,6 +19,14 @@ Route::prefix('admin')->group(function () {
 
         Route::name('admin.')->group(function () {
             Route::resource('users', UserController::class)->except('show');
+
+            Route::resource('pages', PageController::class)->except('show');
+            Route::post('preview/page', [PreviewController::class, 'page'])->name('preview.page');
+            // A refreshed or bookmarked preview tab arrives as GET: explain instead of erroring.
+            Route::get('preview/page', fn () => response()->view('admin.preview-error', [
+                'errors' => [],
+                'expired' => true,
+            ]));
 
             Route::get('media', [MediaController::class, 'index'])->name('media.index');
             Route::get('media/browse', [MediaController::class, 'browse'])->name('media.browse');
@@ -46,3 +50,8 @@ Route::prefix('admin')->group(function () {
 
     require __DIR__.'/account.php';
 });
+
+// Builder pages at "/{slug}" (about-us, contact-us, custom pages). Registered last.
+Route::get('{slug}', [SitePageController::class, 'show'])
+    ->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')
+    ->name('page.show');

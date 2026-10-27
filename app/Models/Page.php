@@ -23,6 +23,12 @@ class Page extends Model
     /** @use HasFactory<PageFactory> */
     use HasFactory, HasFaqs, HasSections, HasSeo, HasSlugRedirect, SoftDeletes;
 
+    /** Slugs custom pages cannot use: they belong to other routes. */
+    public const RESERVED_SLUGS = [
+        'admin', 'services', 'service-areas', 'blog', 'reviews', 'forms', 'storage', 'static',
+        'build', 'sitemap.xml', 'robots.txt', 'up', 'login', 'logout', 'page', 'preview',
+    ];
+
     protected function casts(): array
     {
         return [
@@ -41,6 +47,11 @@ class Page extends Model
     protected function published(Builder $query): void
     {
         $query->where('status', PageStatus::Published);
+    }
+
+    public function isPublished(): bool
+    {
+        return $this->status === PageStatus::Published;
     }
 
     public function isSystem(): bool

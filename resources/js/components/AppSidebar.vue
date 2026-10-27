@@ -34,6 +34,7 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard, home } from '@/routes';
 import { index as mediaIndex } from '@/routes/admin/media';
+import { index as pagesIndex } from '@/routes/admin/pages';
 import { index as settingsIndex } from '@/routes/admin/settings';
 import { index as usersIndex } from '@/routes/admin/users';
 import type { NavGroup, NavItem } from '@/types';
@@ -49,7 +50,7 @@ const navGroups: NavGroup[] = [
     {
         label: 'Content',
         items: [
-            { title: 'Pages', href: '#', icon: FileText, disabled: true },
+            { title: 'Pages', href: pagesIndex(), icon: FileText },
             { title: 'Services', href: '#', icon: Truck, disabled: true },
             { title: 'Service Areas', href: '#', icon: MapPin, disabled: true },
             { title: 'Area × Service', href: '#', icon: Grid3x3, disabled: true },
