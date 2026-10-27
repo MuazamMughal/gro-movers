@@ -16,6 +16,7 @@ use App\Models\MoveType;
 use App\Support\FormGuard;
 use App\Support\Seo;
 use App\Support\Settings;
+use App\Support\Turnstile;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
@@ -28,7 +29,8 @@ use Illuminate\Support\Str;
 /**
  * POST /forms/quote and /forms/contact (no CSRF: the pages are static HTML).
  * Protected by the same-origin check, a rate limit, the honeypot and the
- * signed start time (see FormGuard). Emails are queued.
+ * signed start time (see FormGuard), plus Cloudflare Turnstile when its keys
+ * are set. Emails are queued.
  */
 class FormController extends Controller
 {
@@ -92,24 +94,34 @@ class FormController extends Controller
 
     /**
      * Bots that filled the honeypot or submitted too fast get a normal-looking
-     * success response and nothing is saved. A missing or forged start time is
-     * an error the visitor can fix by reloading.
+     * success response and nothing is saved. A missing or forged start time, or
+     * a failed Turnstile check, is an error the visitor can fix.
      */
     private function blocked(PublicFormRequest $request, string $form): JsonResponse|RedirectResponse|Response|null
     {
         $reason = FormGuard::check($request->all());
 
         if ($reason === null) {
-            return null;
+            if (Turnstile::passes($request->input(Turnstile::FIELD), $form, $request->ip())) {
+                return null;
+            }
+
+            $reason = 'turnstile';
         }
 
         Log::info("Blocked {$form} form submission", ['reason' => $reason, 'ip' => $request->ip()]);
 
-        if ($reason !== 'invalid') {
+        if (! in_array($reason, ['invalid', 'turnstile'], true)) {
             return $this->success($request, $form, tracked: false);
         }
 
-        $message = 'Your form expired. Please reload the page and send it again.';
+        $call = ($phone = Settings::get('general.phone')) ? ", or call us at {$phone}" : '';
+        $message = match (true) {
+            $reason === 'invalid' => 'Your form expired. Please reload the page and send it again.',
+            // No token at all from a plain POST: the widget never ran because JavaScript is off.
+            blank($request->input(Turnstile::FIELD)) && ! $request->expectsJson() => "Our spam check needs JavaScript. Please turn it on and send the form again{$call}.",
+            default => 'Please complete the security check and send the form again.',
+        };
 
         if ($request->expectsJson()) {
             return response()->json(['message' => $message, 'errors' => ['form' => [$message]]], 422);
@@ -119,7 +131,7 @@ class FormController extends Controller
         return response()->view('forms.invalid', [
             'form' => $form,
             'errors' => new MessageBag(['form' => $message]),
-            'old' => $request->except([FormGuard::HONEYPOT, FormGuard::FIELD]),
+            'old' => $request->except([FormGuard::HONEYPOT, FormGuard::FIELD, Turnstile::FIELD]),
             'seo' => Seo::make(title: 'Please send the form again', path: $request->path(), index: false),
         ], 422);
     }

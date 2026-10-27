@@ -89,13 +89,15 @@ class SettingsTabs
             ],
             'integrations' => [
                 'label' => 'Integrations',
-                'description' => 'Analytics, Search Console and address autocomplete.',
+                'description' => 'Analytics, Search Console, address autocomplete and form spam protection.',
                 'fields' => [
                     ['key' => 'integrations.google_places_key', 'type' => 'text', 'label' => 'Google Maps / Places API key', 'help' => 'Powers address autocomplete on Moving From / Moving To. Restrict the key to your domain in Google Cloud.', 'rules' => ['nullable', 'string', 'max:100']],
                     ['key' => 'integrations.gtm_id', 'type' => 'text', 'label' => 'Google Tag Manager ID', 'width' => 'half', 'help' => 'e.g. GTM-ABC1234. When set, load GA4 through GTM.', 'rules' => ['nullable', 'regex:/^GTM-[A-Z0-9]{4,10}$/']],
                     ['key' => 'integrations.ga4_id', 'type' => 'text', 'label' => 'GA4 Measurement ID', 'width' => 'half', 'help' => 'e.g. G-ABC123XYZ. Ignored when a GTM ID is set.', 'rules' => ['nullable', 'regex:/^G-[A-Z0-9]{4,12}$/']],
                     ['key' => 'integrations.search_console_verification', 'type' => 'text', 'label' => 'Search Console verification', 'help' => 'Paste the full <meta> tag or just its content value.', 'rules' => ['nullable', 'string', 'max:255']],
                     ['key' => 'integrations.search_console_file', 'type' => 'text', 'label' => 'Search Console HTML file (optional)', 'help' => 'If you verify with the HTML file method instead: enter the file name Google gives you, e.g. google1234abcd5678.html. The site then serves it at the root.', 'rules' => ['nullable', 'regex:/^google[a-z0-9]+\\.html$/']],
+                    ['key' => 'integrations.turnstile_site_key', 'type' => 'text', 'label' => 'Cloudflare Turnstile site key', 'width' => 'half', 'help' => 'Spam check on the quote and contact forms. Create a widget for your domain at dash.cloudflare.com > Turnstile. Clear the site key to switch the check off.', 'rules' => ['nullable', 'string', 'max:100', 'regex:/^[0-9A-Za-z_-]+$/']],
+                    ['key' => 'integrations.turnstile_secret_key', 'type' => 'secret', 'label' => 'Cloudflare Turnstile secret key', 'width' => 'half', 'help' => 'Stored encrypted. The check runs only when both keys are set.', 'rules' => ['nullable', 'string', 'max:255']],
                     ['key' => 'integrations.facebook_pixel_id', 'type' => 'text', 'label' => 'Facebook Pixel ID', 'rules' => ['nullable', 'digits_between:5,20']],
                     ['key' => 'integrations.head_scripts', 'type' => 'code', 'label' => 'Custom <head> code', 'help' => 'Printed before </head> on every public page.', 'rules' => ['nullable', 'string', 'max:20000']],
                     ['key' => 'integrations.body_scripts', 'type' => 'code', 'label' => 'Custom <body> code', 'help' => 'Printed right after <body> on every public page.', 'rules' => ['nullable', 'string', 'max:20000']],

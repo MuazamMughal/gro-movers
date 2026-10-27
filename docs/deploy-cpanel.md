@@ -347,6 +347,25 @@ Then log in at `https://example.com/admin` and work through the [launch checklis
 
 ---
 
+## 14b. Spam protection (Cloudflare Turnstile)
+
+The forms always have a hidden trap field, a minimum fill-in time and a rate limit (5 sends per 10 minutes per visitor). Turnstile adds Cloudflare's invisible human check on top. It's free, and the site doesn't need to be on Cloudflare.
+
+1. In the Cloudflare dashboard, open **Turnstile → Add widget**.
+2. Enter a name and your domain (`example.com`). Choose **Managed** mode.
+3. Copy the **Site key** and **Secret key** into **Admin → Settings → Integrations**, then save. The site rebuilds, and the check is active once both keys are set.
+4. Send a test quote from a phone. Most visitors see nothing; a "Verify you are human" box appears only when Cloudflare is unsure.
+
+| | |
+|---|---|
+| **When it loads** | Only when someone starts filling in a form, so it doesn't slow down pages. |
+| **Visitors without JavaScript** | Can't pass the check. They get a page asking them to turn JavaScript on, with your phone number. |
+| **If Cloudflare is down** | Forms keep working on the other checks; the event is logged. Leads are never lost because of Turnstile. |
+| **Switching it off** | Clear the site key. |
+| **Testing locally** | Cloudflare's test keys work on `localhost`: site key `1x00000000000000000000AA` with secret `1x0000000000000000000000000000000AA` (always passes) or `2x0000000000000000000000000000000AA` (always fails). |
+
+---
+
 ## 15. Launch checklist
 
 **In the admin**
@@ -356,7 +375,8 @@ Then log in at `https://example.com/admin` and work through the [launch checklis
 - [ ] **Settings → Integrations:**
   - Google Places API key, restricted to `https://example.com/*` in Google Cloud;
   - GA4 or GTM ID;
-  - Search Console verification.
+  - Search Console verification;
+  - Cloudflare Turnstile site and secret keys (see [Spam protection](#14b-spam-protection-cloudflare-turnstile)).
 - [ ] **Reviews:** sample reviews replaced with real ones (the yellow banner disappears).
 - [ ] **Pages → Privacy Policy / Terms:** reviewed by a lawyer (the "Note" badge explains this), then remove the note text.
 - [ ] **Starter copy:** checked for claims you can stand behind, such as "licensed and insured", "since 2015" and opening days.

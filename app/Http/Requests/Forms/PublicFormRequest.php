@@ -4,6 +4,7 @@ namespace App\Http\Requests\Forms;
 
 use App\Support\Phone;
 use App\Support\Seo;
+use App\Support\Turnstile;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -53,7 +54,7 @@ abstract class PublicFormRequest extends FormRequest
         throw new HttpResponseException(response()->view('forms.invalid', [
             'form' => $this->formName(),
             'errors' => $validator->errors(),
-            'old' => $this->except(['website', '_started']),
+            'old' => $this->except(['website', '_started', Turnstile::FIELD]),
             'seo' => Seo::make(title: 'Please check your details', path: $this->path(), index: false),
         ], 422));
     }

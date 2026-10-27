@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Services\Static\StaticPublisher;
 use App\Support\Settings;
+use App\Support\Turnstile;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -71,6 +72,7 @@ class DeployCheck extends Command
         $lastRun = Cache::get('scheduler.last_run');
         $minutes = $lastRun ? (int) now()->diffInMinutes($lastRun, true) : null;
         $this->check('Cron runs every minute', $minutes !== null && $minutes <= 5, $lastRun ? "last run {$minutes} min ago" : 'never', fix: 'add the cron job (see docs/deploy-cpanel.md)', required: $production);
+        $this->check('Form spam check (Turnstile)', Turnstile::enabled(), fix: 'add both keys in Settings > Integrations', required: false);
         $this->check('Static cache', ! $publisher->enabled() || $publisher->fileCount() > 0, $publisher->enabled() ? $publisher->fileCount().' pages built' : 'switched off', required: false);
         try {
             $this->check('No failed queue jobs', DB::table('failed_jobs')->count() === 0, fix: 'see: php artisan queue:failed', required: false);

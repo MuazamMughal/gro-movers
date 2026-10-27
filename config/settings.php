@@ -84,8 +84,8 @@ return [
         'integrations.facebook_pixel_id' => null,
         'integrations.head_scripts' => null,
         'integrations.body_scripts' => null,
-        'integrations.turnstile_site_key' => null,   // T18
-        'integrations.turnstile_secret_key' => null, // T18
+        'integrations.turnstile_site_key' => null,
+        'integrations.turnstile_secret_key' => null, // stored encrypted
 
         // Forms
         'forms.tcpa_text' => 'By submitting this form, you agree that {company} may contact you by phone, text message and email about your move, including with automated technology. Consent is not a condition of purchase. Message and data rates may apply.',

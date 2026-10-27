@@ -99,7 +99,8 @@ class DeployToolsTest extends TestCase
         $this->artisan('deploy:check')
             ->expectsOutputToContain('PHP 8.3 or newer')
             ->expectsOutputToContain('Database connection')
-            ->expectsOutputToContain('Cron runs every minute');
+            ->expectsOutputToContain('Cron runs every minute')
+            ->expectsOutputToContain('Form spam check (Turnstile)');
 
         config(['app.key' => '']);
         $this->artisan('deploy:check')->expectsOutputToContain('run: php artisan key:generate')->assertFailed();

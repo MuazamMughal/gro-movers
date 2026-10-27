@@ -1,9 +1,10 @@
 import { track } from './analytics';
+import { attachTurnstile } from './turnstile';
 
 /**
  * Progressive enhancement for the server-rendered public forms: inline
- * validation, a fresh signed start time, AJAX submit with server errors,
- * and the GA4 / GTM dataLayer event on success. Without JS the form is a
+ * validation, a fresh signed start time, Turnstile when enabled, AJAX submit
+ * with server errors, and the GA4 / GTM dataLayer event on success. Without JS the form is a
  * normal POST, so nothing here is required for it to work.
  */
 
@@ -69,6 +70,7 @@ export function enhanceForm(form: HTMLFormElement, options: FormOptions): void {
     const touched = new Set<string>();
     const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
     const label = button?.textContent?.trim() ?? '';
+    const challenge = attachTurnstile(form);
 
     form.addEventListener(
         'focusin',
@@ -112,6 +114,13 @@ export function enhanceForm(form: HTMLFormElement, options: FormOptions): void {
 
         try {
             await freshToken();
+
+            if (challenge && !(await challenge.token())) {
+                setFormError(form, 'Please complete the security check below, then send the form again.');
+
+                return;
+            }
+
             const response = await fetch(form.action, {
                 method: 'POST',
                 body: new FormData(form),
@@ -134,6 +143,8 @@ export function enhanceForm(form: HTMLFormElement, options: FormOptions): void {
             } else {
                 setFormError(form, data.message || 'Something went wrong. Please try again or call us.');
             }
+
+            challenge?.reset(); // tokens are single-use
         } catch {
             setFormError(form, 'We could not send the form. Check your connection and try again, or call us.');
         } finally {

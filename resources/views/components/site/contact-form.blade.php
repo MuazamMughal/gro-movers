@@ -33,6 +33,6 @@
         <textarea id="{{ $id }}-message" name="message" rows="5" required minlength="5" maxlength="5000" aria-invalid="{{ $invalid('message') }}" aria-describedby="{{ $id }}-message-error" class="{{ $inputClass }}">{{ $old['message'] ?? '' }}</textarea>
         <x-site.form-error field="message" :id="$id.'-message'" :errors="$errors" />
     </div>
-    <x-site.form-guard :old="$old" />
+    <x-site.form-guard form="contact" :old="$old" />
     <button type="submit" class="inline-flex min-h-12 items-center justify-center rounded-lg bg-tertiary-strong px-6 py-3 font-bold text-white hover:bg-tertiary-hover disabled:cursor-wait disabled:opacity-70">Send message</button>
 </form>
