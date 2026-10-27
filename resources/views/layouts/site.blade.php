@@ -1,6 +1,6 @@
 {{--
-    Public site layout. Header, footer, top contact bar and the mobile sticky
-    Call / Quote bar are added in T11; this is the document shell.
+    Public site layout: header and footer (menus from admin). The top contact bar,
+    sticky header and mobile sticky Call / Quote bar are added in T11.
     Expects: $seo (App\Support\SeoData). Optional: $preview (bool) for admin previews,
     $previewNotice (string) to replace the preview banner text.
 --}}
@@ -26,9 +26,17 @@
         </div>
     @endif
 
+    @unless ($bare ?? false)
+        <x-site.header />
+    @endunless
+
     <main id="main">
         @yield('content')
     </main>
+
+    @unless ($bare ?? false)
+        <x-site.footer />
+    @endunless
 
     @stack('body-end')
 </body>

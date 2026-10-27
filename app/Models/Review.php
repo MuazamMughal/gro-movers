@@ -43,6 +43,13 @@ class Review extends Model
         $query->where('is_featured', true);
     }
 
+    /** Featured first, then the admin's order, then newest. */
+    #[Scope]
+    protected function ordered(Builder $query): void
+    {
+        $query->orderByDesc('is_featured')->orderBy('sort')->orderByDesc('reviewed_at')->orderByDesc('id');
+    }
+
     public function area(): BelongsTo
     {
         return $this->belongsTo(Area::class);

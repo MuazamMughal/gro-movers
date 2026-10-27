@@ -12,6 +12,7 @@
 @source '../views/services';
 @source '../views/areas';
 @source '../views/blog';
+@source '../views/reviews';
 @source '../views/components/picture.blade.php';
 @source '../../app/Blog';
 @source '../js/site';

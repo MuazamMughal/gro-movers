@@ -40,10 +40,13 @@ import { index as areaServicesIndex } from '@/routes/admin/area-services';
 import { index as areasIndex } from '@/routes/admin/areas';
 import { index as authorsIndex } from '@/routes/admin/authors';
 import { index as blogCategoriesIndex } from '@/routes/admin/blog-categories';
+import { index as faqsIndex } from '@/routes/admin/faqs';
 import { index as mediaIndex } from '@/routes/admin/media';
+import { index as menusIndex } from '@/routes/admin/menus';
 import { index as moveTypesIndex } from '@/routes/admin/move-types';
 import { index as pagesIndex } from '@/routes/admin/pages';
 import { index as postsIndex } from '@/routes/admin/posts';
+import { index as reviewsIndex } from '@/routes/admin/reviews';
 import { index as servicesIndex } from '@/routes/admin/services';
 import { index as settingsIndex } from '@/routes/admin/settings';
 import { index as tagsIndex } from '@/routes/admin/tags';
@@ -65,8 +68,8 @@ const navGroups: NavGroup[] = [
             { title: 'Services', href: servicesIndex(), icon: Truck },
             { title: 'Service Areas', href: areasIndex(), icon: MapPin },
             { title: 'Area × Service', href: areaServicesIndex(), icon: Grid3x3 },
-            { title: 'Reviews', href: '#', icon: Star, disabled: true },
-            { title: 'FAQs', href: '#', icon: CircleHelp, disabled: true },
+            { title: 'Reviews', href: reviewsIndex(), icon: Star },
+            { title: 'FAQs', href: faqsIndex(), icon: CircleHelp },
             { title: 'Media Library', href: mediaIndex(), icon: Image },
         ],
     },
@@ -89,7 +92,7 @@ const navGroups: NavGroup[] = [
     {
         label: 'Site',
         items: [
-            { title: 'Menus', href: '#', icon: Menu, disabled: true },
+            { title: 'Menus', href: menusIndex(), icon: Menu },
             { title: 'Move Types', href: moveTypesIndex(), icon: ListChecks },
             { title: 'SEO Tools', href: '#', icon: Search, disabled: true },
             { title: 'Settings', href: settingsIndex(), icon: Settings },

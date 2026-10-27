@@ -37,6 +37,7 @@ return [
         'general.service_radius_text' => 'Serving Dallas–Fort Worth and moves nationwide',
         'general.price_range' => '$$',
         'general.timezone' => 'America/Chicago',
+        'general.footer_blurb' => 'Licensed and insured movers serving Dallas–Fort Worth with local, long-distance and commercial moves, packing and storage.',
         'general.social' => [
             'facebook' => null,
             'instagram' => null,

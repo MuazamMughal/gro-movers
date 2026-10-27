@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Site;
 use App\Enums\SystemPage;
 use App\Http\Controllers\Controller;
 use App\Models\Page;
+use App\Sections\AutoSections;
 use App\Sections\SectionRenderer;
 use App\Support\Seo;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Collection;
 
 /**
  * Public builder pages: the home page and every page served at "/{slug}".
@@ -45,7 +47,25 @@ class PageController extends Controller
         return view('pages.show', [
             'page' => $page,
             'seo' => Seo::for($page, $page->publicPath()),
-            'rendered' => $this->renderer->render($page),
+            'rendered' => $this->renderer->render($page, sections: $this->withAttachedFaqs($page)),
         ]);
+    }
+
+    /**
+     * FAQs attached in the page's FAQs tab get a section of their own when the
+     * page has no FAQ section yet, placed before a closing call to action.
+     */
+    private function withAttachedFaqs(Page $page): Collection
+    {
+        $sections = $page->visibleSections()->get();
+
+        if ($sections->contains('type', 'faq') || ! $page->faqs()->active()->exists()) {
+            return $sections;
+        }
+
+        $faq = AutoSections::make('faq', ['mode' => 'attached', 'heading' => 'Frequently asked questions', 'background' => 'muted'], -2);
+        $position = $sections->last()?->type === 'cta_banner' ? $sections->count() - 1 : $sections->count();
+
+        return $sections->splice(0, $position)->push($faq)->concat($sections)->values();
     }
 }

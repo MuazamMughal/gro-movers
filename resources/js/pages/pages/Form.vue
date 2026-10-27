@@ -3,6 +3,7 @@ import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import { ArrowLeft, ExternalLink, Eye } from '@lucide/vue';
 import { computed, ref, watch } from 'vue';
 import Heading from '@/components/Heading.vue';
+import RecordPicker from '@/components/sections/RecordPicker.vue';
 import SectionBuilder from '@/components/sections/SectionBuilder.vue';
 import type { SectionItem, SectionOptions, SectionSchema } from '@/components/sections/types';
 import { uid } from '@/components/sections/types';
@@ -33,6 +34,7 @@ type PageData = {
 
 const props = defineProps<{
     page: PageData | null;
+    faqIds: number[];
     seo: SeoProps;
     sections: SectionItem[];
     sectionSchema: SectionSchema;
@@ -52,6 +54,7 @@ const form = useForm({
     title: props.page?.title ?? '',
     slug: props.page?.slug ?? '',
     status: props.page?.status ?? 'draft',
+    faq_ids: props.faqIds,
     seo: { ...props.seo.values },
     sections: props.sections.map((s) => ({ ...s, _key: uid() })),
 });
@@ -74,18 +77,25 @@ const siteUrl = computed(() => seoDefaults.value.site_url.replace(/\/$/, ''));
 const publicPath = computed(() => (props.page?.slug_locked ? props.page.path : `/${form.slug || 'your-page'}`));
 
 // ---- Tabs with error counts ---------------------------------------------------
-type Tab = 'content' | 'sections' | 'seo';
+type Tab = 'content' | 'sections' | 'faqs' | 'seo';
 const tab = ref<Tab>('sections');
 const tabs: { key: Tab; label: string }[] = [
     { key: 'content', label: 'Page details' },
     { key: 'sections', label: 'Sections' },
+    { key: 'faqs', label: 'FAQs' },
     { key: 'seo', label: 'SEO' },
 ];
 
 const errorKeys = computed(() => Object.keys(form.errors));
 const tabErrors = (key: Tab) =>
     errorKeys.value.filter((k) =>
-        key === 'sections' ? k.startsWith('sections.') : key === 'seo' ? k.startsWith('seo.') : !k.startsWith('sections.') && !k.startsWith('seo.'),
+        key === 'sections'
+            ? k.startsWith('sections.')
+            : key === 'seo'
+              ? k.startsWith('seo.')
+              : key === 'faqs'
+                ? k.startsWith('faq_ids')
+                : !k.startsWith('sections.') && !k.startsWith('seo.') && !k.startsWith('faq_ids'),
     ).length;
 
 // ---- Save / publish -------------------------------------------------------------
@@ -236,6 +246,13 @@ const title = computed(() => (isNew.value ? 'New page' : form.title || 'Untitled
         </section>
 
         <!-- SEO -->
+        <section v-show="tab === 'faqs'" class="max-w-2xl space-y-3" role="tabpanel">
+            <Heading variant="small" title="Frequently asked questions" description="Pick questions from the FAQ bank. They appear in an FAQ section near the end of the page (or in your own FAQ section set to “FAQs attached to this page”)." />
+            <RecordPicker id="page-faqs" v-model="form.faq_ids" :options="sectionOptions.faqs" noun="FAQs" />
+            <p v-if="!sectionOptions.faqs.length" class="text-sm text-muted-foreground">The FAQ bank is empty. Write FAQs in the FAQs module first.</p>
+            <p v-if="form.errors.faq_ids" class="text-sm text-destructive">{{ form.errors.faq_ids }}</p>
+        </section>
+
         <section v-show="tab === 'seo'" class="max-w-3xl" role="tabpanel">
             <SeoPanel
                 v-model="form.seo"

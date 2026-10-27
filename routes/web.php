@@ -5,11 +5,14 @@ use App\Http\Controllers\Admin\AreaServiceController;
 use App\Http\Controllers\Admin\AuthorController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\MediaController;
+use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\MoveTypeController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\PreviewController;
+use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\TagController;
@@ -17,6 +20,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Site\AreaController as SiteAreaController;
 use App\Http\Controllers\Site\BlogController as SiteBlogController;
 use App\Http\Controllers\Site\PageController as SitePageController;
+use App\Http\Controllers\Site\ReviewController as SiteReviewController;
 use App\Http\Controllers\Site\ServiceController as SiteServiceController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,6 +33,8 @@ Route::get('service-areas/{area}/{service}', [SiteAreaController::class, 'servic
     ->where(['area' => '[a-z0-9]+(?:-[a-z0-9]+)*', 'service' => '[a-z0-9]+(?:-[a-z0-9]+)*'])
     ->name('areas.service');
 Route::get('services/{slug}', [SiteServiceController::class, 'show'])->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('services.show');
+
+Route::get('reviews', [SiteReviewController::class, 'index'])->name('reviews.index');
 
 Route::get('blog', [SiteBlogController::class, 'index'])->name('blog.index');
 Route::get('blog/page/{page}', [SiteBlogController::class, 'index'])->whereNumber('page')->name('blog.page');
@@ -70,6 +76,16 @@ Route::prefix('admin')->group(function () {
             Route::resource('blog-categories', CategoryController::class)->except('show')->parameters(['blog-categories' => 'category']);
             Route::resource('authors', AuthorController::class)->except('show');
             Route::resource('tags', TagController::class)->only(['index', 'store', 'update', 'destroy']);
+
+            Route::patch('reviews/{review}/toggle', [ReviewController::class, 'toggle'])->name('reviews.toggle');
+            Route::resource('reviews', ReviewController::class)->except('show');
+
+            Route::get('menus', [MenuController::class, 'index'])->name('menus.index');
+            Route::get('menus/{menu}/edit', [MenuController::class, 'edit'])->name('menus.edit');
+            Route::put('menus/{menu}', [MenuController::class, 'update'])->name('menus.update');
+
+            Route::post('faqs/reorder', [FaqController::class, 'reorder'])->name('faqs.reorder');
+            Route::resource('faqs', FaqController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
 
             Route::post('move-types/reorder', [MoveTypeController::class, 'reorder'])->name('move-types.reorder');
             Route::resource('move-types', MoveTypeController::class)->only(['index', 'store', 'update', 'destroy']);

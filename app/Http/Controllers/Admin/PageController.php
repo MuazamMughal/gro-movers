@@ -7,6 +7,7 @@ use App\Enums\SystemPage;
 use App\Http\Controllers\Controller;
 use App\Models\Page;
 use App\Sections\SectionAdmin;
+use App\Support\FaqAttach;
 use App\Support\SeoForm;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
@@ -61,6 +62,7 @@ class PageController extends Controller
     {
         return Inertia::render('pages/Form', [
             'page' => null,
+            'faqIds' => [],
             'seo' => SeoForm::props(null, null),
             ...SectionAdmin::props(null),
         ]);
@@ -74,6 +76,7 @@ class PageController extends Controller
             $page = Page::query()->create($this->attributes($data, null));
             SectionAdmin::save($page, $request);
             SeoForm::save($page, $data['seo'] ?? []);
+            FaqAttach::sync($page, $data['faq_ids'] ?? []);
 
             return $page;
         });
@@ -102,6 +105,7 @@ class PageController extends Controller
                 'published_at' => $page->published_at?->toIso8601String(),
                 'updated_at' => $page->updated_at?->toIso8601String(),
             ],
+            'faqIds' => FaqAttach::ids($page),
             'seo' => SeoForm::props($page, $page->publicPath()),
             ...SectionAdmin::props($page),
         ]);
@@ -118,6 +122,7 @@ class PageController extends Controller
             $page->update($this->attributes($data, $page));
             SectionAdmin::save($page, $request);
             SeoForm::save($page, $data['seo'] ?? []);
+            FaqAttach::sync($page, $data['faq_ids'] ?? []);
         });
 
         $message = match (true) {
@@ -161,6 +166,7 @@ class PageController extends Controller
                 Rule::unique('pages', 'slug')->ignore($page),
             ],
             'status' => ['required', Rule::enum(PageStatus::class)],
+            ...FaqAttach::rules(),
             ...SeoForm::rules(),
             ...SectionAdmin::rules($request),
         ];
