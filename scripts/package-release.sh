@@ -22,7 +22,7 @@ rm -f public/hot
 echo "2/4  Copying the app…"
 rm -rf "$WORK" && mkdir -p "$WORK"
 rsync -a \
-  --exclude='.git/' --exclude='.github/' --exclude='.claude/' --exclude='.idea/' --exclude='.vscode/' \
+  --exclude='.*/' \
   --exclude='node_modules/' --exclude='vendor/' --exclude='release/' --exclude='tests/' \
   --exclude='docker/' --exclude='compose.yaml' --exclude='Makefile' --exclude='phpunit.xml' \
   --exclude='.env' --exclude='.env.backup' --exclude='.phpunit.result.cache' \

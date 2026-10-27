@@ -3,11 +3,12 @@
 @if ($items->isNotEmpty())
 <x-site.section :background="$s['background'] ?? 'light'" :anchor="$anchor">
     <x-site.heading :eyebrow="$s['eyebrow'] ?? null" :heading="$s['heading'] ?? null" :intro="$s['intro'] ?? null" :tag="$headingTag" :dark="$dark" />
-    <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    {{-- Centered rows: a short list (e.g. 3 cities) sits in the middle instead of leaving an empty column. --}}
+    <ul class="flex flex-wrap justify-center gap-3">
         @foreach ($items as $area)
-            <li>
+            <li class="w-full sm:w-[calc(50%-0.375rem)] lg:w-[calc(25%-0.5625rem)]">
                 <a href="{{ $area->publicPath() }}" @class([
-                    'flex items-center gap-3 rounded-xl border px-5 py-4 font-semibold transition-colors',
+                    'flex items-center justify-center gap-3 rounded-xl border px-5 py-4 font-semibold transition-colors',
                     'border-white/15 hover:bg-white/10' => $dark,
                     'border-border bg-white text-secondary hover:border-tertiary hover:text-tertiary-strong' => ! $dark,
                 ])>

@@ -42,9 +42,10 @@
     --color-secondary-dark: color-mix(in oklab, var(--color-secondary) 80%, black);
     /* Brighter blue for the glow on navy sections (white text keeps ≥ 7:1). */
     --color-secondary-glow: color-mix(in oklab, var(--color-secondary) 55%, #3b82f6);
-    /* Ends of the orange gradient: white text keeps ≥ 4:1 at the bright end. */
-    --color-tertiary-deep: color-mix(in oklab, var(--color-tertiary-strong) 88%, black);
-    --color-tertiary-bright: color-mix(in oklab, var(--color-tertiary-strong) 75%, var(--color-tertiary));
+    /* Lighter orange gradient: the accessible shade into the brand orange; white text keeps ~4:1 in the middle, where it sits. */
+    --color-tertiary-deep: var(--color-tertiary-strong);
+    --color-tertiary-mid: color-mix(in oklab, var(--color-tertiary-strong) 62%, var(--color-tertiary));
+    --color-tertiary-bright: color-mix(in oklab, var(--color-tertiary-strong) 25%, var(--color-tertiary));
 }
 
 /* Navy with a soft light-blue glow (hero, dark sections, footer, call-to-action boxes). */
@@ -58,7 +59,7 @@
 /* Energetic orange gradient (buttons, accent sections, badges). */
 @utility bg-energy {
     background-color: var(--color-tertiary-strong);
-    background-image: linear-gradient(135deg, var(--color-tertiary-deep) 0%, var(--color-tertiary-strong) 45%, var(--color-tertiary-bright) 100%);
+    background-image: linear-gradient(135deg, var(--color-tertiary-deep) 0%, var(--color-tertiary-mid) 50%, var(--color-tertiary-bright) 100%);
 }
 
 /* Orange glow under call-to-action buttons. */
