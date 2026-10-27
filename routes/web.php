@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\AreaController;
+use App\Http\Controllers\Admin\AreaServiceController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\MoveTypeController;
@@ -8,6 +10,7 @@ use App\Http\Controllers\Admin\PreviewController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Site\AreaController as SiteAreaController;
 use App\Http\Controllers\Site\PageController as SitePageController;
 use App\Http\Controllers\Site\ServiceController as SiteServiceController;
 use Illuminate\Support\Facades\Route;
@@ -15,6 +18,11 @@ use Illuminate\Support\Facades\Route;
 // Public site (Blade, server-rendered).
 Route::get('/', [SitePageController::class, 'home'])->name('home');
 Route::get('services', [SiteServiceController::class, 'index'])->name('services.index');
+Route::get('service-areas', [SiteAreaController::class, 'index'])->name('areas.index');
+Route::get('service-areas/{area}', [SiteAreaController::class, 'show'])->where('area', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('areas.show');
+Route::get('service-areas/{area}/{service}', [SiteAreaController::class, 'service'])
+    ->where(['area' => '[a-z0-9]+(?:-[a-z0-9]+)*', 'service' => '[a-z0-9]+(?:-[a-z0-9]+)*'])
+    ->name('areas.service');
 Route::get('services/{slug}', [SiteServiceController::class, 'show'])->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('services.show');
 
 // Admin panel (Inertia + Vue). Fortify auth routes share the same /admin prefix.
@@ -30,6 +38,17 @@ Route::prefix('admin')->group(function () {
             Route::post('services/reorder', [ServiceController::class, 'reorder'])->name('services.reorder');
             Route::patch('services/{service}/toggle', [ServiceController::class, 'toggle'])->name('services.toggle');
             Route::resource('services', ServiceController::class)->except('show');
+
+            Route::post('areas/reorder', [AreaController::class, 'reorder'])->name('areas.reorder');
+            Route::patch('areas/{area}/toggle', [AreaController::class, 'toggle'])->name('areas.toggle');
+            Route::resource('areas', AreaController::class)->except('show');
+
+            Route::get('area-services', [AreaServiceController::class, 'index'])->name('area-services.index');
+            Route::get('area-services/template', [AreaServiceController::class, 'editTemplate'])->name('area-services.template');
+            Route::put('area-services/template', [AreaServiceController::class, 'updateTemplate'])->name('area-services.template.update');
+            Route::patch('area-services/{areaService}/toggle', [AreaServiceController::class, 'toggle'])->name('area-services.toggle');
+            Route::get('area-services/{areaService}/edit', [AreaServiceController::class, 'edit'])->name('area-services.edit');
+            Route::put('area-services/{areaService}', [AreaServiceController::class, 'update'])->name('area-services.update');
 
             Route::post('move-types/reorder', [MoveTypeController::class, 'reorder'])->name('move-types.reorder');
             Route::resource('move-types', MoveTypeController::class)->only(['index', 'store', 'update', 'destroy']);

@@ -33,6 +33,8 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard, home } from '@/routes';
+import { index as areaServicesIndex } from '@/routes/admin/area-services';
+import { index as areasIndex } from '@/routes/admin/areas';
 import { index as mediaIndex } from '@/routes/admin/media';
 import { index as moveTypesIndex } from '@/routes/admin/move-types';
 import { index as pagesIndex } from '@/routes/admin/pages';
@@ -54,8 +56,8 @@ const navGroups: NavGroup[] = [
         items: [
             { title: 'Pages', href: pagesIndex(), icon: FileText },
             { title: 'Services', href: servicesIndex(), icon: Truck },
-            { title: 'Service Areas', href: '#', icon: MapPin, disabled: true },
-            { title: 'Area × Service', href: '#', icon: Grid3x3, disabled: true },
+            { title: 'Service Areas', href: areasIndex(), icon: MapPin },
+            { title: 'Area × Service', href: areaServicesIndex(), icon: Grid3x3 },
             { title: 'Blog', href: '#', icon: Newspaper, disabled: true },
             { title: 'Reviews', href: '#', icon: Star, disabled: true },
             { title: 'FAQs', href: '#', icon: CircleHelp, disabled: true },

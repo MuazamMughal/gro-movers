@@ -25,8 +25,23 @@ class SystemPagesSeeder extends Seeder
                 ],
             );
 
-            if (! $key->indexable() && $page->seo === null) {
+            if ($page->seo !== null) {
+                continue;
+            }
+
+            if ($key === SystemPage::ThankYou) {
                 $page->seo()->create(['robots_index' => false]);
+            }
+
+            // The template's SEO is inherited (with tokens filled in) by every
+            // "{service} in {city}" page, so it must stay indexable.
+            if ($key === SystemPage::AreaServiceTemplate) {
+                $page->seo()->create([
+                    'meta_title' => '{service} in {city}, {state_code} | {company}',
+                    'meta_description' => 'Looking for {service} in {city}, {state_code}? {company} provides licensed, insured movers with upfront pricing. Get your free quote today.',
+                    'robots_index' => true,
+                    'robots_follow' => true,
+                ]);
             }
         }
     }
