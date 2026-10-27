@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\SeoToolsController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\StaticSiteController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Site\AreaController as SiteAreaController;
@@ -101,6 +102,8 @@ Route::prefix('admin')->group(function () {
             Route::delete('leads/{lead}/notes/{note}', [LeadController::class, 'destroyNote'])->name('leads.notes.destroy');
             Route::resource('leads', LeadController::class)->only(['index', 'show', 'update', 'destroy']);
             Route::resource('messages', ContactMessageController::class)->only(['index', 'show', 'update', 'destroy']);
+
+            Route::post('static/rebuild', [StaticSiteController::class, 'rebuild'])->middleware('throttle:6,1')->name('static.rebuild');
 
             Route::prefix('seo')->name('seo.')->controller(SeoToolsController::class)->group(function () {
                 Route::get('/', 'report')->name('report');

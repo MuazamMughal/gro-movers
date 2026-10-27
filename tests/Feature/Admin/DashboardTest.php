@@ -37,7 +37,8 @@ class DashboardTest extends TestCase
                 ->where('stats.unreadMessages', 1)
                 ->has('chart', 30)
                 ->has('latestLeads', 4)
-                ->where('lastBuild', null)
+                ->where('staticSite.running', null)
+                ->where('staticSite.failures', [])
             );
     }
 }

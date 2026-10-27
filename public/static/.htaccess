@@ -1,0 +1,6 @@
+# Static HTML cache (written by the app). No listings, no scripts.
+Options -Indexes
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+RemoveHandler .php .phtml .phar

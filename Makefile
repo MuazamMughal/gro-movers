@@ -31,8 +31,8 @@ build:           ## Production asset build
 dev:             ## Vite dev server with hot reload
 	$(SAIL) npm run dev
 
-rebuild-static:  ## Regenerate the static HTML cache (available from T14)
-	$(SAIL) artisan site:rebuild
+rebuild-static:  ## Rebuild the static HTML cache now (public/static)
+	$(SAIL) artisan static:build --now
 
 apache:          ## Start the cPanel-like Apache container on :8080
 	docker compose --profile apache up -d apache

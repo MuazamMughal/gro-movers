@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { RefreshCw } from '@lucide/vue';
-import { computed } from 'vue';
+import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import Heading from '@/components/Heading.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/card';
 import { dashboard } from '@/routes';
 import { report as seoReport } from '@/routes/admin/seo';
+import { rebuild as rebuildStatic } from '@/routes/admin/static';
 
 type Lead = {
     id: number;
@@ -37,12 +38,13 @@ const props = defineProps<{
     };
     chart: { date: string; total: number }[];
     latestLeads: Lead[];
-    lastBuild: {
-        path: string;
-        status: string;
-        error: string | null;
-        built_at: string;
-    } | null;
+    staticSite: {
+        enabled: boolean;
+        files: number;
+        running: { total: number; done: number; progress: number } | null;
+        lastBuiltAt: string | null;
+        failures: { path: string; error: string | null }[];
+    };
     hiddenFromGoogle: { path: string; label: string; edit_url: string; expected: boolean }[];
 }>();
 
@@ -53,6 +55,24 @@ defineOptions({
         breadcrumbs: [{ title: 'Dashboard', href: dashboard() }],
     },
 });
+
+// ---- Static site: rebuild button and live progress ------------------------
+const rebuilding = ref(false);
+function rebuild() {
+    rebuilding.value = true;
+    router.post(rebuildStatic().url, {}, { preserveScroll: true, onFinish: () => (rebuilding.value = false) });
+}
+
+let poll: ReturnType<typeof setInterval> | undefined;
+watch(
+    () => props.staticSite.running,
+    (running) => {
+        clearInterval(poll);
+        if (running) poll = setInterval(() => router.reload({ only: ['staticSite'] }), 3000);
+    },
+    { immediate: true },
+);
+onBeforeUnmount(() => clearInterval(poll));
 
 const tiles = computed(() => [
     { label: 'Leads today', value: props.stats.leadsToday },
@@ -214,29 +234,29 @@ const formatDay = (day: string) => dateFmt.format(new Date(`${day}T00:00:00`));
                     >
                 </CardHeader>
                 <CardContent class="space-y-4 text-sm">
-                    <p v-if="lastBuild">
-                        Last build:
-                        <Badge
-                            :variant="
-                                lastBuild.status === 'ok'
-                                    ? 'secondary'
-                                    : 'destructive'
-                            "
-                            >{{ lastBuild.status }}</Badge
-                        >
-                        <span class="block text-muted-foreground">{{
-                            formatDate(lastBuild.built_at)
-                        }}</span>
+                    <p v-if="!staticSite.enabled" class="text-amber-700 dark:text-amber-400">
+                        Switched off in Settings → Static Cache: every page is rendered live.
                     </p>
-                    <p v-else class="text-muted-foreground">
-                        No build has run yet.
-                    </p>
-                    <Button
-                        variant="outline"
-                        disabled
-                        title="Available once the static publisher is built"
-                    >
-                        <RefreshCw class="size-4" />
+                    <template v-else>
+                        <div v-if="staticSite.running" class="space-y-1.5" role="status">
+                            <p class="font-medium">Rebuilding… {{ staticSite.running.progress }}%</p>
+                            <div class="h-2 overflow-hidden rounded-full bg-muted">
+                                <div class="h-full bg-primary transition-all" :style="{ width: `${staticSite.running.progress}%` }" />
+                            </div>
+                        </div>
+                        <p>
+                            <span class="text-2xl font-semibold tabular-nums">{{ staticSite.files }}</span>
+                            pages cached
+                        </p>
+                        <p v-if="staticSite.lastBuiltAt" class="text-muted-foreground">Last update {{ formatDate(staticSite.lastBuiltAt) }}</p>
+                        <p v-else class="text-muted-foreground">No build has run yet.</p>
+                        <div v-if="staticSite.failures.length" class="space-y-1 rounded-md border border-destructive/40 p-2">
+                            <p class="font-medium text-destructive">{{ staticSite.failures.length }} {{ staticSite.failures.length === 1 ? 'page' : 'pages' }} failed to build (shown live meanwhile):</p>
+                            <p v-for="f in staticSite.failures" :key="f.path" class="truncate font-mono text-xs" :title="f.error ?? ''">{{ f.path }}</p>
+                        </div>
+                    </template>
+                    <Button variant="outline" :disabled="!staticSite.enabled || !!staticSite.running || rebuilding" @click="rebuild">
+                        <RefreshCw class="size-4" :class="{ 'animate-spin': staticSite.running || rebuilding }" />
                         Rebuild site
                     </Button>
                 </CardContent>

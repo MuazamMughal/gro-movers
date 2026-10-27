@@ -17,6 +17,7 @@ use App\Models\Service;
 use App\Models\Setting;
 use App\Models\User;
 use App\Services\Media\MediaUsage;
+use App\Services\Static\StaticInvalidator;
 use App\Support\MailSettings;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -38,7 +39,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(StaticInvalidator::class);
     }
 
     /**
@@ -52,6 +53,7 @@ class AppServiceProvider extends ServiceProvider
         $this->configureMediaUsage();
         $this->configureRateLimits();
         $this->configureSeoCaches();
+        $this->app->make(StaticInvalidator::class)->register();
     }
 
     /**

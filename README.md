@@ -52,7 +52,9 @@ make dev                                   # Vite with hot reload
 | `make dev` / `make build` | Vite dev server / production build |
 | `make shell` | Shell inside the app container |
 | `make apache` | Start the cPanel-like Apache container |
-| `make rebuild-static` | Regenerate the static HTML cache (from T14) |
+| `make rebuild-static` | Rebuild the static HTML cache now (`artisan static:build --now`) |
+| `sail artisan static:build /path …` | Rebuild just these pages |
+| `sail artisan static:clear` | Delete all static files (everything renders live) |
 
 ## Containers
 | Service | Purpose |
@@ -63,6 +65,13 @@ make dev                                   # Vite with hot reload
 | `queue` | `queue:work`, for lead emails and static rebuilds |
 | `scheduler` | `schedule:work`, mirroring the cPanel cron |
 | `apache` (profile) | `php:8.3-apache`, for testing `public/.htaccess` |
+
+## Static HTML cache
+Public pages are pre-rendered to `public/static/{path}/index.html`, and Apache serves them without PHP (see `public/.htaccess`).
+- Content changes rebuild the affected pages automatically through the queue.
+- Menus, settings and theme changes rebuild the whole site.
+- The dashboard shows the status and has a "Rebuild site" button.
+- The Sail dev server ignores these files; test them with `make apache` (http://localhost:8080).
 
 ## Deployment
 cPanel. See `docs/deploy-cpanel.md` (written in T17).

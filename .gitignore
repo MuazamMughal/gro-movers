@@ -45,6 +45,7 @@ yarn-error.log
 /opencode.jsonc
 
 # Generated per environment
-/public/static
+/public/static/*
+!/public/static/.htaccess
 /storage/app/public/media
 /storage/app/backups
