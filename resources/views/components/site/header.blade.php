@@ -2,7 +2,7 @@
     Site header: logo, header menu (one level of dropdowns), Call Now and Get a Free Quote.
     Dropdowns open on hover and keyboard focus without JS; the small script adds
     click-to-open, aria-expanded and Escape. Phones get a <details> drawer (mobile menu).
-    T11 adds the top contact bar, sticky behaviour and the mobile sticky Call/Quote bar.
+    It sticks to the top on scroll (the contact bar above it scrolls away).
 --}}
 @php
     use App\Enums\MenuLocation;
@@ -16,7 +16,7 @@
     $current = '/'.ltrim(request()->path(), '/');
     $isCurrent = fn (?string $url) => $url !== null && rtrim($url, '/') === rtrim($current, '/');
 @endphp
-<header class="relative z-40 border-b border-border bg-primary">
+<header class="sticky top-0 z-40 border-b border-border bg-primary/95 backdrop-blur supports-[backdrop-filter]:bg-primary/90">
     <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-lg focus:bg-secondary focus:px-4 focus:py-2 focus:text-primary">Skip to content</a>
     <div class="mx-auto flex h-18 max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8">
         <a href="/" class="flex shrink-0 items-center" aria-label="{{ $company }} home">
@@ -64,7 +64,9 @@
         @endif
 
         <div class="ml-auto flex items-center gap-2 lg:ml-0">
-            <x-site.call-button variant="outline" location="header" class="hidden! xl:inline-flex!" />
+            {{-- Call Now is always visible: below 768px in the mobile bar, then here (compact while the menu needs the room). --}}
+            <x-site.call-button variant="outline" location="header" class="hidden! md:inline-flex! lg:hidden! xl:inline-flex!" />
+            <x-site.call-button variant="outline" location="header" compact class="hidden! lg:inline-flex! xl:hidden!" />
             <x-site.button href="/get-a-quote" label="Get a Free Quote" class="hidden! sm:inline-flex!" />
 
             @if ($mobileItems)

@@ -7,9 +7,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Area;
 use App\Models\AreaServicePage;
 use App\Models\Page;
+use App\Models\Review;
 use App\Models\Service;
 use App\Sections\AutoSections;
+use App\Sections\RenderedSections;
 use App\Sections\SectionRenderer;
+use App\Support\Breadcrumbs;
 use App\Support\Seo;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
@@ -18,24 +21,26 @@ class AreaController extends Controller
 {
     public function __construct(private readonly SectionRenderer $renderer) {}
 
-    /** /service-areas */
+    /** /service-areas: the page's sections plus every active city, grouped by state. */
     public function index(): View
     {
         $page = Page::system(SystemPage::AreasIndex);
         abort_unless($page && $page->isPublished(), 404);
 
-        $sections = $page->visibleSections()->get();
+        $own = $page->visibleSections()->get();
+        $sections = AutoSections::complete($own, ['heading' => $page->title, 'theme' => 'dark'], withFaq: $page->faqs()->active()->exists());
+        $closing = $sections->last()?->type === 'cta_banner' ? collect([$sections->pop()]) : collect();
 
-        if (! $sections->contains('type', 'areas_grid')) {
-            $sections->push(AutoSections::make('areas_grid', ['mode' => 'all', 'heading' => 'Cities we serve', 'background' => 'light'], -1));
-        }
-
-        $sections = AutoSections::complete($sections, ['heading' => $page->title, 'theme' => 'dark'], withFaq: $page->faqs()->exists());
-
-        return view('pages.show', [
+        return view('areas.index', [
             'page' => $page,
             'seo' => Seo::for($page, '/service-areas'),
+            'breadcrumbs' => Breadcrumbs::areas(),
             'rendered' => $this->renderer->render($page, sections: $sections),
+            'closing' => $this->renderer->render($page, sections: $closing, allowH1: false),
+            // The page's own areas grid replaces the automatic list.
+            'states' => $own->contains('type', 'areas_grid') ? collect() : Area::query()->active()->ordered()->with('image.variants')->get()
+                ->groupBy(fn (Area $a) => $a->state_name ?: $a->state_code)
+                ->sortKeys(),
         ]);
     }
 
@@ -61,9 +66,11 @@ class AreaController extends Controller
         return view('areas.show', [
             'area' => $area,
             'seo' => Seo::for($area, $area->publicPath()),
+            'breadcrumbs' => Breadcrumbs::area($area),
             'rendered' => $this->renderer->render($area, area: $area, sections: $sections),
             'closing' => $this->renderer->render($area, area: $area, sections: $closing, allowH1: false),
             'services' => $this->liveServices($area),
+            'reviews' => $this->reviewsFor($area, $sections),
             'neighbors' => $area->neighbors,
         ]);
     }
@@ -105,10 +112,33 @@ class AreaController extends Controller
             'service' => $service,
             'page' => $page,
             'seo' => Seo::for($page, $page->publicPath()),
+            'breadcrumbs' => Breadcrumbs::areaService($area, $service),
             'rendered' => $this->renderer->render($owner, area: $area, service: $service, sections: $sections),
             'closing' => $this->renderer->render($owner, area: $area, service: $service, sections: $closing, allowH1: false),
             'siblings' => $this->liveServices($area)->reject(fn ($s) => $s['id'] === $service->id)->values(),
         ]);
+    }
+
+    /**
+     * Reviews block for a city page, unless the page already has a reviews section.
+     * Shows the city's own reviews, else featured reviews under a general heading.
+     */
+    private function reviewsFor(Area $area, Collection $sections): ?RenderedSections
+    {
+        if ($sections->contains('type', 'reviews_slider')) {
+            return null;
+        }
+
+        $local = Review::query()->active()->where('area_id', $area->id)->exists();
+        $section = AutoSections::make('reviews_slider', [
+            'mode' => 'context',
+            'heading' => $local ? "What {$area->city} customers say" : 'What our customers say',
+            'limit' => 6,
+            'show_summary' => $local,
+            'background' => 'light',
+        ], -4);
+
+        return $this->renderer->render($area, area: $area, sections: [$section], allowH1: false);
     }
 
     /**

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Page;
 use App\Sections\AutoSections;
 use App\Sections\SectionRenderer;
+use App\Support\Breadcrumbs;
 use App\Support\Seo;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
@@ -47,25 +48,51 @@ class PageController extends Controller
         return view('pages.show', [
             'page' => $page,
             'seo' => Seo::for($page, $page->publicPath()),
-            'rendered' => $this->renderer->render($page, sections: $this->withAttachedFaqs($page)),
+            'breadcrumbs' => Breadcrumbs::page($page),
+            'rendered' => $this->renderer->render($page, sections: $this->completeSections($page)),
         ]);
     }
 
     /**
-     * FAQs attached in the page's FAQs tab get a section of their own when the
-     * page has no FAQ section yet, placed before a closing call to action.
+     * Fill gaps so system pages always do their job:
+     * - Contact gets the contact form (with phone, email, address, hours) and a map.
+     * - Get a Free Quote gets a prominent quote form.
+     * - FAQs attached in the FAQs tab get a section when the page has none.
+     * Forms go right after the hero; FAQs go before a closing call to action.
      */
-    private function withAttachedFaqs(Page $page): Collection
+    private function completeSections(Page $page): Collection
     {
-        $sections = $page->visibleSections()->get();
+        $sections = $page->visibleSections()->get()->values();
+        $types = $sections->pluck('type');
+        $top = [];
 
-        if ($sections->contains('type', 'faq') || ! $page->faqs()->active()->exists()) {
-            return $sections;
+        if ($page->system_key === SystemPage::Contact && ! $types->contains('contact_form')) {
+            $top[] = AutoSections::make('contact_form', ['heading' => 'Send us a message', 'intro' => 'We reply within one business day. For a price, the quote form is fastest.', 'show_details' => true], -5);
+
+            if (! $types->contains('map')) {
+                $top[] = AutoSections::make('map', ['height' => 'md'], -6);
+            }
         }
 
-        $faq = AutoSections::make('faq', ['mode' => 'attached', 'heading' => 'Frequently asked questions', 'background' => 'muted'], -2);
-        $position = $sections->last()?->type === 'cta_banner' ? $sections->count() - 1 : $sections->count();
+        if ($page->system_key === SystemPage::Quote && ! $types->contains('quote_form')) {
+            $top[] = AutoSections::make('quote_form', [
+                'heading' => 'Get your free moving quote',
+                'intro' => 'Tell us about your move. We reply with a clear, upfront price, usually the same day.',
+                'bullets' => [['text' => 'No obligation, no hidden fees'], ['text' => 'Licensed and insured movers'], ['text' => 'Local and long-distance moves']],
+                'background' => 'muted',
+            ], -7);
+        }
 
-        return $sections->splice(0, $position)->push($faq)->concat($sections)->values();
+        if ($top !== []) {
+            $at = $sections->first()?->type === 'hero' ? 1 : 0;
+            $sections->splice($at, 0, $top);
+        }
+
+        if (! $types->contains('faq') && $page->faqs()->active()->exists()) {
+            $faq = AutoSections::make('faq', ['mode' => 'attached', 'heading' => 'Frequently asked questions', 'background' => 'muted'], -2);
+            $sections->splice($sections->last()?->type === 'cta_banner' ? $sections->count() - 1 : $sections->count(), 0, [$faq]);
+        }
+
+        return $sections;
     }
 }

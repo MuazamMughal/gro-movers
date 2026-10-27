@@ -8,6 +8,7 @@ use App\Models\Page;
 use App\Models\Review;
 use App\Sections\AutoSections;
 use App\Sections\SectionRenderer;
+use App\Support\Breadcrumbs;
 use App\Support\Seo;
 use Illuminate\Contracts\View\View;
 
@@ -33,6 +34,7 @@ class ReviewController extends Controller
         return view('reviews.index', [
             'page' => $page,
             'seo' => Seo::for($page, '/reviews'),
+            'breadcrumbs' => Breadcrumbs::reviews(),
             'rendered' => $this->renderer->render($page, sections: $sections),
             'closing' => $this->renderer->render($page, sections: $closing, allowH1: false),
             'reviews' => $reviews,

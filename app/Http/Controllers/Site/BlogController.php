@@ -11,6 +11,7 @@ use App\Models\Post;
 use App\Models\Section;
 use App\Sections\AutoSections;
 use App\Sections\SectionRenderer;
+use App\Support\Breadcrumbs;
 use App\Support\Seo;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\View\View;
@@ -51,6 +52,7 @@ class BlogController extends Controller
 
         return view('blog.list', [
             'seo' => Seo::for($blogPage, '/blog', $page),
+            'breadcrumbs' => Breadcrumbs::blog($page),
             'intro' => $page === 1 ? $this->renderer->render($blogPage, sections: $sections) : null,
             'heading' => $page === 1 ? null : $blogPage->title,
             'closing' => $this->renderer->render($blogPage, sections: $closing, allowH1: false),
@@ -82,6 +84,7 @@ class BlogController extends Controller
 
         return view('blog.list', [
             'seo' => Seo::for($category, $category->publicPath(), $page),
+            'breadcrumbs' => Breadcrumbs::category($category, $page),
             'intro' => $this->renderer->render($category, sections: [$hero]),
             'heading' => null,
             'closing' => $this->renderer->render($category, sections: [$this->cta()], allowH1: false),
@@ -113,6 +116,7 @@ class BlogController extends Controller
         return view('blog.show', [
             'post' => $post,
             'seo' => Seo::for($post, $post->publicPath()),
+            'breadcrumbs' => Breadcrumbs::post($post),
             'body' => PostContent::render($post->content),
             'related' => $this->related($post),
             'previous' => $this->neighbour($post, older: true),

@@ -21,6 +21,8 @@
         </x-site.section>
     @endif
 
+    {!! $reviews?->html !!}
+
     @if ($area->map_embed || ($area->lat && $area->lng))
         @php($src = $area->map_embed ?: 'https://www.google.com/maps?q='.$area->lat.','.$area->lng.'&z=12&output=embed')
         <x-site.section background="light" class="py-12!">

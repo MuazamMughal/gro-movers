@@ -19,5 +19,17 @@
         </x-site.section>
     @endif
 
+    @if ($posts->isNotEmpty())
+        <x-site.section>
+            <x-site.heading heading="Moving tips and guides" intro="Advice from our crews to help you plan." />
+            <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                @foreach ($posts as $post)
+                    <x-site.post-card :post="$post" />
+                @endforeach
+            </div>
+            <div class="mt-10 text-center"><x-site.button href="/blog" label="More moving guides" variant="outline" /></div>
+        </x-site.section>
+    @endif
+
     {!! $closing->html !!}
 @endsection

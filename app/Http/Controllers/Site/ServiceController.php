@@ -6,9 +6,11 @@ use App\Enums\SystemPage;
 use App\Http\Controllers\Controller;
 use App\Models\AreaServicePage;
 use App\Models\Page;
+use App\Models\Post;
 use App\Models\Service;
 use App\Sections\AutoSections;
 use App\Sections\SectionRenderer;
+use App\Support\Breadcrumbs;
 use App\Support\Seo;
 use Illuminate\Contracts\View\View;
 
@@ -33,6 +35,7 @@ class ServiceController extends Controller
         return view('pages.show', [
             'page' => $page,
             'seo' => Seo::for($page, '/services'),
+            'breadcrumbs' => Breadcrumbs::services(),
             'rendered' => $this->renderer->render($page, sections: $sections),
         ]);
     }
@@ -60,9 +63,11 @@ class ServiceController extends Controller
         return view('services.show', [
             'service' => $service,
             'seo' => Seo::for($service, $service->publicPath()),
+            'breadcrumbs' => Breadcrumbs::service($service),
             'rendered' => $this->renderer->render($service, service: $service, sections: $sections),
             'closing' => $this->renderer->render($service, service: $service, sections: $closing, allowH1: false),
             'areas' => $this->areasFor($service),
+            'posts' => Post::query()->published()->latestFirst()->with(['category', 'featuredImage.variants'])->limit(3)->get(),
         ]);
     }
 

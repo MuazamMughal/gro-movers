@@ -8,6 +8,7 @@ use App\Models\Section;
 use App\Models\SeoMeta;
 use App\Sections\SectionRegistry;
 use App\Sections\SectionRenderer;
+use App\Support\Breadcrumbs;
 use App\Support\Seo;
 use App\Support\SeoForm;
 use Illuminate\Contracts\View\View;
@@ -63,6 +64,7 @@ class PreviewController extends Controller
         return view('pages.show', [
             'page' => $page,
             'seo' => Seo::for($page, $page->publicPath() ?? '/'),
+            'breadcrumbs' => Breadcrumbs::page($page),
             'rendered' => $this->renderer->render($page, sections: $models),
             'preview' => true,
         ]);
