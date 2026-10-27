@@ -15,6 +15,10 @@ return [
 
     'default' => env('QUEUE_CONNECTION', 'database'),
 
+    // Run a short-lived worker from the scheduler every minute (cPanel). Off when a
+    // permanent worker runs instead (Sail's queue container, supervisor).
+    'cron_worker' => (bool) env('QUEUE_CRON_WORKER', true),
+
     /*
     |--------------------------------------------------------------------------
     | Queue Connections

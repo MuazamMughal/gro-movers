@@ -31,13 +31,13 @@
     RewriteRule ^ %1 [L,R=301]
 
     # --- Static HTML cache: clean GET requests are served from public/static without PHP ---
-    # Missing file, query string, POST, admin, forms or assets -> falls through to Laravel.
-    RewriteCond %{REQUEST_METHOD} GET
+    # Missing file, query string, POST (anything but GET/HEAD), admin, forms or assets -> falls through to Laravel.
+    RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$
     RewriteCond %{QUERY_STRING} ^$
     RewriteCond %{DOCUMENT_ROOT}/static/index.html -f
     RewriteRule ^$ static/index.html [L]
 
-    RewriteCond %{REQUEST_METHOD} GET
+    RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$
     RewriteCond %{QUERY_STRING} ^$
     RewriteCond %{REQUEST_URI} !^/(admin|forms|storage|build|static|up)(/|$)
     RewriteCond %{DOCUMENT_ROOT}/static%{REQUEST_URI}/index.html -f

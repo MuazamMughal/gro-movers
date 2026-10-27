@@ -49,3 +49,6 @@ yarn-error.log
 !/public/static/.htaccess
 /storage/app/public/media
 /storage/app/backups
+
+# Release packages (scripts/package-release.sh)
+/release

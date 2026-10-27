@@ -107,6 +107,23 @@ class StaticPublisherTest extends TestCase
         $this->assertSame('removed', $this->publisher->build('/no-such-page'));
     }
 
+    public function test_server_errors_keep_the_previous_copy()
+    {
+        $this->publisher->build('/about-us');
+        $this->artisan('down');
+
+        try {
+            $this->assertSame('failed', $this->publisher->build('/about-us'));
+            $this->assertFileExists($this->file('/about-us'));
+            $this->assertDatabaseHas('static_builds', ['path' => '/about-us', 'status' => 'failed', 'error' => 'HTTP 503, previous copy kept']);
+
+            $this->artisan('static:build', ['--now' => true])->expectsOutputToContain('Run php artisan up first')->assertFailed();
+            $this->assertSame(1, $this->publisher->fileCount());
+        } finally {
+            $this->artisan('up');
+        }
+    }
+
     public function test_paths_cover_every_public_page_and_blog_pagination()
     {
         $tips = Category::where('slug', 'moving-tips')->sole();

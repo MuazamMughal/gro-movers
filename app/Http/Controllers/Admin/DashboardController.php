@@ -8,6 +8,7 @@ use App\Models\Lead;
 use App\Seo\SeoAudit;
 use App\Services\Static\StaticPublisher;
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -43,6 +44,8 @@ class DashboardController extends Controller
                 'id', 'full_name', 'from_city', 'to_city', 'move_date', 'move_type_name', 'status', 'read_at', 'created_at',
             ]),
             'staticSite' => fn () => StaticSiteController::status(app(StaticPublisher::class)),
+            // The cron job drives emails, rebuilds, scheduled posts and backups: warn when it stops.
+            'schedulerLastRun' => Cache::get('scheduler.last_run'),
             // "Pages hidden from Google (N)": should only ever be /thank-you.
             'hiddenFromGoogle' => collect(SeoAudit::run()['hidden'])->map(fn ($h) => [
                 'path' => $h['path'], 'label' => $h['label'], 'edit_url' => $h['edit_url'], 'expected' => $h['expected'],

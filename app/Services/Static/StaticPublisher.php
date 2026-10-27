@@ -86,7 +86,7 @@ class StaticPublisher
     }
 
     /**
-     * Render one path and write (status 200) or delete (anything else) its file.
+     * Render one path and write (status 200), keep (5xx) or delete (anything else) its file.
      *
      * @return string ok, removed or failed
      */
@@ -111,6 +111,10 @@ class StaticPublisher
                 $this->write($this->fileFor($path), $html);
                 $result = 'ok';
                 $error = null;
+            } elseif ($status >= 500) {
+                // Maintenance mode or a passing server error: the old copy beats no page.
+                $result = 'failed';
+                $error = "HTTP {$status}, previous copy kept";
             } else {
                 // Gone, redirected or not HTML: never serve a stale copy.
                 $this->purge($path);

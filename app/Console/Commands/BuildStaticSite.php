@@ -26,6 +26,12 @@ class BuildStaticSite extends Command
             return self::SUCCESS;
         }
 
+        if (app()->isDownForMaintenance()) {
+            $this->error('The site is in maintenance mode, so every page would answer 503. Run php artisan up first.');
+
+            return self::FAILURE;
+        }
+
         $paths = $this->argument('paths');
 
         if ($paths) {

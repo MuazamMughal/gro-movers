@@ -46,7 +46,11 @@ const props = defineProps<{
         failures: { path: string; error: string | null }[];
     };
     hiddenFromGoogle: { path: string; label: string; edit_url: string; expected: boolean }[];
+    schedulerLastRun: string | null;
 }>();
+
+// Cron should tick every minute; 10 minutes of silence means emails and rebuilds are waiting.
+const cronStale = computed(() => !props.schedulerLastRun || Date.now() - new Date(props.schedulerLastRun).getTime() > 10 * 60 * 1000);
 
 const unexpectedHidden = computed(() => props.hiddenFromGoogle.filter((h) => !h.expected));
 
@@ -158,6 +162,15 @@ const formatDay = (day: string) => dateFmt.format(new Date(`${day}T00:00:00`));
                 </div>
             </CardContent>
         </Card>
+
+        <div v-if="cronStale" class="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm" role="alert">
+            <p class="font-semibold text-destructive">The scheduled task (cron) is not running.</p>
+            <p class="text-muted-foreground">
+                Lead emails, site rebuilds, scheduled posts and backups wait until it runs.
+                {{ schedulerLastRun ? `Last run: ${formatDate(schedulerLastRun)}.` : 'It has never run on this server.' }}
+                See “Cron” in docs/deploy-cpanel.md.
+            </p>
+        </div>
 
         <Card :class="unexpectedHidden.length ? 'border-destructive' : ''">
             <CardHeader>
