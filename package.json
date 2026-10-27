@@ -14,6 +14,10 @@
         "@inertiajs/vite": "^3.0.0",
         "@inertiajs/vue3": "^3.0.0",
         "@lucide/vue": "^1.17.0",
+        "@tiptap/extension-link": "^3.32.0",
+        "@tiptap/pm": "^3.32.0",
+        "@tiptap/starter-kit": "^3.32.0",
+        "@tiptap/vue-3": "^3.32.0",
         "@vueuse/core": "^12.8.2",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
@@ -24,7 +28,8 @@
         "tw-animate-css": "^1.2.5",
         "vue": "^3.5.13",
         "vue-advanced-cropper": "^2.8.9",
-        "vue-sonner": "^2.0.0"
+        "vue-sonner": "^2.0.0",
+        "vuedraggable": "^4.1.0"
     },
     "devDependencies": {
         "@laravel/vite-plugin-wayfinder": "^0.1.3",

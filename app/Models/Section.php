@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-#[Fillable(['type', 'data', 'sort', 'is_visible'])]
+#[Fillable(['type', 'data', 'media_ids', 'sort', 'is_visible'])]
 class Section extends Model
 {
     /** @use HasFactory<SectionFactory> */
@@ -18,6 +18,7 @@ class Section extends Model
     {
         return [
             'data' => 'array',
+            'media_ids' => 'array',
             'is_visible' => 'boolean',
         ];
     }

@@ -5,10 +5,13 @@ namespace App\Providers;
 use App\Models\Area;
 use App\Models\AreaServicePage;
 use App\Models\Category;
+use App\Models\Media;
 use App\Models\Page;
 use App\Models\Post;
+use App\Models\Section;
 use App\Models\Service;
 use App\Models\User;
+use App\Services\Media\MediaUsage;
 use App\Support\MailSettings;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -36,6 +39,25 @@ class AppServiceProvider extends ServiceProvider
         $this->configureDefaults();
         $this->configureMorphMap();
         $this->configureMail();
+        $this->configureMediaUsage();
+    }
+
+    /**
+     * Images inside page-builder sections count as "in use" in the media library.
+     */
+    protected function configureMediaUsage(): void
+    {
+        MediaUsage::resolveUsing('sections', fn (Media $media) => Section::query()
+            ->whereJsonContains('media_ids', $media->id)
+            ->with('sectionable')
+            ->get()
+            ->map(fn (Section $section) => [
+                'label' => $section->sectionable
+                    ? class_basename($section->sectionable).': '.($section->sectionable->title ?? $section->sectionable->name ?? $section->sectionable->city ?? "#{$section->sectionable_id}")
+                    : 'Deleted page',
+                'field' => (config("sections.types.{$section->type}.label") ?? $section->type).' section',
+            ])
+            ->all());
     }
 
     /**

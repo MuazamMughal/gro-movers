@@ -18,12 +18,12 @@ use Illuminate\Support\Arr;
  * Finds every place a media item is used, so it cannot be deleted while in use.
  *
  * Built-in sources are media foreign keys and media settings. Modules that store
- * media IDs elsewhere (section JSON in T5, rich text in T9) add a resolver with
- * MediaUsage::resolveUsing(fn (Media $media): array => [...]).
+ * media IDs elsewhere (section JSON, rich text) add a named resolver with
+ * MediaUsage::resolveUsing('sections', fn (Media $media): array => [...]).
  */
 class MediaUsage
 {
-    /** @var list<Closure(Media): list<array{label: string, field: string}>> */
+    /** @var array<string, Closure(Media): list<array{label: string, field: string}>> */
     private static array $resolvers = [];
 
     /**
@@ -40,11 +40,14 @@ class MediaUsage
     ];
 
     /**
+     * Register (or replace) a named resolver. Named so repeated app boots, as in
+     * tests or long-running workers, never register the same source twice.
+     *
      * @param  Closure(Media): list<array{label: string, field: string}>  $resolver
      */
-    public static function resolveUsing(Closure $resolver): void
+    public static function resolveUsing(string $name, Closure $resolver): void
     {
-        static::$resolvers[] = $resolver;
+        static::$resolvers[$name] = $resolver;
     }
 
     /**

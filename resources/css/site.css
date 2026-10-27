@@ -43,3 +43,54 @@
         border-color: var(--color-border);
     }
 }
+
+/* Rich text written in the admin editor (sections, blog posts). */
+@layer components {
+    .prose-site {
+        @apply text-lg leading-relaxed;
+
+        & > * + * {
+            @apply mt-5;
+        }
+
+        & h2 {
+            @apply mt-10 text-2xl font-extrabold tracking-tight md:text-3xl;
+        }
+
+        & h3 {
+            @apply mt-8 text-xl font-bold;
+        }
+
+        & h4 {
+            @apply mt-6 text-lg font-bold;
+        }
+
+        & a {
+            @apply font-semibold text-tertiary underline decoration-2 underline-offset-2 hover:text-tertiary-hover;
+        }
+
+        & ul {
+            @apply list-disc space-y-2 pl-6 marker:text-tertiary;
+        }
+
+        & ol {
+            @apply list-decimal space-y-2 pl-6 marker:font-bold marker:text-tertiary;
+        }
+
+        & blockquote {
+            @apply border-l-4 border-tertiary pl-5 text-xl font-medium italic;
+        }
+
+        & hr {
+            @apply my-10 border-border;
+        }
+
+        & strong {
+            @apply font-bold;
+        }
+
+        [data-theme='dark'] & a {
+            @apply text-tertiary-soft;
+        }
+    }
+}
