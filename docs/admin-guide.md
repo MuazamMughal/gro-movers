@@ -174,9 +174,23 @@ Mark `generate_lead` as a **key event** in GA4.
 
 ---
 
-## 11. Users and your account
+## 11. Users, roles and your account
 
-- **Users:** add or remove admin accounts. Everyone with an account can change everything, so only add people you trust. Remove accounts when someone leaves.
+Only **Administrators** see **Users** and **Roles**.
+
+- **Users:** add or remove accounts and give each person a **role**. Remove accounts when someone leaves.
+- **Roles:** decide what each role can see and change. Each user sees only the menu items their role allows.
+
+| Role | Can use |
+|---|---|
+| **Administrator** | Everything, including Users and Roles. Built in; it can't be changed. |
+| **Content Editor** | Pages, services, areas, blog, reviews, FAQs, images and menus. |
+| **Sales** | Quote requests (view, update, export) and contact messages. |
+| **SEO Manager** | SEO Tools, page content and SEO fields, images, and rebuilding the site. |
+
+- **Your own role:** click **Add role** to make your own, or edit the three editable ones.
+- **Images:** anyone who edits content can add images from inside their editor. The **Media Library** page itself (replacing and deleting images) needs the Media Library permission.
+- **Safety rules:** you can't change your own role, the last Administrator can't be demoted or deleted, and a role that people still have can't be deleted.
 - **Your account** (your name, bottom left): change your name, email and password, and switch the admin between light and dark mode.
 - **Forgot your password?** Use the link on the login page; a reset email is sent to you.
 

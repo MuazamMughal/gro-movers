@@ -11,6 +11,7 @@ use App\Models\Media;
 use App\Models\Page;
 use App\Models\Post;
 use App\Models\Redirect;
+use App\Models\Role;
 use App\Models\Section;
 use App\Models\SeoMeta;
 use App\Models\Service;
@@ -26,6 +27,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
@@ -51,10 +53,26 @@ class AppServiceProvider extends ServiceProvider
         $this->configureDefaults();
         $this->configureMorphMap();
         $this->configureMail();
+        $this->configurePermissions();
         $this->configureMediaUsage();
         $this->configureRateLimits();
         $this->configureSeoCaches();
         $this->app->make(StaticInvalidator::class)->register();
+    }
+
+    /**
+     * T19: one Gate ability per permission (config/permissions.php), plus
+     * "administrator" (users and roles) and "content" (any content permission:
+     * the image picker and previews inside the editors).
+     */
+    protected function configurePermissions(): void
+    {
+        foreach (Role::allPermissions() as $permission) {
+            Gate::define($permission, fn (User $user) => $user->hasPermission($permission));
+        }
+
+        Gate::define('administrator', fn (User $user) => $user->isAdministrator());
+        Gate::define('content', fn (User $user) => collect(config('permissions.content'))->contains(fn ($p) => $user->hasPermission($p)));
     }
 
     /**

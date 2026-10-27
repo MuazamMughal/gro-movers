@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -12,7 +13,8 @@ use Inertia\Inertia;
 use Inertia\Response;
 
 /**
- * Admin accounts. Every user has full access; there are no roles.
+ * Admin accounts, each with one role (T19). Administrators only. Nobody can
+ * change their own role, and the last Administrator cannot be demoted or deleted.
  */
 class UserController extends Controller
 {
@@ -20,8 +22,9 @@ class UserController extends Controller
     {
         return Inertia::render('users/Index', [
             'users' => User::query()
+                ->with('role:id,name,is_system')
                 ->orderBy('name')
-                ->get(['id', 'name', 'email', 'last_login_at', 'created_at']),
+                ->get(['id', 'name', 'email', 'role_id', 'last_login_at', 'created_at']),
             'currentUserId' => $request->user()->id,
         ]);
     }
@@ -30,6 +33,7 @@ class UserController extends Controller
     {
         return Inertia::render('users/Form', [
             'user' => null,
+            'roles' => $this->roleOptions(),
             'passwordRules' => Password::defaults()->toPasswordRulesString(),
         ]);
     }
@@ -41,15 +45,17 @@ class UserController extends Controller
         $user = User::query()->create($data);
         $user->forceFill(['email_verified_at' => now()])->save();
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => "Admin {$user->name} created."]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => "User {$user->name} created."]);
 
         return to_route('admin.users.index');
     }
 
-    public function edit(User $user): Response
+    public function edit(Request $request, User $user): Response
     {
         return Inertia::render('users/Form', [
-            'user' => $user->only(['id', 'name', 'email']),
+            'user' => $user->only(['id', 'name', 'email', 'role_id']),
+            'roles' => $this->roleOptions(),
+            'isSelf' => $user->is($request->user()),
             'passwordRules' => Password::defaults()->toPasswordRulesString(),
         ]);
     }
@@ -62,9 +68,19 @@ class UserController extends Controller
             unset($data['password']);
         }
 
+        if ((int) $data['role_id'] !== $user->role_id) {
+            if ($user->is($request->user())) {
+                return $this->refuse('You cannot change your own role.');
+            }
+
+            if ($user->isAdministrator() && $this->administratorCount() <= 1) {
+                return $this->refuse('The last Administrator must keep the Administrator role.');
+            }
+        }
+
         $user->update($data);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => 'Admin updated.']);
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'User updated.']);
 
         return to_route('admin.users.index');
     }
@@ -75,13 +91,13 @@ class UserController extends Controller
             return $this->refuse('You cannot delete your own account.');
         }
 
-        if (User::query()->count() <= 1) {
-            return $this->refuse('The last admin account cannot be deleted.');
+        if ($user->isAdministrator() && $this->administratorCount() <= 1) {
+            return $this->refuse('The last Administrator account cannot be deleted.');
         }
 
         $user->delete();
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => 'Admin deleted.']);
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'User deleted.']);
 
         return to_route('admin.users.index');
     }
@@ -95,7 +111,19 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user)],
             'password' => [$user ? 'nullable' : 'required', 'string', Password::default(), 'confirmed'],
+            'role_id' => ['required', 'integer', Rule::exists(Role::class, 'id')],
         ];
+    }
+
+    /** @return list<array{id: int, name: string, description: ?string, is_system: bool}> */
+    private function roleOptions(): array
+    {
+        return Role::query()->orderByDesc('is_system')->orderBy('name')->get(['id', 'name', 'description', 'is_system'])->toArray();
+    }
+
+    private function administratorCount(): int
+    {
+        return User::query()->whereRelation('role', 'is_system', true)->count();
     }
 
     private function refuse(string $message): RedirectResponse

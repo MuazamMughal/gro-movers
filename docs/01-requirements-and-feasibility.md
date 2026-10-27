@@ -120,7 +120,7 @@
 ### 4.3 Admin Panel (full control)
 **Auth & users**
 - Secure login and forgot password.
-- **One role only: Admin.** There can be multiple admin accounts, all with full access. There is no role or permission system.
+- ~~One role only: Admin.~~ **Changed (T19):** roles with permissions; the Administrator role has full access. See `02-build-prompt.md` §14.1.
 
 **Dashboard**
 - Leads today, this week and this month, recent leads, recent posts, and quick links.
@@ -264,7 +264,7 @@
 | 3 | Quote form | **Single step.** Only the fields listed: Name, Email, Phone, From, To, Date, Type of Move |
 | 4 | Branding | Style follows the reference site. **Primary = white, secondary = navy, tertiary = orange**, all CSS variables editable in admin |
 | 5 | Area × Service pages | **Yes** |
-| 6 | Roles | **Admin only** |
+| 6 | Roles | ~~Admin only~~ → **Roles and permissions (T19)** |
 | 7 | Lead alerts | **Email only** |
 | 8 | Spam protection | **Cloudflare Turnstile**, built in the **last** task |
 | 9 | Content | **SEO-ready placeholder copy** in the seeders |

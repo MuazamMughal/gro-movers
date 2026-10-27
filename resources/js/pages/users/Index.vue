@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
 import { Pencil, Plus, Trash2 } from '@lucide/vue';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import ConfirmDialog from '@/components/ConfirmDialog.vue';
 import Heading from '@/components/Heading.vue';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +12,7 @@ type AdminUser = {
     id: number;
     name: string;
     email: string;
+    role: { id: number; name: string; is_system: boolean } | null;
     last_login_at: string | null;
     created_at: string;
 };
@@ -45,8 +46,10 @@ const confirmDelete = () => {
     });
 };
 
+// The server also refuses deleting yourself or the last Administrator.
+const administrators = computed(() => props.users.filter((u) => u.role?.is_system).length);
 const canDelete = (user: AdminUser) =>
-    user.id !== props.currentUserId && props.users.length > 1;
+    user.id !== props.currentUserId && !(user.role?.is_system && administrators.value <= 1);
 
 const formatDate = (iso: string | null) =>
     iso
@@ -77,6 +80,7 @@ const formatDate = (iso: string | null) =>
                     <tr>
                         <th class="px-4 py-3 font-medium">Name</th>
                         <th class="px-4 py-3 font-medium">Email</th>
+                        <th class="px-4 py-3 font-medium">Role</th>
                         <th class="px-4 py-3 font-medium">Last login</th>
                         <th class="px-4 py-3"><span class="sr-only">Actions</span></th>
                     </tr>
@@ -93,6 +97,9 @@ const formatDate = (iso: string | null) =>
                             >
                         </td>
                         <td class="px-4 py-3">{{ user.email }}</td>
+                        <td class="px-4 py-3">
+                            <Badge :variant="user.role?.is_system ? 'default' : 'outline'">{{ user.role?.name ?? 'No role' }}</Badge>
+                        </td>
                         <td class="px-4 py-3 text-muted-foreground">
                             {{ formatDate(user.last_login_at) }}
                         </td>

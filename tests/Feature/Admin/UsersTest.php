@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Admin;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -41,6 +42,7 @@ class UsersTest extends TestCase
         $this->post(route('admin.users.store'), [
             'name' => 'New Admin',
             'email' => 'new@example.com',
+            'role_id' => Role::administrator()->id,
             'password' => 'a-strong-password',
             'password_confirmation' => 'a-strong-password',
         ])->assertRedirect(route('admin.users.index'));
@@ -67,6 +69,7 @@ class UsersTest extends TestCase
         $this->put(route('admin.users.update', $other), [
             'name' => 'Renamed',
             'email' => $other->email,
+            'role_id' => $other->role_id,
             'password' => '',
             'password_confirmation' => '',
         ])->assertRedirect(route('admin.users.index'));

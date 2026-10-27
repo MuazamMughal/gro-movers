@@ -17,7 +17,7 @@ The public site must deliver **fully rendered static HTML** for ranking and spee
 3. Services, Service Areas, Area×Service pages, Blog Categories, Blog Posts and Move Types are **unlimited and dynamic**. One template per type.
 4. All media is stored **on our server** (Laravel `public` disk), cropped to presets and converted to WebP.
 5. **There are no mover or marketplace features.** No mover accounts, directories, or lead selling or distribution.
-6. There is **one admin role**. Multiple admin users are allowed, all with full access, and there is no permission system.
+6. ~~There is one admin role.~~ **Changed in T19:** users have roles with permissions (see §14.1). The Administrator role has full access.
 7. Lead alerts go out **by email only**.
 8. The quote form is **a single step** with **exactly** these fields: Full Name, Email Address, Phone Number, Moving From, Moving To, Moving Date, Type of Move, and a Submit Request button. **Add no other fields.** The honeypot and the hidden address-detail fields are allowed.
 9. It must run on **cPanel shared hosting** with **no Node on the server**.
@@ -606,6 +606,21 @@ For every task: implement it, write or extend the Pest tests, run `sail test` an
 | **T16** | Full SEO placeholder content seeders (§12) | The site looks complete after `migrate:fresh --seed` |
 | **T17** | `docs/deploy-cpanel.md` + `docs/admin-guide.md` | A fresh cPanel deploy can follow the guide end to end |
 | **T18** | **Cloudflare Turnstile (LAST):** Settings keys, widget on the quote and contact forms (lazy-loaded), server-side `siteverify`, graceful skip when no keys are set | A bot POST without a token is rejected while keys are set |
+| **T19** | **Roles and permissions** (added after launch scope, see §14.1): roles with permission checkboxes, a fixed Administrator role, role per user, route and sidebar enforcement, escalation safeguards | A user without a permission gets no menu item and is refused on every route of that module, including JSON endpoints; an Editor cannot reach Users, Roles or Settings |
+
+### 14.1 T19: Roles and permissions
+
+Replaces rule 6 in §0 ("one admin role") and the "no roles" launch check. Built without a package.
+
+- **Permissions** are defined once in `config/permissions.php`, grouped by module, each with a label: `pages`, `services` (services and Area × Service pages), `areas`, `blog` (posts, categories, authors, tags), `reviews`, `faqs`, `media`, `menus`, `move_types`, `leads.view`, `leads.manage` (status, notes, delete), `leads.export`, `messages`, `seo`, `settings`, `static` (rebuild the site).
+- **Roles** (`roles` table: name, description, permissions JSON, `is_system`). Each user has exactly one role (`users.role_id`).
+  - **Administrator** (system role): every permission, plus **Users** and **Roles**, which only Administrators can manage. It cannot be edited or deleted.
+  - Seeded, editable roles: **Content Editor** (pages, services, areas, blog, reviews, faqs, media, menus), **Sales** (leads.view, leads.manage, leads.export, messages), **SEO Manager** (seo, pages, services, areas, blog, media, static).
+  - Admins can create, edit and delete roles. A role with users cannot be deleted.
+- **Enforcement:** `can:` middleware on every admin route group. Image-picker endpoints (browse, upload, crop, alt text) are allowed for any content permission, so editors can add images; the Media Library page itself and replace/delete need `media`. Content previews follow the content permission. Account pages (profile, password, appearance) are open to every signed-in user. A refused page request goes back to the dashboard with an error toast; JSON requests get 403.
+- **Admin UI:** the sidebar shows only allowed modules; the inbox badges only to users who can see leads/messages. Dashboard cards show only for permitted modules. Users list shows each user's role; the user form has a role picker. New **Roles** page with grouped checkboxes.
+- **Safeguards:** a user cannot change their own role; only Administrators can grant or remove the Administrator role (and only they reach Users/Roles at all); the last Administrator cannot be demoted or deleted.
+- **Migration:** existing users become Administrators; `db:seed` creates the roles and gives the first admin the Administrator role.
 
 ---
 
@@ -643,5 +658,5 @@ For every task: implement it, write or extend the Pest tests, run `sail test` an
 - [ ] Every image comes from the server media library through presets with WebP.
 - [ ] The static cache serves all pages. Publishing updates the affected pages within about a minute (cron) or instantly (sync for small sets).
 - [ ] The site runs on cPanel without Node. Development runs fully in Laravel Sail with one `sail up -d`.
-- [ ] There are no mover or marketplace features, no roles and no SMS.
+- [ ] There are no mover or marketplace features and no SMS. Roles and permissions work as in §14.1 (T19).
 - [ ] Tests are green, Lighthouse targets are met, and the docs are written.

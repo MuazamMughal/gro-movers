@@ -11,12 +11,16 @@ import { Label } from '@/components/ui/label';
 import { index } from '@/routes/admin/users';
 
 const props = defineProps<{
-    user: { id: number; name: string; email: string } | null;
+    user: { id: number; name: string; email: string; role_id: number | null } | null;
+    roles: { id: number; name: string; description: string | null; is_system: boolean }[];
+    isSelf?: boolean;
     passwordRules: string;
 }>();
 
 const isEdit = computed(() => props.user !== null);
-const title = computed(() => (isEdit.value ? 'Edit admin' : 'Add admin'));
+const title = computed(() => (isEdit.value ? 'Edit user' : 'Add user'));
+const selectClass =
+    'h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-xs focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none disabled:opacity-60 dark:bg-input/30';
 
 const action = computed(() =>
     props.user
@@ -40,7 +44,7 @@ defineOptions({
             :description="
                 isEdit
                     ? 'Leave the password empty to keep the current one.'
-                    : 'The new admin can sign in at /admin/login with these details.'
+                    : 'The new user can sign in at /admin/login with these details.'
             "
         />
 
@@ -75,6 +79,20 @@ defineOptions({
             </div>
 
             <div class="grid gap-2">
+                <Label for="role">Role</Label>
+                <!-- Your own role is fixed, so you cannot lock yourself out. -->
+                <input v-if="isSelf" type="hidden" name="role_id" :value="user?.role_id ?? ''" />
+                <select id="role" :name="isSelf ? undefined : 'role_id'" :class="selectClass" :disabled="isSelf" required>
+                    <option value="" disabled :selected="!user?.role_id">Choose a role…</option>
+                    <option v-for="role in roles" :key="role.id" :value="role.id" :selected="user?.role_id === role.id">
+                        {{ role.name }}{{ role.description ? ` — ${role.description}` : '' }}
+                    </option>
+                </select>
+                <p v-if="isSelf" class="text-sm text-muted-foreground">You cannot change your own role.</p>
+                <InputError :message="errors.role_id" />
+            </div>
+
+            <div class="grid gap-2">
                 <Label for="password">{{
                     isEdit ? 'New password' : 'Password'
                 }}</Label>
@@ -102,7 +120,7 @@ defineOptions({
 
             <div class="flex items-center gap-3">
                 <Button :disabled="processing">
-                    {{ isEdit ? 'Save changes' : 'Create admin' }}
+                    {{ isEdit ? 'Save changes' : 'Create user' }}
                 </Button>
                 <Button variant="ghost" as-child>
                     <Link :href="index()">Cancel</Link>

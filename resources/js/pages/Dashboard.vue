@@ -34,25 +34,26 @@ const props = defineProps<{
         leads7: number;
         leads30: number;
         unreadLeads: number;
-        unreadMessages: number;
-    };
-    chart: { date: string; total: number }[];
-    latestLeads: Lead[];
+        unreadMessages: number | null;
+    } | null;
+    chart: { date: string; total: number }[] | null;
+    latestLeads: Lead[] | null;
     staticSite: {
         enabled: boolean;
         files: number;
         running: { total: number; done: number; progress: number } | null;
         lastBuiltAt: string | null;
         failures: { path: string; error: string | null }[];
-    };
-    hiddenFromGoogle: { path: string; label: string; edit_url: string; expected: boolean }[];
+    } | null;
+    // Null when the user's role does not cover that module (T19).
+    hiddenFromGoogle: { path: string; label: string; edit_url: string; expected: boolean }[] | null;
     schedulerLastRun: string | null;
 }>();
 
 // Cron should tick every minute; 10 minutes of silence means emails and rebuilds are waiting.
 const cronStale = computed(() => !props.schedulerLastRun || Date.now() - new Date(props.schedulerLastRun).getTime() > 10 * 60 * 1000);
 
-const unexpectedHidden = computed(() => props.hiddenFromGoogle.filter((h) => !h.expected));
+const unexpectedHidden = computed(() => props.hiddenFromGoogle?.filter((h) => !h.expected) ?? []);
 
 defineOptions({
     layout: {
@@ -69,7 +70,7 @@ function rebuild() {
 
 let poll: ReturnType<typeof setInterval> | undefined;
 watch(
-    () => props.staticSite.running,
+    () => props.staticSite?.running,
     (running) => {
         clearInterval(poll);
         if (running) poll = setInterval(() => router.reload({ only: ['staticSite'] }), 3000);
@@ -78,19 +79,26 @@ watch(
 );
 onBeforeUnmount(() => clearInterval(poll));
 
-const tiles = computed(() => [
-    { label: 'Leads today', value: props.stats.leadsToday },
-    { label: 'Leads, last 7 days', value: props.stats.leads7 },
-    { label: 'Leads, last 30 days', value: props.stats.leads30 },
-    {
-        label: 'Unread',
-        value: props.stats.unreadLeads + props.stats.unreadMessages,
-        hint: `${props.stats.unreadLeads} leads · ${props.stats.unreadMessages} messages`,
-    },
-]);
+const tiles = computed(() => {
+    const stats = props.stats;
+    if (!stats) return [];
+
+    return [
+        { label: 'Leads today', value: stats.leadsToday },
+        { label: 'Leads, last 7 days', value: stats.leads7 },
+        { label: 'Leads, last 30 days', value: stats.leads30 },
+        stats.unreadMessages === null
+            ? { label: 'Unread', value: stats.unreadLeads, hint: 'quote requests' }
+            : {
+                  label: 'Unread',
+                  value: stats.unreadLeads + stats.unreadMessages,
+                  hint: `${stats.unreadLeads} leads · ${stats.unreadMessages} messages`,
+              },
+    ];
+});
 
 const chartMax = computed(() =>
-    Math.max(1, ...props.chart.map((d) => d.total)),
+    Math.max(1, ...(props.chart ?? []).map((d) => d.total)),
 );
 
 const dateFmt = new Intl.DateTimeFormat('en-US', {
@@ -110,7 +118,7 @@ const formatDay = (day: string) => dateFmt.format(new Date(`${day}T00:00:00`));
             description="Quote requests and site status at a glance."
         />
 
-        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div v-if="tiles.length" class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <Card v-for="tile in tiles" :key="tile.label" class="gap-2 py-5">
                 <CardHeader class="px-5">
                     <CardDescription>{{ tile.label }}</CardDescription>
@@ -124,7 +132,7 @@ const formatDay = (day: string) => dateFmt.format(new Date(`${day}T00:00:00`));
             </Card>
         </div>
 
-        <Card>
+        <Card v-if="chart && stats">
             <CardHeader>
                 <CardTitle>Leads per day</CardTitle>
                 <CardDescription>Last 30 days</CardDescription>
@@ -172,7 +180,7 @@ const formatDay = (day: string) => dateFmt.format(new Date(`${day}T00:00:00`));
             </p>
         </div>
 
-        <Card :class="unexpectedHidden.length ? 'border-destructive' : ''">
+        <Card v-if="hiddenFromGoogle" :class="unexpectedHidden.length ? 'border-destructive' : ''">
             <CardHeader>
                 <CardTitle class="flex items-center gap-2">
                     Pages hidden from Google ({{ hiddenFromGoogle.length }})
@@ -194,8 +202,8 @@ const formatDay = (day: string) => dateFmt.format(new Date(`${day}T00:00:00`));
             </CardContent>
         </Card>
 
-        <div class="grid gap-4 lg:grid-cols-3">
-            <Card class="lg:col-span-2">
+        <div v-if="latestLeads || staticSite" class="grid gap-4 lg:grid-cols-3">
+            <Card v-if="latestLeads" :class="staticSite ? 'lg:col-span-2' : 'lg:col-span-3'">
                 <CardHeader>
                     <CardTitle>Latest quote requests</CardTitle>
                 </CardHeader>
@@ -238,7 +246,7 @@ const formatDay = (day: string) => dateFmt.format(new Date(`${day}T00:00:00`));
                 </CardContent>
             </Card>
 
-            <Card>
+            <Card v-if="staticSite" :class="{ 'lg:col-span-3': !latestLeads }">
                 <CardHeader>
                     <CardTitle>Static site</CardTitle>
                     <CardDescription

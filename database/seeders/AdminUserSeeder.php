@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
@@ -39,6 +40,7 @@ class AdminUserSeeder extends Seeder
             'name' => config('settings.admin.name'),
             'email' => $email,
             'password' => $password,
+            'role_id' => Role::administrator()->id,
         ])->forceFill(['email_verified_at' => now()])->save();
 
         $this->command?->info("Admin {$email} created.");

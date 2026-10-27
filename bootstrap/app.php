@@ -10,6 +10,8 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -41,4 +43,15 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
+
+        // T19: an admin page the user's role does not allow goes back to the dashboard with a message.
+        $exceptions->render(function (AccessDeniedHttpException $e, Request $request) {
+            if (! $request->is('admin', 'admin/*') || $request->expectsJson() || ! $request->user() || $request->routeIs('dashboard')) {
+                return null;
+            }
+
+            Inertia::flash('toast', ['type' => 'error', 'message' => 'Your role does not include access to that page.']);
+
+            return to_route('dashboard');
+        });
     })->create();

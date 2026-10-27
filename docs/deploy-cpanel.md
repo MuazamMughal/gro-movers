@@ -424,6 +424,8 @@ The forms always have a hidden trap field, a minimum fill-in time and a rate lim
 - **`queue:restart`** makes the next cron-started worker load the new code.
 - **`static:build --now`** refreshes every page with the new templates and assets. It must run **after** `up`, because it refuses to run while the site is down.
 
+**First update after roles were added (T19):** `migrate` makes every existing user an Administrator. Run `php artisan db:seed --class=RoleSeeder --force` once to add the Content Editor, Sales and SEO Manager roles.
+
 **Never** run `db:seed` with `SEED_CONTENT=true` on purpose after launch. It does nothing while services exist, but there is no reason to run it.
 
 ---

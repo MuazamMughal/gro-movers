@@ -53,8 +53,15 @@ class HandleInertiaRequests extends Middleware
             'seoDefaults' => fn () => $request->user() ? SeoForm::defaults() : null,
             // Unread counts for the sidebar badges.
             'inbox' => fn () => $request->user() ? [
-                'leads' => Lead::query()->unread()->count(),
-                'messages' => ContactMessage::query()->unread()->count(),
+                'leads' => $request->user()->hasPermission('leads.view') ? Lead::query()->unread()->count() : null,
+                'messages' => $request->user()->hasPermission('messages') ? ContactMessage::query()->unread()->count() : null,
+            ] : null,
+            // T19: what the signed-in user's role allows (sidebar, buttons).
+            'access' => fn () => $request->user() ? [
+                'role' => $request->user()->role?->name,
+                'administrator' => $request->user()->isAdministrator(),
+                'permissions' => $request->user()->permissions(),
+                'content' => $request->user()->can('content'),
             ] : null,
             // Crop presets for the image picker and cropper (config/media.php).
             'mediaPresets' => fn () => collect(config('media.presets'))->map(fn (array $p) => [

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -30,7 +31,21 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            // Full access by default; use withRole() for restricted users.
+            'role_id' => fn () => Role::administrator()->id,
         ];
+    }
+
+    /**
+     * A user with a custom role holding exactly these permissions.
+     *
+     * @param  list<string>  $permissions
+     */
+    public function withPermissions(array $permissions): static
+    {
+        return $this->state(fn () => [
+            'role_id' => Role::query()->create(['name' => 'Role '.Str::random(6), 'permissions' => $permissions])->id,
+        ]);
     }
 
     /**

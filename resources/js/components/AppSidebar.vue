@@ -16,6 +16,7 @@ import {
     Newspaper,
     Search,
     Settings,
+    ShieldCheck,
     Star,
     Tags,
     Truck,
@@ -53,15 +54,18 @@ import { index as servicesIndex } from '@/routes/admin/services';
 import { report as seoReport } from '@/routes/admin/seo';
 import { index as settingsIndex } from '@/routes/admin/settings';
 import { index as tagsIndex } from '@/routes/admin/tags';
+import { index as rolesIndex } from '@/routes/admin/roles';
 import { index as usersIndex } from '@/routes/admin/users';
 import type { NavGroup, NavItem } from '@/types';
 import { computed } from 'vue';
+import { useAccess } from '@/composables/useAccess';
 
 // Modules marked `disabled` are built in later tasks (see docs/02-build-prompt.md §14).
 const page = usePage();
-const inbox = computed(() => page.props.inbox as { leads: number; messages: number } | null);
+const inbox = computed(() => page.props.inbox as { leads: number | null; messages: number | null } | null);
+const { can, isAdministrator } = useAccess();
 
-const navGroups = computed<NavGroup[]>(() => [
+const allGroups = computed<NavGroup[]>(() => [
     {
         label: 'Overview',
         items: [
@@ -71,42 +75,53 @@ const navGroups = computed<NavGroup[]>(() => [
     {
         label: 'Content',
         items: [
-            { title: 'Pages', href: pagesIndex(), icon: FileText },
-            { title: 'Services', href: servicesIndex(), icon: Truck },
-            { title: 'Service Areas', href: areasIndex(), icon: MapPin },
-            { title: 'Area × Service', href: areaServicesIndex(), icon: Grid3x3 },
-            { title: 'Reviews', href: reviewsIndex(), icon: Star },
-            { title: 'FAQs', href: faqsIndex(), icon: CircleHelp },
-            { title: 'Media Library', href: mediaIndex(), icon: Image },
+            { title: 'Pages', href: pagesIndex(), icon: FileText, permission: 'pages' },
+            { title: 'Services', href: servicesIndex(), icon: Truck, permission: 'services' },
+            { title: 'Service Areas', href: areasIndex(), icon: MapPin, permission: 'areas' },
+            { title: 'Area × Service', href: areaServicesIndex(), icon: Grid3x3, permission: 'services' },
+            { title: 'Reviews', href: reviewsIndex(), icon: Star, permission: 'reviews' },
+            { title: 'FAQs', href: faqsIndex(), icon: CircleHelp, permission: 'faqs' },
+            { title: 'Media Library', href: mediaIndex(), icon: Image, permission: 'media' },
         ],
     },
     {
         label: 'Blog',
         items: [
-            { title: 'Posts', href: postsIndex(), icon: Newspaper },
-            { title: 'Categories', href: blogCategoriesIndex(), icon: FolderOpen },
-            { title: 'Authors', href: authorsIndex(), icon: UserRound },
-            { title: 'Tags', href: tagsIndex(), icon: Tags },
+            { title: 'Posts', href: postsIndex(), icon: Newspaper, permission: 'blog' },
+            { title: 'Categories', href: blogCategoriesIndex(), icon: FolderOpen, permission: 'blog' },
+            { title: 'Authors', href: authorsIndex(), icon: UserRound, permission: 'blog' },
+            { title: 'Tags', href: tagsIndex(), icon: Tags, permission: 'blog' },
         ],
     },
     {
         label: 'Leads',
         items: [
-            { title: 'Quote Requests', href: leadsIndex(), icon: Inbox, badge: inbox.value?.leads },
-            { title: 'Contact Messages', href: messagesIndex(), icon: Mail, badge: inbox.value?.messages },
+            { title: 'Quote Requests', href: leadsIndex(), icon: Inbox, badge: inbox.value?.leads ?? undefined, permission: 'leads.view' },
+            { title: 'Contact Messages', href: messagesIndex(), icon: Mail, badge: inbox.value?.messages ?? undefined, permission: 'messages' },
         ],
     },
     {
         label: 'Site',
         items: [
-            { title: 'Menus', href: menusIndex(), icon: Menu },
-            { title: 'Move Types', href: moveTypesIndex(), icon: ListChecks },
-            { title: 'SEO Tools', href: seoReport(), icon: Search },
-            { title: 'Settings', href: settingsIndex(), icon: Settings },
-            { title: 'Users', href: usersIndex(), icon: Users },
+            { title: 'Menus', href: menusIndex(), icon: Menu, permission: 'menus' },
+            { title: 'Move Types', href: moveTypesIndex(), icon: ListChecks, permission: 'move_types' },
+            { title: 'SEO Tools', href: seoReport(), icon: Search, permission: 'seo' },
+            { title: 'Settings', href: settingsIndex(), icon: Settings, permission: 'settings' },
+            { title: 'Users', href: usersIndex(), icon: Users, permission: 'administrator' },
+            { title: 'Roles', href: rolesIndex(), icon: ShieldCheck, permission: 'administrator' },
         ],
     },
 ]);
+
+// Only the modules the user's role allows; groups left empty are dropped.
+const navGroups = computed<NavGroup[]>(() =>
+    allGroups.value
+        .map((group) => ({
+            ...group,
+            items: group.items.filter((item) => !item.permission || (item.permission === 'administrator' ? isAdministrator.value : can(item.permission))),
+        }))
+        .filter((group) => group.items.length),
+);
 
 const footerNavItems: NavItem[] = [
     { title: 'View website', href: home(), icon: ExternalLink },

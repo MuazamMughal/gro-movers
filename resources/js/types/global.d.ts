@@ -21,6 +21,7 @@ declare module '@inertiajs/core' {
             auth: Auth;
             sidebarOpen: boolean;
             brand: { name: string; logo: string | null; logoDark: string | null; icon: string };
+            access: { role: string | null; administrator: boolean; permissions: string[]; content: boolean } | null;
             [key: string]: unknown;
         };
     }

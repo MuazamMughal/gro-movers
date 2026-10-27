@@ -15,6 +15,8 @@ export type NavItem = {
     disabled?: boolean;
     /** Only highlight on an exact URL match (e.g. the dashboard at /admin). */
     exact?: boolean;
+    /** Permission needed to see the item ('administrator' for users and roles); see useAccess(). */
+    permission?: string;
     /** Count shown on the right (e.g. unread leads); hidden when 0. */
     badge?: number;
 };
