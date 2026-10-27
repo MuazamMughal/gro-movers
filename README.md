@@ -7,6 +7,8 @@ SEO-first marketing site for a US moving company.
 Specs:
 - [docs/01-requirements-and-feasibility.md](docs/01-requirements-and-feasibility.md): requirements and decisions
 - [docs/02-build-prompt.md](docs/02-build-prompt.md): build spec and task list (T0–T18)
+- [docs/deploy-cpanel.md](docs/deploy-cpanel.md): deploying to cPanel, cron, SSL, backups, Search Console
+- [docs/admin-guide.md](docs/admin-guide.md): using the admin day to day
 
 ## Stack
 - **Backend:** Laravel 13 · PHP 8.3 · MySQL 8.0
@@ -83,4 +85,4 @@ Public pages are pre-rendered to `public/static/{path}/index.html`, and Apache s
 - The Sail dev server ignores these files; test them with `make apache` (http://localhost:8080).
 
 ## Deployment
-cPanel. See `docs/deploy-cpanel.md` (written in T17).
+cPanel. See [docs/deploy-cpanel.md](docs/deploy-cpanel.md).
