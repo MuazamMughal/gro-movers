@@ -12,6 +12,7 @@ use App\Models\Service;
 use App\Sections\AutoSections;
 use App\Sections\RenderedSections;
 use App\Sections\SectionRenderer;
+use App\Seo\Schema;
 use App\Support\Breadcrumbs;
 use App\Support\Seo;
 use Illuminate\Contracts\View\View;
@@ -67,6 +68,7 @@ class AreaController extends Controller
             'area' => $area,
             'seo' => Seo::for($area, $area->publicPath()),
             'breadcrumbs' => Breadcrumbs::area($area),
+            'schema' => [Schema::area($area)],
             'rendered' => $this->renderer->render($area, area: $area, sections: $sections),
             'closing' => $this->renderer->render($area, area: $area, sections: $closing, allowH1: false),
             'services' => $this->liveServices($area),
@@ -113,6 +115,7 @@ class AreaController extends Controller
             'page' => $page,
             'seo' => Seo::for($page, $page->publicPath()),
             'breadcrumbs' => Breadcrumbs::areaService($area, $service),
+            'schema' => [Schema::areaService($page)],
             'rendered' => $this->renderer->render($owner, area: $area, service: $service, sections: $sections),
             'closing' => $this->renderer->render($owner, area: $area, service: $service, sections: $closing, allowH1: false),
             'siblings' => $this->liveServices($area)->reject(fn ($s) => $s['id'] === $service->id)->values(),

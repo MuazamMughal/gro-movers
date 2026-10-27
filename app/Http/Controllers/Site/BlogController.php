@@ -11,6 +11,7 @@ use App\Models\Post;
 use App\Models\Section;
 use App\Sections\AutoSections;
 use App\Sections\SectionRenderer;
+use App\Seo\Schema;
 use App\Support\Breadcrumbs;
 use App\Support\Seo;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -117,6 +118,7 @@ class BlogController extends Controller
             'post' => $post,
             'seo' => Seo::for($post, $post->publicPath()),
             'breadcrumbs' => Breadcrumbs::post($post),
+            'schema' => [Schema::post($post)],
             'body' => PostContent::render($post->content),
             'related' => $this->related($post),
             'previous' => $this->neighbour($post, older: true),

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ContactMessage;
 use App\Models\Lead;
 use App\Models\StaticBuild;
+use App\Seo\SeoAudit;
 use Carbon\CarbonImmutable;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -44,6 +45,10 @@ class DashboardController extends Controller
                 'id', 'full_name', 'from_city', 'to_city', 'move_date', 'move_type_name', 'status', 'read_at', 'created_at',
             ]),
             'lastBuild' => $lastBuild?->only(['path', 'status', 'error', 'built_at']),
+            // "Pages hidden from Google (N)": should only ever be /thank-you.
+            'hiddenFromGoogle' => collect(SeoAudit::run()['hidden'])->map(fn ($h) => [
+                'path' => $h['path'], 'label' => $h['label'], 'edit_url' => $h['edit_url'], 'expected' => $h['expected'],
+            ])->values(),
         ]);
     }
 }

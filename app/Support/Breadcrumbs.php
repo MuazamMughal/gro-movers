@@ -107,26 +107,6 @@ class Breadcrumbs
     }
 
     /**
-     * BreadcrumbList structured data (absolute URLs; the current page uses its canonical).
-     *
-     * @param  list<Crumb>  $crumbs
-     * @return array<string, mixed>
-     */
-    public static function schema(array $crumbs, ?string $currentUrl = null): array
-    {
-        return [
-            '@context' => 'https://schema.org',
-            '@type' => 'BreadcrumbList',
-            'itemListElement' => array_map(fn (array $crumb, int $i) => array_filter([
-                '@type' => 'ListItem',
-                'position' => $i + 1,
-                'name' => $crumb['label'],
-                'item' => $crumb['url'] !== null ? Seo::absoluteUrl($crumb['url']) : $currentUrl,
-            ]), $crumbs, array_keys($crumbs)),
-        ];
-    }
-
-    /**
      * Home plus the given [label, url] pairs.
      *
      * @param  array{0: string, 1: string|null}  ...$items

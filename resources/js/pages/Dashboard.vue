@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import { RefreshCw } from '@lucide/vue';
 import { computed } from 'vue';
 import Heading from '@/components/Heading.vue';
@@ -13,6 +13,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { dashboard } from '@/routes';
+import { report as seoReport } from '@/routes/admin/seo';
 
 type Lead = {
     id: number;
@@ -42,7 +43,10 @@ const props = defineProps<{
         error: string | null;
         built_at: string;
     } | null;
+    hiddenFromGoogle: { path: string; label: string; edit_url: string; expected: boolean }[];
 }>();
+
+const unexpectedHidden = computed(() => props.hiddenFromGoogle.filter((h) => !h.expected));
 
 defineOptions({
     layout: {
@@ -132,6 +136,28 @@ const formatDay = (day: string) => dateFmt.format(new Date(`${day}T00:00:00`));
                     <span>{{ formatDay(chart[0].date) }}</span>
                     <span>Today</span>
                 </div>
+            </CardContent>
+        </Card>
+
+        <Card :class="unexpectedHidden.length ? 'border-destructive' : ''">
+            <CardHeader>
+                <CardTitle class="flex items-center gap-2">
+                    Pages hidden from Google ({{ hiddenFromGoogle.length }})
+                    <Badge v-if="unexpectedHidden.length" variant="destructive">{{ unexpectedHidden.length }} to check</Badge>
+                </CardTitle>
+                <CardDescription>
+                    Normally only the thank-you page is hidden. Anything else here will not show up in Google search.
+                </CardDescription>
+            </CardHeader>
+            <CardContent class="text-sm">
+                <ul class="flex flex-wrap gap-2">
+                    <li v-for="h in hiddenFromGoogle" :key="h.path">
+                        <Link :href="h.edit_url" class="inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 hover:bg-muted" :class="{ 'border-destructive text-destructive': !h.expected }">
+                            {{ h.label }} <span class="font-mono text-xs text-muted-foreground">{{ h.path }}</span>
+                        </Link>
+                    </li>
+                </ul>
+                <Link :href="seoReport()" class="mt-3 inline-block text-muted-foreground underline">Open the SEO report</Link>
             </CardContent>
         </Card>
 

@@ -29,12 +29,13 @@ class LayoutTest extends TestCase
         $this->seed([SettingsSeeder::class, SystemPagesSeeder::class, MenuSeeder::class, BlogCategorySeeder::class]);
     }
 
-    /** Decoded BreadcrumbList JSON-LD of a page. */
+    /** The BreadcrumbList node of the page's JSON-LD graph. */
     private function breadcrumbSchema(string $html): ?array
     {
-        preg_match('#<script type="application/ld\+json">(\{"@context":"https://schema.org","@type":"BreadcrumbList".*?)</script>#s', $html, $m);
+        preg_match('#<script type="application/ld\+json">(.*?)</script>#s', $html, $m);
+        $graph = json_decode($m[1] ?? 'null', true)['@graph'] ?? [];
 
-        return isset($m[1]) ? json_decode($m[1], true) : null;
+        return collect($graph)->firstWhere('@type', 'BreadcrumbList');
     }
 
     public function test_every_page_has_contact_bar_sticky_header_and_mobile_call_quote_bar()

@@ -7,6 +7,8 @@
     @fonts('inter')
     @vite('resources/css/site.css')
     <x-site.theme-vars />
+    <x-site.schema :seo="$seo" />
+    <x-site.integrations-head />
 </head>
 <body class="font-sans">
     <main class="grid min-h-screen place-items-center px-4">

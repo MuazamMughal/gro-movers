@@ -1,3 +1,5 @@
+import { track } from './analytics';
+
 /**
  * Progressive enhancement for the server-rendered public forms: inline
  * validation, a fresh signed start time, AJAX submit with server errors,
@@ -14,12 +16,6 @@ export type FormOptions = {
     /** Called before validation (e.g. to normalise the phone field). */
     beforeSubmit?: (form: HTMLFormElement) => void;
 };
-
-declare global {
-    interface Window {
-        dataLayer?: Record<string, unknown>[];
-    }
-}
 
 const field = (form: HTMLFormElement, name: string) =>
     form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null;
@@ -125,8 +121,7 @@ export function enhanceForm(form: HTMLFormElement, options: FormOptions): void {
             const data = await response.json().catch(() => ({}));
 
             if (response.ok && data.ok) {
-                window.dataLayer = window.dataLayer || [];
-                window.dataLayer.push({ event: options.event, form_id: form.id, page_path: location.pathname });
+                track(options.event, { form_id: form.id, page_path: location.pathname });
                 location.assign(data.redirect || '/thank-you');
 
                 return;

@@ -10,6 +10,7 @@ use App\Models\Post;
 use App\Models\Service;
 use App\Sections\AutoSections;
 use App\Sections\SectionRenderer;
+use App\Seo\Schema;
 use App\Support\Breadcrumbs;
 use App\Support\Seo;
 use Illuminate\Contracts\View\View;
@@ -64,6 +65,7 @@ class ServiceController extends Controller
             'service' => $service,
             'seo' => Seo::for($service, $service->publicPath()),
             'breadcrumbs' => Breadcrumbs::service($service),
+            'schema' => [Schema::service($service)],
             'rendered' => $this->renderer->render($service, service: $service, sections: $sections),
             'closing' => $this->renderer->render($service, service: $service, sections: $closing, allowH1: false),
             'areas' => $this->areasFor($service),

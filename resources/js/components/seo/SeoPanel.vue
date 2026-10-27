@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { usePage } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import { ChevronDown, EyeOff, Monitor, Smartphone } from '@lucide/vue';
 import { computed, ref, watch } from 'vue';
 import ConfirmDialog from '@/components/ConfirmDialog.vue';
@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { request } from '@/lib/http';
 import { show as showMedia } from '@/routes/admin/media';
+import { check as checkSeo } from '@/routes/admin/seo';
 import LengthMeter from './LengthMeter.vue';
 import type { SeoDefaults, SeoProps, SeoValues } from './types';
 
@@ -79,6 +80,38 @@ const displayUrl = computed(() => {
         return { host: url, crumbs: [] as string[] };
     }
 });
+
+// ---- Uniqueness: warn when another indexable page already uses this title or description ----
+type Clash = { field: 'title' | 'description' | 'h1'; label: string; path: string; edit_url: string };
+const clashes = ref<Clash[]>([]);
+const ownPath = computed(() => {
+    try {
+        return props.url ? new URL(props.url).pathname : null;
+    } catch {
+        return null;
+    }
+});
+const clashesFor = (field: Clash['field']) => clashes.value.filter((c) => c.field === field);
+
+let uniquenessTimer: ReturnType<typeof setTimeout> | undefined;
+watch(
+    [title, description],
+    () => {
+        clearTimeout(uniquenessTimer);
+        uniquenessTimer = setTimeout(async () => {
+            try {
+                const res = await request<{ clashes: Clash[] }>(checkSeo().url, {
+                    method: 'POST',
+                    body: { path: ownPath.value, title: title.value, description: description.value },
+                });
+                clashes.value = res.clashes;
+            } catch {
+                clashes.value = [];
+            }
+        }, 500);
+    },
+    { immediate: true },
+);
 
 // ---- Social preview image --------------------------------------------------
 const imageId = computed(() => model.value.og_image_id ?? props.fallbacks.image_id ?? defaults.value.default_image_id);
@@ -201,6 +234,9 @@ const advancedOpen = ref(!!(model.value.canonical_url || model.value.og_title ||
                     Must be unique across the site.
                 </p>
                 <p v-if="error('meta_title')" class="text-sm text-destructive">{{ error('meta_title') }}</p>
+                <p v-for="c in clashesFor('title')" :key="'title' + c.path" class="text-sm text-amber-700 dark:text-amber-400" role="status">
+                    Same title as <Link :href="c.edit_url" class="font-medium underline">{{ c.label }}</Link> <span class="font-mono text-xs">{{ c.path }}</span>. Each page needs its own.
+                </p>
             </div>
 
             <div class="grid gap-2">
@@ -223,6 +259,9 @@ const advancedOpen = ref(!!(model.value.canonical_url || model.value.og_title ||
                     The grey text under the link. Aim for 120–160 characters with the service, the city and a reason to click.
                 </p>
                 <p v-if="error('meta_description')" class="text-sm text-destructive">{{ error('meta_description') }}</p>
+                <p v-for="c in clashesFor('description')" :key="'description' + c.path" class="text-sm text-amber-700 dark:text-amber-400" role="status">
+                    Same description as <Link :href="c.edit_url" class="font-medium underline">{{ c.label }}</Link> <span class="font-mono text-xs">{{ c.path }}</span>. Each page needs its own.
+                </p>
             </div>
         </div>
 

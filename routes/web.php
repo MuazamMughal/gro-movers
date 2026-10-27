@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\PreviewController;
 use App\Http\Controllers\Admin\ReviewController;
+use App\Http\Controllers\Admin\SeoToolsController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\TagController;
@@ -24,6 +25,7 @@ use App\Http\Controllers\Site\BlogController as SiteBlogController;
 use App\Http\Controllers\Site\FormController;
 use App\Http\Controllers\Site\PageController as SitePageController;
 use App\Http\Controllers\Site\ReviewController as SiteReviewController;
+use App\Http\Controllers\Site\SeoFileController;
 use App\Http\Controllers\Site\ServiceController as SiteServiceController;
 use Illuminate\Support\Facades\Route;
 
@@ -38,6 +40,10 @@ Route::get('service-areas/{area}/{service}', [SiteAreaController::class, 'servic
 Route::get('services/{slug}', [SiteServiceController::class, 'show'])->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('services.show');
 
 Route::get('reviews', [SiteReviewController::class, 'index'])->name('reviews.index');
+
+Route::get('sitemap.xml', [SeoFileController::class, 'sitemap'])->name('sitemap');
+Route::get('robots.txt', [SeoFileController::class, 'robots'])->name('robots');
+Route::get('google{code}.html', [SeoFileController::class, 'verification'])->where('code', '[a-z0-9]+')->name('search-console-file');
 
 // Public forms (no CSRF: see bootstrap/app.php).
 Route::get('forms/token', [FormController::class, 'token'])->name('forms.token');
@@ -95,6 +101,19 @@ Route::prefix('admin')->group(function () {
             Route::delete('leads/{lead}/notes/{note}', [LeadController::class, 'destroyNote'])->name('leads.notes.destroy');
             Route::resource('leads', LeadController::class)->only(['index', 'show', 'update', 'destroy']);
             Route::resource('messages', ContactMessageController::class)->only(['index', 'show', 'update', 'destroy']);
+
+            Route::prefix('seo')->name('seo.')->controller(SeoToolsController::class)->group(function () {
+                Route::get('/', 'report')->name('report');
+                Route::post('check', 'check')->name('check');
+                Route::get('redirects', 'redirects')->name('redirects.index');
+                Route::post('redirects', 'storeRedirect')->name('redirects.store');
+                Route::post('redirects/import', 'importRedirects')->name('redirects.import');
+                Route::put('redirects/{redirect}', 'updateRedirect')->name('redirects.update');
+                Route::delete('redirects/{redirect}', 'destroyRedirect')->name('redirects.destroy');
+                Route::get('robots', 'robots')->name('robots');
+                Route::put('robots', 'updateRobots')->name('robots.update');
+                Route::post('sitemap', 'regenerateSitemap')->name('sitemap.regenerate');
+            });
 
             Route::get('menus', [MenuController::class, 'index'])->name('menus.index');
             Route::get('menus/{menu}/edit', [MenuController::class, 'edit'])->name('menus.edit');

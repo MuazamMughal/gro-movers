@@ -1,5 +1,8 @@
+import { initAnalytics, track, trackClicks } from './lib/analytics';
+
 /**
  * Public site script (tiny, deferred module). It:
+ * - loads GTM / GA4 / Pixel after the first interaction or when idle, and tracks call and quote clicks,
  * - remembers where the visitor came from (landing page, referrer, UTM tags) for the forms,
  * - loads form islands only when a form comes near the screen or is focused,
  * - pushes the GA4 event on /thank-you after a no-JS form submit (?sent=…).
@@ -77,8 +80,7 @@ function thankYouEvent(): void {
     const sent = params.get('sent');
     if (!sent || !['quote', 'contact'].includes(sent)) return;
 
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({ event: sent === 'quote' ? 'generate_lead' : 'contact_submit', form_id: `${sent}-nojs`, page_path: location.pathname });
+    track(sent === 'quote' ? 'generate_lead' : 'contact_submit', { form_id: `${sent}-nojs`, page_path: location.pathname });
 
     // Drop the parameter so a reload does not count the lead twice.
     params.delete('sent');
@@ -86,5 +88,7 @@ function thankYouEvent(): void {
 }
 
 rememberVisit();
+initAnalytics();
+trackClicks();
 mountIslands();
 thankYouEvent();

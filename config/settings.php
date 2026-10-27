@@ -77,6 +77,7 @@ return [
         'integrations.ga4_id' => null,
         'integrations.gtm_id' => null,
         'integrations.search_console_verification' => null,
+        'integrations.search_console_file' => null,
         'integrations.facebook_pixel_id' => null,
         'integrations.head_scripts' => null,
         'integrations.body_scripts' => null,

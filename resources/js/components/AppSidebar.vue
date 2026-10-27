@@ -50,6 +50,7 @@ import { index as pagesIndex } from '@/routes/admin/pages';
 import { index as postsIndex } from '@/routes/admin/posts';
 import { index as reviewsIndex } from '@/routes/admin/reviews';
 import { index as servicesIndex } from '@/routes/admin/services';
+import { report as seoReport } from '@/routes/admin/seo';
 import { index as settingsIndex } from '@/routes/admin/settings';
 import { index as tagsIndex } from '@/routes/admin/tags';
 import { index as usersIndex } from '@/routes/admin/users';
@@ -100,7 +101,7 @@ const navGroups = computed<NavGroup[]>(() => [
         items: [
             { title: 'Menus', href: menusIndex(), icon: Menu },
             { title: 'Move Types', href: moveTypesIndex(), icon: ListChecks },
-            { title: 'SEO Tools', href: '#', icon: Search, disabled: true },
+            { title: 'SEO Tools', href: seoReport(), icon: Search },
             { title: 'Settings', href: settingsIndex(), icon: Settings },
             { title: 'Users', href: usersIndex(), icon: Users },
         ],

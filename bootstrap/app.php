@@ -2,6 +2,8 @@
 
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\HandleRedirects;
+use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\VerifyFormOrigin;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -23,6 +25,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->preventRequestForgery(except: ['forms/*']);
 
         $middleware->alias(['form.origin' => VerifyFormOrigin::class]);
+
+        // Redirects run before routing (old URLs may match no route at all);
+        // security headers wrap every response.
+        $middleware->prepend(HandleRedirects::class);
+        $middleware->append(SecurityHeaders::class);
 
         $middleware->web(append: [
             HandleAppearance::class,

@@ -22,9 +22,18 @@
     @fonts('inter')
     @vite(['resources/css/site.css', 'resources/js/site/site.ts'])
     <x-site.theme-vars />
+    <x-site.schema
+        :seo="$seo"
+        :breadcrumbs="$breadcrumbs ?? []"
+        :nodes="$schema ?? []"
+        :business="$schemaBusiness ?? null"
+        :faqs="collect([$rendered ?? null, $closing ?? null, $reviews ?? null])->filter(fn ($r) => $r instanceof \App\Sections\RenderedSections)->flatMap->faqs"
+    />
+    <x-site.integrations-head :preview="$preview ?? false" />
     @stack('head')
 </head>
 <body @class(['font-sans', 'pb-16 md:pb-0' => ! ($bare ?? false)])>
+    <x-site.integrations-body />
     @if ($preview ?? false)
         <div class="sticky top-0 z-50 bg-amber-400 px-4 py-2 text-center text-sm font-semibold text-black" role="status">
             {{ $previewNotice ?? 'Preview of unsaved changes — this is not the live page.' }}
@@ -38,7 +47,7 @@
 
     <main id="main">
         @if (! empty($breadcrumbs))
-            <x-site.breadcrumbs :items="$breadcrumbs" :current="$seo->canonical" />
+            <x-site.breadcrumbs :items="$breadcrumbs" />
         @endif
         @yield('content')
     </main>
