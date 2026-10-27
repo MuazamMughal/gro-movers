@@ -34,7 +34,9 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard, home } from '@/routes';
 import { index as mediaIndex } from '@/routes/admin/media';
+import { index as moveTypesIndex } from '@/routes/admin/move-types';
 import { index as pagesIndex } from '@/routes/admin/pages';
+import { index as servicesIndex } from '@/routes/admin/services';
 import { index as settingsIndex } from '@/routes/admin/settings';
 import { index as usersIndex } from '@/routes/admin/users';
 import type { NavGroup, NavItem } from '@/types';
@@ -51,7 +53,7 @@ const navGroups: NavGroup[] = [
         label: 'Content',
         items: [
             { title: 'Pages', href: pagesIndex(), icon: FileText },
-            { title: 'Services', href: '#', icon: Truck, disabled: true },
+            { title: 'Services', href: servicesIndex(), icon: Truck },
             { title: 'Service Areas', href: '#', icon: MapPin, disabled: true },
             { title: 'Area × Service', href: '#', icon: Grid3x3, disabled: true },
             { title: 'Blog', href: '#', icon: Newspaper, disabled: true },
@@ -71,7 +73,7 @@ const navGroups: NavGroup[] = [
         label: 'Site',
         items: [
             { title: 'Menus', href: '#', icon: Menu, disabled: true },
-            { title: 'Move Types', href: '#', icon: ListChecks, disabled: true },
+            { title: 'Move Types', href: moveTypesIndex(), icon: ListChecks },
             { title: 'SEO Tools', href: '#', icon: Search, disabled: true },
             { title: 'Settings', href: settingsIndex(), icon: Settings },
             { title: 'Users', href: usersIndex(), icon: Users },

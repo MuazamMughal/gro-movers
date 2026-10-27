@@ -1,6 +1,6 @@
 {{-- Trust bar: key numbers and badges. --}}
 @php($dark = ($s['background'] ?? 'muted') === 'dark')
-<x-site.section :background="$s['background'] ?? 'muted'" :anchor="$anchor" class="py-10! md:!py-12">
+<x-site.section :background="$s['background'] ?? 'muted'" :anchor="$anchor" class="py-10! md:py-12!">
     @if ($s['heading'] ?? null)
         <{{ $headingTag }} class="mb-8 text-center text-xl font-bold">{{ $s['heading'] }}</{{ $headingTag }}>
     @endif

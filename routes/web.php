@@ -2,15 +2,20 @@
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MediaController;
+use App\Http\Controllers\Admin\MoveTypeController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\PreviewController;
+use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Site\PageController as SitePageController;
+use App\Http\Controllers\Site\ServiceController as SiteServiceController;
 use Illuminate\Support\Facades\Route;
 
 // Public site (Blade, server-rendered).
 Route::get('/', [SitePageController::class, 'home'])->name('home');
+Route::get('services', [SiteServiceController::class, 'index'])->name('services.index');
+Route::get('services/{slug}', [SiteServiceController::class, 'show'])->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*')->name('services.show');
 
 // Admin panel (Inertia + Vue). Fortify auth routes share the same /admin prefix.
 Route::prefix('admin')->group(function () {
@@ -21,6 +26,13 @@ Route::prefix('admin')->group(function () {
             Route::resource('users', UserController::class)->except('show');
 
             Route::resource('pages', PageController::class)->except('show');
+
+            Route::post('services/reorder', [ServiceController::class, 'reorder'])->name('services.reorder');
+            Route::patch('services/{service}/toggle', [ServiceController::class, 'toggle'])->name('services.toggle');
+            Route::resource('services', ServiceController::class)->except('show');
+
+            Route::post('move-types/reorder', [MoveTypeController::class, 'reorder'])->name('move-types.reorder');
+            Route::resource('move-types', MoveTypeController::class)->only(['index', 'store', 'update', 'destroy']);
             Route::post('preview/page', [PreviewController::class, 'page'])->name('preview.page');
             // A refreshed or bookmarked preview tab arrives as GET: explain instead of erroring.
             Route::get('preview/page', fn () => response()->view('admin.preview-error', [

@@ -3,7 +3,7 @@
     $theme = $s['theme'] ?? 'dark';
     $background = match ($theme) { 'accent' => 'accent', 'light' => 'muted', default => 'dark' };
 @endphp
-<x-site.section :background="$background" :anchor="$anchor" class="py-14! md:!py-16">
+<x-site.section :background="$background" :anchor="$anchor" class="py-14! md:py-16!">
     <div class="flex flex-col items-center gap-6 text-center lg:flex-row lg:justify-between lg:text-left">
         <div class="max-w-2xl">
             <{{ $headingTag }} class="text-3xl font-extrabold tracking-tight text-balance">{{ $s['heading'] }}</{{ $headingTag }}>
