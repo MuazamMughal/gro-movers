@@ -4,7 +4,7 @@
     $theme = match ($background) {
         'dark' => 'bg-secondary text-primary',
         'muted' => 'bg-muted text-secondary',
-        'accent' => 'bg-tertiary text-white',
+        'accent' => 'bg-tertiary-strong text-white',
         default => 'bg-primary text-secondary',
     };
     $container = $width === 'narrow' ? 'max-w-3xl' : 'max-w-7xl';

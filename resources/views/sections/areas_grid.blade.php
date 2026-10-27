@@ -9,7 +9,7 @@
                 <a href="{{ $area->publicPath() }}" @class([
                     'flex items-center gap-3 rounded-xl border px-5 py-4 font-semibold transition-colors',
                     'border-white/15 hover:bg-white/10' => $dark,
-                    'border-border bg-white text-secondary hover:border-tertiary hover:text-tertiary' => ! $dark,
+                    'border-border bg-white text-secondary hover:border-tertiary hover:text-tertiary-strong' => ! $dark,
                 ])>
                     <x-site.icon name="map-pin" class="size-5 shrink-0 text-tertiary" />
                     <span>Movers in {{ $area->name }}</span>

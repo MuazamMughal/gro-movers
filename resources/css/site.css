@@ -30,11 +30,13 @@
     --color-primary: #ffffff;
     --color-secondary: #0a2e5c;
     --color-tertiary: #f66419;
+    /* Accessible shade for white-on-accent buttons and accent text (computed from Settings, see App\Support\Theme). */
+    --color-tertiary-strong: #c55014;
     --color-muted: #f1f5fa;
     --color-border: #dce4ee;
 
     /* Derived shades follow the admin colors automatically. */
-    --color-tertiary-hover: color-mix(in oklab, var(--color-tertiary) 86%, black);
+    --color-tertiary-hover: color-mix(in oklab, var(--color-tertiary-strong) 85%, black);
     --color-tertiary-soft: color-mix(in oklab, var(--color-tertiary) 12%, white);
     --color-secondary-light: color-mix(in oklab, var(--color-secondary) 72%, white);
     --color-secondary-dark: color-mix(in oklab, var(--color-secondary) 80%, black);
@@ -75,15 +77,15 @@
         }
 
         & a {
-            @apply font-semibold text-tertiary underline decoration-2 underline-offset-2 hover:text-tertiary-hover;
+            @apply font-semibold text-tertiary-strong underline decoration-2 underline-offset-2 hover:text-tertiary-hover;
         }
 
         & ul {
-            @apply list-disc space-y-2 pl-6 marker:text-tertiary;
+            @apply list-disc space-y-2 pl-6 marker:text-tertiary-strong;
         }
 
         & ol {
-            @apply list-decimal space-y-2 pl-6 marker:font-bold marker:text-tertiary;
+            @apply list-decimal space-y-2 pl-6 marker:font-bold marker:text-tertiary-strong;
         }
 
         & blockquote {

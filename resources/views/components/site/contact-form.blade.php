@@ -34,5 +34,5 @@
         <x-site.form-error field="message" :id="$id.'-message'" :errors="$errors" />
     </div>
     <x-site.form-guard :old="$old" />
-    <button type="submit" class="inline-flex min-h-12 items-center justify-center rounded-lg bg-tertiary px-6 py-3 font-bold text-white hover:bg-tertiary-hover disabled:cursor-wait disabled:opacity-70">Send message</button>
+    <button type="submit" class="inline-flex min-h-12 items-center justify-center rounded-lg bg-tertiary-strong px-6 py-3 font-bold text-white hover:bg-tertiary-hover disabled:cursor-wait disabled:opacity-70">Send message</button>
 </form>

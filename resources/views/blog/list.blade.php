@@ -23,7 +23,7 @@
                     <a href="{{ $item['url'] }}" @class([
                         'inline-flex min-h-11 items-center rounded-full border px-5 font-semibold transition-colors',
                         'border-secondary bg-secondary text-primary' => $item['active'],
-                        'border-border hover:border-tertiary hover:text-tertiary' => ! $item['active'],
+                        'border-border hover:border-tertiary hover:text-tertiary-strong' => ! $item['active'],
                     ]) @if ($item['active']) aria-current="page" @endif>{{ $item['name'] }}</a>
                 @endforeach
             </nav>

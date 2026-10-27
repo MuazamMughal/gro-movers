@@ -10,7 +10,7 @@
             @foreach ($s['stats'] as $stat)
                 <div>
                     <dt class="sr-only">{{ $stat['label'] }}</dt>
-                    <dd class="text-3xl font-extrabold text-tertiary md:text-4xl">{{ $stat['value'] }}</dd>
+                    <dd class="text-3xl font-extrabold text-tertiary-strong md:text-4xl">{{ $stat['value'] }}</dd>
                     <dd @class(['mt-1 text-sm font-medium', 'text-primary/80' => $dark, 'text-secondary-light' => ! $dark])>{{ $stat['label'] }}</dd>
                 </div>
             @endforeach

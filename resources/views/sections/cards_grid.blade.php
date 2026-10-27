@@ -9,14 +9,14 @@
         @foreach ($s['cards'] ?? [] as $card)
             <div @class(['rounded-2xl border p-6 shadow-sm', 'border-white/10 bg-white/5' => $dark, 'border-border bg-white' => ! $dark])>
                 @if ($card['icon'] ?? null)
-                    <span class="mb-4 inline-flex size-12 items-center justify-center rounded-xl bg-tertiary/10 text-tertiary"><x-site.icon :name="$card['icon']" class="size-6" /></span>
+                    <span class="mb-4 inline-flex size-12 items-center justify-center rounded-xl bg-tertiary/10 text-tertiary-strong"><x-site.icon :name="$card['icon']" class="size-6" /></span>
                 @endif
                 <h3 class="text-xl font-bold">{{ $card['title'] }}</h3>
                 @if ($card['text'] ?? null)
                     <p @class(['mt-2', 'text-primary/80' => $dark, 'text-secondary-light' => ! $dark])>{{ $card['text'] }}</p>
                 @endif
                 @if (! empty($card['link']))
-                    <a href="{{ $card['link']['url'] }}" class="mt-4 inline-flex items-center gap-1 font-semibold text-tertiary hover:text-tertiary-hover">{{ $card['link']['label'] }}<x-site.icon name="arrow-right" class="size-4" /></a>
+                    <a href="{{ $card['link']['url'] }}" class="mt-4 inline-flex items-center gap-1 font-semibold text-tertiary-strong hover:text-tertiary-hover">{{ $card['link']['label'] }}<x-site.icon name="arrow-right" class="size-4" /></a>
                 @endif
             </div>
         @endforeach

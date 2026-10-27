@@ -5,7 +5,7 @@
     <dl class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         @foreach ($s['factors'] ?? [] as $factor)
             <div class="flex gap-4">
-                <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-tertiary/10 text-tertiary"><x-site.icon :name="$factor['icon'] ?? 'tag'" class="size-6" /></span>
+                <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-tertiary/10 text-tertiary-strong"><x-site.icon :name="$factor['icon'] ?? 'tag'" class="size-6" /></span>
                 <div>
                     <dt class="text-lg font-bold">{{ $factor['title'] }}</dt>
                     @if ($factor['text'] ?? null)

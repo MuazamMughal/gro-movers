@@ -12,7 +12,7 @@
         <header class="bg-muted">
             <div class="mx-auto max-w-3xl px-4 pt-12 pb-10 sm:px-6 md:pt-16">
                 @if ($post->category)
-                    <a href="{{ $post->category->publicPath() }}" class="inline-flex rounded-full bg-tertiary/15 px-3 py-1 text-sm font-semibold text-tertiary hover:bg-tertiary/25">{{ $post->category->name }}</a>
+                    <a href="{{ $post->category->publicPath() }}" class="inline-flex rounded-full bg-white px-3 py-1 text-sm font-semibold text-tertiary-strong ring-1 ring-tertiary/30 hover:ring-tertiary">{{ $post->category->name }}</a>
                 @endif
                 <h1 class="mt-4 text-4xl font-extrabold tracking-tight text-balance md:text-5xl">{{ $post->title }}</h1>
                 @if ($post->excerpt)
@@ -47,9 +47,9 @@
                         <summary class="flex cursor-pointer items-center gap-2 text-lg font-bold" id="toc-heading">
                             <x-site.icon name="list" class="size-5 text-tertiary" /> In this article
                         </summary>
-                        <ol class="mt-4 list-decimal space-y-2 pl-6 marker:font-semibold marker:text-tertiary">
+                        <ol class="mt-4 list-decimal space-y-2 pl-6 marker:font-semibold marker:text-tertiary-strong">
                             @foreach ($body->toc as $item)
-                                <li><a href="#{{ $item['id'] }}" class="hover:text-tertiary hover:underline">{{ $item['text'] }}</a></li>
+                                <li><a href="#{{ $item['id'] }}" class="hover:text-tertiary-strong hover:underline">{{ $item['text'] }}</a></li>
                             @endforeach
                         </ol>
                     </details>
@@ -77,7 +77,7 @@
                         <x-picture :media="$post->author->photo" sizes="96px" class="shrink-0" img-class="size-24 rounded-full object-cover" alt="" />
                     @endif
                     <div>
-                        <p class="text-sm font-semibold tracking-wider text-tertiary uppercase">Written by</p>
+                        <p class="text-sm font-semibold tracking-wider text-tertiary-strong uppercase">Written by</p>
                         <p class="mt-1 text-xl font-bold">{{ $post->author->name }}</p>
                         @if ($post->author->job_title)
                             <p class="text-secondary-light">{{ $post->author->job_title }}</p>
@@ -94,13 +94,13 @@
                     @if ($previous)
                         <a href="{{ $previous->publicPath() }}" class="group rounded-2xl border border-border p-5 hover:border-tertiary">
                             <span class="flex items-center gap-1 text-sm text-secondary-light"><x-site.icon name="arrow-left" class="size-4" /> Previous article</span>
-                            <span class="mt-1 block font-bold group-hover:text-tertiary">{{ $previous->title }}</span>
+                            <span class="mt-1 block font-bold group-hover:text-tertiary-strong">{{ $previous->title }}</span>
                         </a>
                     @endif
                     @if ($next)
                         <a href="{{ $next->publicPath() }}" class="group rounded-2xl border border-border p-5 text-right hover:border-tertiary sm:col-start-2">
                             <span class="flex items-center justify-end gap-1 text-sm text-secondary-light">Next article <x-site.icon name="arrow-right" class="size-4" /></span>
-                            <span class="mt-1 block font-bold group-hover:text-tertiary">{{ $next->title }}</span>
+                            <span class="mt-1 block font-bold group-hover:text-tertiary-strong">{{ $next->title }}</span>
                         </a>
                     @endif
                 </nav>

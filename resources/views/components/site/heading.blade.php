@@ -7,7 +7,7 @@
         'max-w-3xl' => $align === 'left',
     ])>
         @if ($eyebrow)
-            <p @class(['mb-3 text-sm font-semibold tracking-wider uppercase', 'text-tertiary' => ! $dark, 'text-tertiary-soft' => $dark])>{{ $eyebrow }}</p>
+            <p @class(['mb-3 text-sm font-semibold tracking-wider uppercase', 'text-tertiary-strong' => ! $dark, 'text-tertiary-soft' => $dark])>{{ $eyebrow }}</p>
         @endif
         @if ($heading)
             <{{ $tag }} class="text-3xl font-extrabold tracking-tight text-balance md:text-4xl">{{ $heading }}</{{ $tag }}>

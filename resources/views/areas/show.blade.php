@@ -10,11 +10,11 @@
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach ($services as $item)
                     <a href="{{ $item['url'] }}" class="group rounded-2xl border border-border bg-white p-6 shadow-sm transition-shadow hover:shadow-lg">
-                        <h3 class="text-lg font-bold group-hover:text-tertiary">{{ $item['title'] }} in {{ $area->city }}</h3>
+                        <h3 class="text-lg font-bold group-hover:text-tertiary-strong">{{ $item['title'] }} in {{ $area->city }}</h3>
                         @if ($item['short_description'])
                             <p class="mt-2 text-secondary-light">{{ $item['short_description'] }}</p>
                         @endif
-                        <span class="mt-4 inline-flex items-center gap-1 font-semibold text-tertiary">See details<x-site.icon name="arrow-right" class="size-4" /></span>
+                        <span class="mt-4 inline-flex items-center gap-1 font-semibold text-tertiary-strong">See details<x-site.icon name="arrow-right" class="size-4" /></span>
                     </a>
                 @endforeach
             </div>

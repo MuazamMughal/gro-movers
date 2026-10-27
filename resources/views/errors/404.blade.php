@@ -11,7 +11,7 @@
 @section('content')
     <section class="bg-muted">
         <div class="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 md:py-24">
-            <p class="text-sm font-bold tracking-widest text-tertiary uppercase">Error 404</p>
+            <p class="text-sm font-bold tracking-widest text-tertiary-strong uppercase">Error 404</p>
             <h1 class="mt-3 text-4xl font-extrabold tracking-tight text-balance md:text-5xl">We couldn’t find that page</h1>
             <p class="mt-5 text-lg text-secondary-light">The link may be old or mistyped. These pages might help, or get your free quote in two minutes.</p>
             <div class="mt-8 flex flex-wrap justify-center gap-3">
@@ -27,7 +27,7 @@
                 <h2 class="text-2xl font-extrabold">Were you looking for…</h2>
                 <ul class="mt-4 divide-y divide-border rounded-2xl border border-border">
                     @foreach ($suggestions as $item)
-                        <li><a href="{{ $item['url'] }}" class="flex items-center justify-between gap-4 px-5 py-4 font-semibold hover:text-tertiary">{{ $item['label'] }}<x-site.icon name="arrow-right" class="size-4 shrink-0" /></a></li>
+                        <li><a href="{{ $item['url'] }}" class="flex items-center justify-between gap-4 px-5 py-4 font-semibold hover:text-tertiary-strong">{{ $item['label'] }}<x-site.icon name="arrow-right" class="size-4 shrink-0" /></a></li>
                     @endforeach
                 </ul>
             </div>
@@ -57,7 +57,7 @@
         </div>
 
         <p class="mt-12 text-center text-secondary-light">
-            Prefer to talk? Call us at <a href="{{ \App\Support\Contact::telHref() }}" class="font-bold text-secondary hover:text-tertiary" data-call-location="404">{{ \App\Support\Contact::phone() }}</a>.
+            Prefer to talk? Call us at <a href="{{ \App\Support\Contact::telHref() }}" class="font-bold text-secondary hover:text-tertiary-strong" data-call-location="404">{{ \App\Support\Contact::phone() }}</a>.
         </p>
     </x-site.section>
 @endsection

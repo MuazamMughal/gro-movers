@@ -19,4 +19,8 @@ return [
 
     // Rendered pages are minified (whitespace between tags, comments).
     'minify' => true,
+
+    // Inline each page's used CSS and load the full stylesheet without blocking
+    // rendering (App\Services\Static\CriticalCss). Live (PHP) pages keep the plain link.
+    'critical_css' => true,
 ];

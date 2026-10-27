@@ -5,7 +5,7 @@
     $current = $paginator->currentPage();
     $last = $paginator->lastPage();
     $pages = collect(range(max(1, $current - 2), min($last, $current + 2)));
-    $link = 'inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-border px-3 font-semibold hover:border-tertiary hover:text-tertiary';
+    $link = 'inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-border px-3 font-semibold hover:border-tertiary hover:text-tertiary-strong';
 @endphp
 @if ($last > 1)
     <nav class="mt-14 flex flex-wrap items-center justify-center gap-2" aria-label="Pagination">

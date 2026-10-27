@@ -17,7 +17,8 @@ return [
     'image_mimes' => ['jpg', 'jpeg', 'png', 'webp'],
 
     // Responsive widths generated (only those smaller than the output width, plus the output width).
-    'widths' => [480, 768, 1200, 1920],
+    // 240 serves logos, avatars and review photos without downloading 480px files.
+    'widths' => [240, 480, 768, 1200, 1920],
 
     'quality' => [
         'webp' => 80,

@@ -8,7 +8,7 @@
                     <x-site.icon name="chevron-right" class="size-3.5 shrink-0 opacity-60" />
                 @endunless
                 @if ($crumb['url'] !== null && ! $loop->last)
-                    <a href="{{ $crumb['url'] }}" class="hover:text-tertiary hover:underline">{{ $crumb['label'] }}</a>
+                    <a href="{{ $crumb['url'] }}" class="hover:text-tertiary-strong hover:underline">{{ $crumb['label'] }}</a>
                 @else
                     <span class="line-clamp-1 font-semibold text-secondary" aria-current="page">{{ $crumb['label'] }}</span>
                 @endif

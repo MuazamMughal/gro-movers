@@ -17,10 +17,10 @@
     <div @class(['flex flex-1 flex-col p-6', 'md:p-10 md:justify-center' => $featured])>
         <div class="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
             @if ($featured)
-                <span class="rounded-full bg-tertiary px-2.5 py-0.5 text-xs font-bold tracking-wide text-white uppercase">Featured</span>
+                <span class="rounded-full bg-tertiary-strong px-2.5 py-0.5 text-xs font-bold tracking-wide text-white uppercase">Featured</span>
             @endif
             @if ($post->category)
-                <span class="font-semibold text-tertiary">{{ $post->category->name }}</span>
+                <span class="font-semibold text-tertiary-strong">{{ $post->category->name }}</span>
             @endif
         </div>
         <{{ $headingTag }} @class(['font-extrabold tracking-tight text-balance', 'text-2xl md:text-3xl' => $featured, 'text-xl' => ! $featured])>

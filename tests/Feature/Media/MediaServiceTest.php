@@ -31,8 +31,8 @@ class MediaServiceTest extends TestCase
         $this->assertSame([2400, 1600], [$media->width, $media->height]);
         $this->assertSame('Moving Truck Dallas', $media->alt);
         $this->assertSame(['x' => 0, 'y' => 300, 'w' => 2400, 'h' => 1000, 'rotate' => 0], $media->crop);
-        $this->assertSame([480, 768, 1200, 1920], $media->variants->where('format', 'webp')->pluck('width')->values()->all());
-        $this->assertSame([480, 768, 1200, 1920], $media->variants->where('format', 'jpg')->pluck('width')->values()->all());
+        $this->assertSame([240, 480, 768, 1200, 1920], $media->variants->where('format', 'webp')->pluck('width')->values()->all());
+        $this->assertSame([240, 480, 768, 1200, 1920], $media->variants->where('format', 'jpg')->pluck('width')->values()->all());
         $this->assertSame([1920, 800], $media->displaySize());
 
         foreach ($media->variants as $variant) {
@@ -50,7 +50,7 @@ class MediaServiceTest extends TestCase
 
         $this->assertSame(['x' => 100, 'y' => 100, 'w' => 600, 'h' => 400, 'rotate' => 0], $media->crop);
         $this->assertSame([600, 400], $media->displaySize());
-        $this->assertSame([480, 600], $media->variants->where('format', 'webp')->pluck('width')->values()->all());
+        $this->assertSame([240, 480, 600], $media->variants->where('format', 'webp')->pluck('width')->values()->all());
 
         $clamped = $this->service->upload(UploadedFile::fake()->image('b.jpg', 500, 500), 'square', ['x' => 400, 'y' => 0, 'w' => 900, 'h' => 900]);
         $this->assertSame(['x' => 400, 'y' => 0, 'w' => 100, 'h' => 500, 'rotate' => 0], $clamped->crop);
@@ -60,7 +60,7 @@ class MediaServiceTest extends TestCase
     {
         $media = $this->service->upload(UploadedFile::fake()->image('small.jpg', 800, 400), 'hero');
 
-        $this->assertSame([480, 768, 800], $media->variants->where('format', 'webp')->pluck('width')->values()->all());
+        $this->assertSame([240, 480, 768, 800], $media->variants->where('format', 'webp')->pluck('width')->values()->all());
         $this->assertSame([800, 333], $media->displaySize());
     }
 

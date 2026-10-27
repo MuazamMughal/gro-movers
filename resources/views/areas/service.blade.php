@@ -17,7 +17,7 @@
                     <h2 class="text-2xl font-extrabold">Other services in {{ $area->city }}</h2>
                     <ul class="mt-4 space-y-2">
                         @foreach ($siblings as $item)
-                            <li><a href="{{ $item['url'] }}" class="inline-flex items-center gap-2 font-semibold hover:text-tertiary"><x-site.icon name="circle-check" class="size-5 text-tertiary" />{{ $item['title'] }} in {{ $area->city }}</a></li>
+                            <li><a href="{{ $item['url'] }}" class="inline-flex items-center gap-2 font-semibold hover:text-tertiary-strong"><x-site.icon name="circle-check" class="size-5 text-tertiary" />{{ $item['title'] }} in {{ $area->city }}</a></li>
                         @endforeach
                     </ul>
                 </div>

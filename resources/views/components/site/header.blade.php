@@ -21,7 +21,7 @@
     <div class="mx-auto flex h-18 max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8">
         <a href="/" class="flex shrink-0 items-center" aria-label="{{ $company }} home">
             @if ($logo)
-                <x-picture :media="$logo" sizes="220px" eager :alt="$company" img-class="h-10 w-auto max-w-[200px] object-contain sm:h-12" />
+                <x-picture :media="$logo" sizes="(min-width: 640px) 200px, 160px" eager :alt="$company" img-class="h-10 w-auto max-w-[200px] object-contain sm:h-12" />
             @else
                 <span class="text-xl font-extrabold tracking-tight">{{ $company }}</span>
             @endif
@@ -35,12 +35,12 @@
                             <li class="group relative" data-dropdown>
                                 <div class="flex items-center">
                                     @if ($item['url'])
-                                        <a href="{{ $item['url'] }}" @if ($item['new_tab']) target="_blank" rel="noopener" @endif @if ($isCurrent($item['url'])) aria-current="page" @endif class="rounded-lg py-2 pr-1 pl-3 font-semibold hover:text-tertiary aria-[current=page]:text-tertiary">{{ $item['label'] }}</a>
-                                        <button type="button" class="rounded-lg p-2 hover:text-tertiary" aria-expanded="false" aria-label="{{ $item['label'] }} menu" data-dropdown-toggle>
+                                        <a href="{{ $item['url'] }}" @if ($item['new_tab']) target="_blank" rel="noopener" @endif @if ($isCurrent($item['url'])) aria-current="page" @endif class="rounded-lg py-2 pr-1 pl-3 font-semibold hover:text-tertiary-strong aria-[current=page]:text-tertiary-strong">{{ $item['label'] }}</a>
+                                        <button type="button" class="rounded-lg p-2 hover:text-tertiary-strong" aria-expanded="false" aria-label="{{ $item['label'] }} menu" data-dropdown-toggle>
                                             <x-site.icon name="chevron-down" class="size-4 transition-transform group-data-open:rotate-180" />
                                         </button>
                                     @else
-                                        <button type="button" class="flex items-center gap-1 rounded-lg px-3 py-2 font-semibold hover:text-tertiary" aria-expanded="false" data-dropdown-toggle>
+                                        <button type="button" class="flex items-center gap-1 rounded-lg px-3 py-2 font-semibold hover:text-tertiary-strong" aria-expanded="false" data-dropdown-toggle>
                                             {{ $item['label'] }} <x-site.icon name="chevron-down" class="size-4 transition-transform group-data-open:rotate-180" />
                                         </button>
                                     @endif
@@ -48,14 +48,14 @@
                                 <ul class="invisible absolute top-full left-0 z-50 min-w-60 translate-y-1 rounded-xl border border-border bg-primary p-2 opacity-0 shadow-xl transition group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-data-open:visible group-data-open:opacity-100">
                                     @foreach ($item['children'] as $child)
                                         <li>
-                                            <a href="{{ $child['url'] }}" @if ($child['new_tab']) target="_blank" rel="noopener" @endif @if ($isCurrent($child['url'])) aria-current="page" @endif class="block rounded-lg px-3 py-2 hover:bg-muted hover:text-tertiary aria-[current=page]:text-tertiary">{{ $child['label'] }}</a>
+                                            <a href="{{ $child['url'] }}" @if ($child['new_tab']) target="_blank" rel="noopener" @endif @if ($isCurrent($child['url'])) aria-current="page" @endif class="block rounded-lg px-3 py-2 hover:bg-muted hover:text-tertiary-strong aria-[current=page]:text-tertiary-strong">{{ $child['label'] }}</a>
                                         </li>
                                     @endforeach
                                 </ul>
                             </li>
                         @else
                             <li>
-                                <a href="{{ $item['url'] }}" @if ($item['new_tab']) target="_blank" rel="noopener" @endif @if ($isCurrent($item['url'])) aria-current="page" @endif class="block rounded-lg px-3 py-2 font-semibold hover:text-tertiary aria-[current=page]:text-tertiary">{{ $item['label'] }}</a>
+                                <a href="{{ $item['url'] }}" @if ($item['new_tab']) target="_blank" rel="noopener" @endif @if ($isCurrent($item['url'])) aria-current="page" @endif class="block rounded-lg px-3 py-2 font-semibold hover:text-tertiary-strong aria-[current=page]:text-tertiary-strong">{{ $item['label'] }}</a>
                             </li>
                         @endif
                     @endforeach
@@ -86,7 +86,7 @@
                                             </summary>
                                             <ul class="pb-3 pl-3">
                                                 @if ($item['url'])
-                                                    <li><a href="{{ $item['url'] }}" class="block py-2 font-medium text-tertiary">All {{ Str::lower($item['label']) }}</a></li>
+                                                    <li><a href="{{ $item['url'] }}" class="block py-2 font-medium text-tertiary-strong">All {{ Str::lower($item['label']) }}</a></li>
                                                 @endif
                                                 @foreach ($item['children'] as $child)
                                                     <li><a href="{{ $child['url'] }}" @if ($child['new_tab']) target="_blank" rel="noopener" @endif class="block py-2">{{ $child['label'] }}</a></li>

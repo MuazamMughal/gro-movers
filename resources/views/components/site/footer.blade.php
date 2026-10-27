@@ -30,7 +30,7 @@
         <div class="space-y-4">
             <a href="/" class="inline-block" aria-label="{{ $company }} home">
                 @if ($logo)
-                    <x-picture :media="$logo" sizes="220px" :alt="$company" img-class="h-12 w-auto max-w-[220px] object-contain" />
+                    <x-picture :media="$logo" sizes="200px" :alt="$company" img-class="h-12 w-auto max-w-[220px] object-contain" />
                 @else
                     <span class="text-xl font-extrabold tracking-tight">{{ $company }}</span>
                 @endif

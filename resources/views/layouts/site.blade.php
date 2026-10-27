@@ -19,7 +19,7 @@
         <link rel="icon" href="{{ $favicon->url(480) }}" type="image/{{ $favicon->isSvg() ? 'svg+xml' : 'webp' }}">
         <link rel="apple-touch-icon" href="{{ $favicon->url(480, $favicon->fallbackFormat() ?? 'webp') }}">
     @endif
-    @fonts('inter')
+    <x-site.fonts />
     @vite(['resources/css/site.css', 'resources/js/site/site.ts'])
     <x-site.theme-vars />
     <x-site.schema

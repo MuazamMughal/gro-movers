@@ -73,7 +73,7 @@
 
     <x-site.form-guard :old="$old" />
 
-    <button type="submit" class="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-tertiary px-6 py-3 text-lg font-bold text-white transition-colors hover:bg-tertiary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary disabled:cursor-wait disabled:opacity-70">
+    <button type="submit" class="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-tertiary-strong px-6 py-3 text-lg font-bold text-white transition-colors hover:bg-tertiary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tertiary disabled:cursor-wait disabled:opacity-70">
         {{ Settings::get('forms.quote_button_label', 'Submit Request') }}
     </button>
 

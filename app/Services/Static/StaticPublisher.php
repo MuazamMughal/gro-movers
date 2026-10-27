@@ -105,7 +105,10 @@ class StaticPublisher
 
             if ($status === 200 && str_contains($type, 'text/html')) {
                 $html = (string) $response->getContent();
-                $this->write($this->fileFor($path), config('static.minify') ? HtmlMinifier::minify($html) : $html);
+                $html = config('static.minify') ? HtmlMinifier::minify($html) : $html;
+                // Inline the CSS this page uses; the full stylesheet then loads without blocking.
+                $html = config('static.critical_css') ? CriticalCss::apply($html) : $html;
+                $this->write($this->fileFor($path), $html);
                 $result = 'ok';
                 $error = null;
             } else {

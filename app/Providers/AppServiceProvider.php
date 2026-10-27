@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -141,6 +142,10 @@ class AppServiceProvider extends ServiceProvider
     protected function configureDefaults(): void
     {
         Date::use(CarbonImmutable::class);
+
+        // Built assets as site-relative paths (/build/...), like media: pre-built static
+        // pages then work on any host and protocol without being rebuilt.
+        Vite::createAssetPathsUsing(fn (string $path) => '/'.ltrim($path, '/'));
 
         // Production always links and redirects over HTTPS (canonicals, sitemap, schema, assets).
         if (app()->isProduction()) {

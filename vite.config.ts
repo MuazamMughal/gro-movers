@@ -20,10 +20,21 @@ export default defineConfig({
                 // Admin panel.
                 bunny('Instrument Sans', {
                     weights: [400, 500, 600],
+                    optimizedFallbacks: false,
                 }),
                 // Public site. Downloaded at build time and served from /build (self-hosted).
+                // Only body text (400) and headings (800, the usual LCP element) are
+                // preloaded; the other weights load when first used. Size-adjusted
+                // local fallbacks (fontaine) keep text from shifting when Inter arrives.
                 bunny('Inter', {
                     weights: [400, 500, 600, 700, 800],
+                    subsets: ['latin'],
+                    display: 'swap',
+                    preload: [
+                        { weight: 400, style: 'normal' },
+                        { weight: 800, style: 'normal' },
+                    ],
+                    optimizedFallbacks: true,
                 }),
             ],
         }),

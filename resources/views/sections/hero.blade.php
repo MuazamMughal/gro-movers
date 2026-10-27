@@ -12,7 +12,11 @@
     <div class="mx-auto grid max-w-7xl items-center gap-12 px-4 py-16 sm:px-6 md:py-24 lg:px-8 {{ $withForm ? 'lg:grid-cols-[1.1fr_1fr]' : '' }}">
         <div @class(['max-w-3xl', 'mx-auto text-center' => ! $withForm])>
             @if ($s['eyebrow'] ?? null)
-                <p class="mb-4 inline-flex rounded-full bg-tertiary/15 px-3 py-1 text-sm font-semibold text-tertiary">{{ $s['eyebrow'] }}</p>
+                <p @class([
+                    'mb-4 inline-flex rounded-full px-3 py-1 text-sm font-semibold',
+                    'bg-white/10 text-tertiary-soft ring-1 ring-white/15' => $dark,
+                    'bg-white text-tertiary-strong ring-1 ring-tertiary/30' => ! $dark,
+                ])>{{ $s['eyebrow'] }}</p>
             @endif
             <{{ $headingTag }} class="text-4xl font-extrabold tracking-tight text-balance sm:text-5xl lg:text-6xl">{{ $s['heading'] }}</{{ $headingTag }}>
             @if ($s['subheading'] ?? null)
