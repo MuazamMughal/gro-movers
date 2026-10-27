@@ -16,6 +16,7 @@ type PageRow = {
     status: 'draft' | 'published';
     is_system: boolean;
     system_label: string | null;
+    admin_note: string | null;
     noindex: boolean;
     seo_missing: boolean;
     sections_count: number;
@@ -112,6 +113,7 @@ const formatDate = (iso: string | null) =>
                             <div class="mt-1 flex flex-wrap gap-1">
                                 <Badge v-if="page.is_system" variant="secondary" class="text-[10px]">System</Badge>
                                 <Badge v-if="page.noindex" variant="destructive" class="text-[10px]">NOINDEX</Badge>
+                                <Badge v-if="page.admin_note" variant="outline" class="border-amber-400 text-[10px] text-amber-700 dark:text-amber-400" :title="page.admin_note">Note</Badge>
                                 <Badge v-if="page.seo_missing" variant="outline" class="text-[10px] text-amber-600">SEO not set</Badge>
                                 <Badge v-if="!page.sections_count" variant="outline" class="text-[10px]">Empty</Badge>
                             </div>

@@ -80,7 +80,7 @@ class ReviewsFaqsTest extends TestCase
             ->component('reviews/Index')
             ->has('reviews.data', 1)
             ->where('reviews.data.0.id', $google->id)
-            ->where('stats', ['count' => 2, 'average' => 4]));
+            ->where('stats', ['samples' => 0, 'count' => 2, 'average' => 4]));
 
         $this->patch(route('admin.reviews.toggle', $google), ['field' => 'is_active']);
         $this->assertFalse($google->fresh()->is_active);

@@ -66,6 +66,15 @@ make dev                                   # Vite with hot reload
 | `scheduler` | `schedule:work`, mirroring the cPanel cron |
 | `apache` (profile) | `php:8.3-apache`, for testing `public/.htaccess` |
 
+## Starter content
+`db:seed` (and `make fresh`) installs SEO-ready placeholder content once:
+- 6 services, 3 cities with all 18 city × service pages, 45 FAQs, 12 sample reviews, every system page, menus, 1 author, 9 blog posts.
+- Generated placeholder images (no stock photos).
+
+Copy lives in `database/seeders/content/*.php`. Re-running never overwrites admin edits.
+- `SEED_CONTENT=false` skips it.
+- Sample reviews and the Privacy/Terms templates are flagged in the admin and must be replaced or reviewed before launch.
+
 ## Static HTML cache
 Public pages are pre-rendered to `public/static/{path}/index.html`, and Apache serves them without PHP (see `public/.htaccess`).
 - Content changes rebuild the affected pages automatically through the queue.

@@ -10,6 +10,7 @@ use App\Models\Media;
 use App\Models\Post;
 use App\Models\Review;
 use App\Models\Service;
+use App\Services\TokenReplacer;
 use App\Support\Contact;
 use App\Support\Seo;
 use App\Support\Settings;
@@ -179,10 +180,11 @@ class Schema
      */
     public static function faq(iterable $faqs): ?array
     {
+        $tokens = new TokenReplacer;
         $items = collect($faqs)->unique('id')->map(fn (Faq $faq) => [
             '@type' => 'Question',
-            'name' => $faq->question,
-            'acceptedAnswer' => ['@type' => 'Answer', 'text' => trim(strip_tags((string) $faq->answer, '<p><br><ul><ol><li><a><strong><b><em><i>'))],
+            'name' => $tokens->replace($faq->question),
+            'acceptedAnswer' => ['@type' => 'Answer', 'text' => trim(strip_tags((string) $tokens->replaceHtml($faq->answer), '<p><br><ul><ol><li><a><strong><b><em><i>'))],
         ])->values()->all();
 
         return $items ? ['@type' => 'FAQPage', 'mainEntity' => $items] : null;
@@ -219,7 +221,8 @@ class Schema
      */
     public static function ratings(Collection $reviews): ?array
     {
-        $own = $reviews->filter(fn (Review $r) => $r->source === ReviewSource::Website)->values();
+        // Placeholder (sample) reviews never become structured data.
+        $own = $reviews->filter(fn (Review $r) => $r->source === ReviewSource::Website && ! $r->is_sample)->values();
 
         if ($own->isEmpty()) {
             return null;

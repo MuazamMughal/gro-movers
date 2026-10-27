@@ -7,6 +7,9 @@
 */
 
 return [
+    // Install the starter content (services, areas, blog…) with db:seed. Off in tests.
+    'seed_content' => (bool) env('SEED_CONTENT', true),
+
     // Initial admin account, read by AdminUserSeeder (via config so it works with config:cache).
     'admin' => [
         'name' => env('ADMIN_NAME', 'Site Admin'),

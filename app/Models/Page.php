@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['system_key', 'title', 'slug', 'status', 'template', 'published_at'])]
+#[Fillable(['system_key', 'title', 'slug', 'status', 'template', 'admin_note', 'published_at'])]
 class Page extends Model
 {
     /** @use HasFactory<PageFactory> */

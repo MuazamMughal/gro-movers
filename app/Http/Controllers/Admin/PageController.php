@@ -49,6 +49,7 @@ class PageController extends Controller
                 'noindex' => ! $page->seoIndexable(),
                 'seo_missing' => $page->seoUsesFallbacks(),
                 'sections_count' => $page->sections_count,
+                'admin_note' => $page->admin_note,
                 'updated_at' => $page->updated_at?->toIso8601String(),
             ]);
 
@@ -101,6 +102,7 @@ class PageController extends Controller
                 'is_system' => $page->isSystem(),
                 'system_label' => $page->system_key ? Str::headline($page->system_key->value) : null,
                 'slug_locked' => $page->system_key?->slugLocked() ?? false,
+                'admin_note' => $page->admin_note,
                 'path' => $page->publicPath(),
                 'published_at' => $page->published_at?->toIso8601String(),
                 'updated_at' => $page->updated_at?->toIso8601String(),

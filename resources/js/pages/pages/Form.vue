@@ -27,6 +27,7 @@ type PageData = {
     is_system: boolean;
     system_label: string | null;
     slug_locked: boolean;
+    admin_note: string | null;
     path: string | null;
     published_at: string | null;
     updated_at: string | null;
@@ -177,6 +178,10 @@ const title = computed(() => (isNew.value ? 'New page' : form.title || 'Untitled
         </div>
 
         <!-- Tabs -->
+        <p v-if="page?.admin_note" class="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-200" role="status">
+            {{ page.admin_note }}
+        </p>
+
         <div class="flex gap-1 border-b" role="tablist" aria-label="Page editor">
             <button
                 v-for="t in tabs"

@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable([
     'name', 'city', 'rating', 'body', 'source', 'reviewed_at', 'photo_media_id',
-    'area_id', 'service_id', 'is_featured', 'is_active', 'sort',
+    'area_id', 'service_id', 'is_featured', 'is_active', 'is_sample', 'sort',
 ])]
 class Review extends Model
 {
@@ -28,6 +28,7 @@ class Review extends Model
             'reviewed_at' => 'date',
             'is_featured' => 'boolean',
             'is_active' => 'boolean',
+            'is_sample' => 'boolean',
         ];
     }
 

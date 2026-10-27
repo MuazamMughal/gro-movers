@@ -49,7 +49,8 @@ class ReviewController extends Controller
                 'service' => $r->service?->title,
                 'is_featured' => $r->is_featured,
                 'is_active' => $r->is_active,
-                'thumb' => $r->photo?->url(480),
+                'is_sample' => $r->is_sample,
+                'thumb' => $r->photo?->url(240),
             ]);
 
         $active = Review::query()->active();
@@ -64,6 +65,7 @@ class ReviewController extends Controller
             'sources' => ReviewSource::options(),
             'areas' => Area::query()->ordered()->get()->map(fn (Area $a) => ['id' => $a->id, 'name' => $a->name]),
             'stats' => [
+                'samples' => Review::query()->where('is_sample', true)->count(),
                 'count' => (clone $active)->count(),
                 'average' => round((float) (clone $active)->avg('rating'), 1),
             ],
@@ -164,6 +166,8 @@ class ReviewController extends Controller
 
         return [
             ...$data,
+            // Saved by a person in the form: no longer placeholder content.
+            'is_sample' => false,
             'is_featured' => (bool) ($data['is_featured'] ?? false),
             'is_active' => (bool) ($data['is_active'] ?? true),
         ];

@@ -21,6 +21,7 @@ type ReviewRow = {
     service: string | null;
     is_featured: boolean;
     is_active: boolean;
+    is_sample: boolean;
     thumb: string | null;
 };
 
@@ -31,7 +32,7 @@ const props = defineProps<{
     filters: { q: string; source: string; area: string };
     sources: Record<string, string>;
     areas: { id: number; name: string }[];
-    stats: { count: number; average: number };
+    stats: { count: number; average: number; samples: number };
 }>();
 
 defineOptions({
@@ -81,6 +82,11 @@ const stars = [1, 2, 3, 4, 5];
             </div>
         </div>
 
+        <p v-if="stats.samples" class="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-200" role="status">
+            {{ stats.samples }} sample {{ stats.samples === 1 ? 'review was' : 'reviews were' }} added with the starter content. Replace them with real customer reviews (or delete them) before launch.
+            Sample reviews are never used for Google review stars.
+        </p>
+
         <div class="flex flex-wrap gap-2">
             <div class="relative min-w-60 flex-1">
                 <Search class="absolute top-2.5 left-2.5 size-4 text-muted-foreground" aria-hidden="true" />
@@ -115,6 +121,7 @@ const stars = [1, 2, 3, 4, 5];
                         </span>
                         <Badge variant="outline">{{ review.source }}</Badge>
                         <Badge v-if="review.is_featured">Featured</Badge>
+                        <Badge v-if="review.is_sample" variant="outline" class="border-amber-400 text-amber-700 dark:text-amber-400">Sample</Badge>
                     </div>
                     <p class="line-clamp-2 text-sm text-muted-foreground">{{ review.body }}</p>
                     <p class="text-xs text-muted-foreground">

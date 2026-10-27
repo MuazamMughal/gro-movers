@@ -10,8 +10,8 @@ class DatabaseSeeder extends Seeder
     use WithoutModelEvents;
 
     /**
-     * Base data the site needs to run. Every seeder is idempotent and never
-     * overwrites values changed in admin. Demo/SEO content is added in T16.
+     * Base data the site needs to run, then the starter content. Every seeder
+     * is idempotent and never overwrites values changed in admin.
      */
     public function run(): void
     {
@@ -23,5 +23,10 @@ class DatabaseSeeder extends Seeder
             MenuSeeder::class,
             BlogCategorySeeder::class,
         ]);
+
+        // SEO-ready starter content (once; never overwrites). SEED_CONTENT=false skips it.
+        if (config('settings.seed_content')) {
+            $this->call(ContentSeeder::class);
+        }
     }
 }
