@@ -16,8 +16,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable([
     'full_name', 'email', 'phone',
-    'from_address', 'from_city', 'from_state', 'from_zip', 'from_lat', 'from_lng',
-    'to_address', 'to_city', 'to_state', 'to_zip', 'to_lat', 'to_lng',
+    'from_address', 'from_house_number', 'from_street', 'from_neighborhood', 'from_city', 'from_county',
+    'from_state', 'from_state_name', 'from_zip', 'from_country', 'from_country_code', 'from_lat', 'from_lng', 'from_osm_id',
+    'to_address', 'to_house_number', 'to_street', 'to_neighborhood', 'to_city', 'to_county',
+    'to_state', 'to_state_name', 'to_zip', 'to_country', 'to_country_code', 'to_lat', 'to_lng', 'to_osm_id',
     'move_date', 'move_type_id', 'move_type_name', 'status',
     'source_url', 'referrer', 'utm', 'ip', 'user_agent', 'read_at',
 ])]

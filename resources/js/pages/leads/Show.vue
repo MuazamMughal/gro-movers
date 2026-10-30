@@ -10,22 +10,17 @@ import { Textarea } from '@/components/ui/textarea';
 import { destroy, index, update } from '@/routes/admin/leads';
 import { destroy as destroyNote, store as storeNote } from '@/routes/admin/leads/notes';
 
+/** One side of the move: the full address the visitor chose, its parts (city, county, ZIP…) and map links. */
+type Address = { address: string; parts: Record<string, string>; map: string; osm: string | null };
+
 type Lead = {
     id: number;
     full_name: string;
     email: string;
     phone: string;
     phone_href: string;
-    from_address: string;
-    from_city: string | null;
-    from_state: string | null;
-    from_zip: string | null;
-    to_address: string;
-    to_city: string | null;
-    to_state: string | null;
-    to_zip: string | null;
-    from_map: string;
-    to_map: string;
+    from: Address;
+    to: Address;
     move_date: string;
     days_until: number;
     move_type_name: string;
@@ -55,7 +50,6 @@ const removeNote = (id: number) => router.delete(destroyNote({ lead: props.lead.
 const confirming = ref(false);
 
 const when = (days: number) => (days === 0 ? 'today' : days === 1 ? 'tomorrow' : days > 1 ? `in ${days} days` : `${-days} days ago`);
-const place = (city: string | null, state: string | null, zip: string | null) => [city, [state, zip].filter(Boolean).join(' ')].filter(Boolean).join(', ');
 </script>
 
 <template>
@@ -82,17 +76,22 @@ const place = (city: string | null, state: string | null, zip: string | null) =>
 
                 <section class="rounded-xl border p-5" aria-label="Move">
                     <dl class="grid gap-5 sm:grid-cols-2">
-                        <div>
-                            <dt class="text-xs text-muted-foreground">Moving from</dt>
-                            <dd class="font-semibold">{{ lead.from_address }}</dd>
-                            <dd v-if="place(lead.from_city, lead.from_state, lead.from_zip)" class="text-sm text-muted-foreground">{{ place(lead.from_city, lead.from_state, lead.from_zip) }}</dd>
-                            <dd><a :href="lead.from_map" target="_blank" rel="noopener" class="mt-1 inline-flex items-center gap-1 text-sm text-primary hover:underline"><MapPin class="size-3.5" /> Open in Google Maps</a></dd>
-                        </div>
-                        <div>
-                            <dt class="text-xs text-muted-foreground">Moving to</dt>
-                            <dd class="font-semibold">{{ lead.to_address }}</dd>
-                            <dd v-if="place(lead.to_city, lead.to_state, lead.to_zip)" class="text-sm text-muted-foreground">{{ place(lead.to_city, lead.to_state, lead.to_zip) }}</dd>
-                            <dd><a :href="lead.to_map" target="_blank" rel="noopener" class="mt-1 inline-flex items-center gap-1 text-sm text-primary hover:underline"><MapPin class="size-3.5" /> Open in Google Maps</a></dd>
+                        <div v-for="side in (['from', 'to'] as const)" :key="side">
+                            <dt class="text-xs text-muted-foreground">{{ side === 'from' ? 'Moving from' : 'Moving to' }}</dt>
+                            <dd class="font-semibold">{{ lead[side].address }}</dd>
+                            <dd v-if="Object.keys(lead[side].parts).length">
+                                <dl class="mt-2 grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-0.5 text-sm">
+                                    <template v-for="(value, label) in lead[side].parts" :key="label">
+                                        <dt class="text-muted-foreground">{{ label }}</dt>
+                                        <dd class="break-words">{{ value }}</dd>
+                                    </template>
+                                </dl>
+                            </dd>
+                            <dd v-else class="text-sm text-muted-foreground">Typed by hand (no suggestion chosen), so no address parts were saved.</dd>
+                            <dd class="mt-1 flex flex-wrap gap-x-4">
+                                <a :href="lead[side].map" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-sm text-primary hover:underline"><MapPin class="size-3.5" /> Open in Google Maps</a>
+                                <a v-if="lead[side].osm" :href="lead[side].osm" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-sm text-primary hover:underline"><MapPin class="size-3.5" /> OpenStreetMap</a>
+                            </dd>
                         </div>
                         <div>
                             <dt class="text-xs text-muted-foreground">Moving date</dt>

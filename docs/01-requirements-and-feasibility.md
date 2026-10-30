@@ -17,7 +17,7 @@
 | Image cropper with fixed sizes | ✅ Yes | Vue cropper (e.g. `vue-advanced-cropper`). The server builds the sizes plus WebP versions. |
 | Media stored on our own server | ✅ Yes | Laravel `public` disk, under `storage/app/public/media`. |
 | Quote form leads stored and emailed | ✅ Yes | Saved in MySQL, emailed to the admin, with a lead inbox in the admin panel. |
-| Address autocomplete for Moving From / Moving To | ✅ Yes | Google Places Autocomplete, limited to the US. The API key is set in the admin Settings. Without a key, the fields fall back to plain text. |
+| Address autocomplete for Moving From / Moving To | ✅ Yes | **Photon** (open source, OpenStreetMap data, no key), limited to the US. The server URL is set in the admin Settings. Without it, or if the server fails, the fields fall back to plain text. *(Changed from Google Places on 2026-10-29.)* |
 | cPanel hosting | ✅ Yes | Option A needs no Node on the server. Assets are built locally and uploaded. Queues use the `database` driver and run from cPanel cron. Images use GD, because Imagick is often missing on cPanel. Static files are served through `.htaccess` rewrites. |
 | Same look as the reference site | ⚠️ Partly | movinglead.co sells **leads to movers**. It is not a moving company. We copy its **layout style** (hero, trust bar, steps, FAQ, coverage grid, sticky CTA) and not its content or branding. |
 
@@ -86,7 +86,7 @@
 6. **Blog:** Listing with pagination, categories, a featured image, author, date, reading time, table of contents, related posts, and social share.
 7. **Reviews page:** Reviews entered by the admin (name, city, rating, text, date, source such as Google/Yelp, an optional photo) and an aggregate rating.
 8. **Quote form:** A **single step** with exactly these fields and nothing else: Full Name, Email Address, Phone Number, Moving From, Moving To, Moving Date, Type of Move, and Submit Request.
-   - **Moving From / Moving To** use **Google Places Autocomplete**, limited to US addresses. The formatted address, city, state, ZIP and lat/lng are stored in hidden fields.
+   - **Moving From / Moving To** use **Photon** address autocomplete (open source, OpenStreetMap), limited to US addresses. The full address string is saved, plus every part in hidden fields: house number, street, neighborhood, city, county, state (code and name), ZIP, country, country code, lat/lng and the OpenStreetMap ID.
    - **Type of Move** is a dropdown fed from the admin **Move Types** module. It is independent of Services.
    - Client- and server-side validation, a honeypot plus rate limit, TCPA consent text, and a redirect to `/thank-you`.
    - **Cloudflare Turnstile** comes in the **last task** of the build.
@@ -176,7 +176,7 @@
 **Site Settings**
 - Company name, logos (light/dark), favicon, phone, email, address, business hours, USDOT / MC numbers, and social links.
 - Theme colors (primary, secondary, tertiary, muted, border) and the default SEO and OG image.
-- Tracking codes, SMTP email settings, the Google Places API key and the Cloudflare Turnstile keys.
+- Tracking codes, SMTP email settings, the Photon address search server and the Cloudflare Turnstile keys.
 
 **SEO tools:** Redirect manager, robots.txt editor, sitemap regeneration, and a **"Rebuild static cache"** button.
 
@@ -207,7 +207,7 @@
 | Static cache | Custom publisher that writes HTML to `public/static`, plus a Nginx/Apache rewrite to serve those files first |
 | Email | Laravel Mail (SMTP) with queued jobs |
 | SEO | spatie/laravel-sitemap and a JSON-LD helper |
-| Address autocomplete | Google Maps JS API, Places library (US only) |
+| Address autocomplete | Photon, open-source OpenStreetMap geocoder (US only) |
 | Spam | Honeypot and rate limit, plus Cloudflare Turnstile (last task) |
 | Server | **cPanel** (Apache + PHP 8.3). The domain points to `/public`, or `/public_html` uses an `.htaccess` bridge. Cron runs `schedule:run` every minute, and assets are pre-built with Vite. |
 
@@ -269,7 +269,7 @@
 | 8 | Spam protection | **Cloudflare Turnstile**, built in the **last** task |
 | 9 | Content | **SEO-ready placeholder copy** in the seeders |
 | 10 | Crop sizes | As listed in §4.3 |
-| 11 | Address input | **Google Places Autocomplete** on Moving From / Moving To (US only) |
+| 11 | Address input | **Photon** (open source) on Moving From / Moving To (US only). Was Google Places until 2026-10-29. |
 | 12 | Type of Move | **Managed in admin** (Move Types module) |
 | 13 | Meta title / description | **Editable in admin for every public URL** |
 | 14 | Movers | **No mover features at all.** Single-company site |

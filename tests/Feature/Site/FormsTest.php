@@ -3,6 +3,7 @@
 namespace Tests\Feature\Site;
 
 use App\Enums\LeadStatus;
+use App\Http\Requests\Forms\QuoteRequest;
 use App\Mail\ContactReceived;
 use App\Mail\LeadAutoReply;
 use App\Mail\LeadReceived;
@@ -42,8 +43,12 @@ class FormsTest extends TestCase
             'full_name' => 'Jessica Miller',
             'email' => 'Jessica@Example.com',
             'phone' => '(214) 555-0199',
-            'from_address' => '1200 Main St, Dallas, TX 75201',
-            'from_city' => 'Dallas', 'from_state' => 'tx', 'from_zip' => '75201', 'from_lat' => '32.7801', 'from_lng' => '-96.8005',
+            // Picked from a Photon suggestion: every part is filled.
+            'from_address' => '1200 Main Street, West End Historic District, Dallas, TX 75202',
+            'from_house_number' => '1200', 'from_street' => 'Main Street', 'from_neighborhood' => 'West End Historic District',
+            'from_city' => 'Dallas', 'from_county' => 'Dallas', 'from_state' => 'tx', 'from_state_name' => 'Texas', 'from_zip' => '75202',
+            'from_country' => 'United States', 'from_country_code' => 'us', 'from_lat' => '32.7797528', 'from_lng' => '-96.8015566', 'from_osm_id' => 'N12021744966',
+            // Typed by hand: only the city/state/ZIP the old fields had.
             'to_address' => '5000 Legacy Dr, Plano, TX 75024',
             'to_city' => 'Plano', 'to_state' => 'TX', 'to_zip' => '75024', 'to_lat' => '', 'to_lng' => '',
             'move_date' => now()->addWeeks(3)->toDateString(),
@@ -71,7 +76,13 @@ class FormsTest extends TestCase
         $lead = Lead::sole();
         $this->assertSame('jessica@example.com', $lead->email);
         $this->assertSame('+12145550199', $lead->phone);
-        $this->assertSame('TX', $lead->from_state);
+        $this->assertSame('1200 Main Street, West End Historic District, Dallas, TX 75202', $lead->from_address);
+        $this->assertSame(
+            ['1200', 'Main Street', 'West End Historic District', 'Dallas', 'Dallas', 'TX', 'Texas', '75202', 'United States', 'US', '32.7797528', '-96.8015566', 'N12021744966'],
+            array_values($lead->only(array_map(fn ($part) => "from_{$part}", QuoteRequest::ADDRESS_PARTS))),
+        );
+        $this->assertNull($lead->to_street);
+        $this->assertNull($lead->to_country);
         $this->assertSame($this->moveType->name, $lead->move_type_name);
         $this->assertSame(LeadStatus::New, $lead->status);
         $this->assertEquals(['utm_source' => 'google', 'utm_medium' => 'cpc'], $lead->utm);
@@ -115,6 +126,11 @@ class FormsTest extends TestCase
             ->assertStatus(422)
             ->assertJsonValidationErrors(['full_name', 'email', 'phone', 'from_address', 'move_date', 'move_type_id'])
             ->assertJsonPath('errors.phone.0', 'Please enter a valid US phone number, e.g. (214) 555-0100.');
+
+        // Hidden address parts that did not come from a US Photon result are refused.
+        $this->fromSite()->postJson('/forms/quote', $this->quote(['from_country_code' => 'CA', 'from_osm_id' => 'X1', 'from_zip' => 'M5V 2T6']))
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['from_country_code', 'from_osm_id', 'from_zip']);
 
         $this->fromSite()->postJson('/forms/quote', $this->quote(['move_date' => now()->addMonths(19)->toDateString()]))
             ->assertJsonValidationErrors(['move_date' => 'within the next 18 months']);
@@ -202,6 +218,10 @@ class FormsTest extends TestCase
         $this->assertStringContainsString('name="_started" value="', $html);
         $this->assertStringContainsString('name="website"', $html);
         $this->assertStringContainsString('name="from_zip"', $html);
+        $this->assertStringContainsString('name="to_county"', $html);
+        $this->assertStringContainsString('name="to_osm_id"', $html);
+        $this->assertStringContainsString('data-address-api="https://photon.komoot.io"', $html);
+        $this->assertStringNotContainsString('maps.googleapis.com', $html);
         $this->assertStringContainsString('name="utm"', $html);
         $this->assertStringContainsString('data-island="quote-form"', $html);
         $this->assertStringContainsString('>Submit Request<', str_replace(["\n", '  '], '', $html));

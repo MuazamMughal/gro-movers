@@ -2,7 +2,7 @@
 {{--
     Quote request form: exactly Full Name, Email Address, Phone Number, Moving From,
     Moving To, Moving Date, Type of Move and the submit button. A plain POST works
-    without JS; the "quote-form" island adds Google Places, inline validation and AJAX submit.
+    without JS; the "quote-form" island adds Photon address suggestions, inline validation and AJAX submit.
     $old / $errors refill the form after a failed no-JS submit (forms/invalid).
 --}}
 @php
@@ -22,7 +22,7 @@
     method="post"
     action="/forms/quote"
     data-island="quote-form"
-    data-places-key="{{ Settings::get('integrations.google_places_key') }}"
+    data-address-api="{{ Settings::get('integrations.address_api_url') }}"
     novalidate
     {{ $attributes->class('relative rounded-2xl bg-white p-6 text-secondary shadow-xl ring-1 ring-black/5 sm:p-8') }}
 >
@@ -55,7 +55,7 @@
                     <x-site.icon :name="$side === 'from' ? 'map-pin' : 'map-pin-check'" class="pointer-events-none absolute top-1/2 left-3.5 size-5 -translate-y-1/2 text-tertiary-strong" />
                     <input id="{{ $id }}-{{ $side }}" name="{{ $side }}_address" type="text" required autocomplete="off" minlength="5" maxlength="255" placeholder="Address, city or ZIP" value="{{ $old[$side.'_address'] ?? '' }}" aria-invalid="{{ $invalid($side.'_address') }}" aria-describedby="{{ $id }}-{{ $side }}-error" class="{{ $inputClass }} pl-11">
                 </div>
-                @foreach (['city', 'state', 'zip', 'lat', 'lng'] as $part)
+                @foreach (\App\Http\Requests\Forms\QuoteRequest::ADDRESS_PARTS as $part)
                     <input type="hidden" name="{{ $side }}_{{ $part }}" value="{{ $old[$side.'_'.$part] ?? '' }}">
                 @endforeach
                 <x-site.form-error :field="$side.'_address'" :id="$id.'-'.$side" :errors="$errors" />

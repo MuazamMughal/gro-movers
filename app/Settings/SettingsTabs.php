@@ -91,7 +91,7 @@ class SettingsTabs
                 'label' => 'Integrations',
                 'description' => 'Analytics, Search Console, address autocomplete and form spam protection.',
                 'fields' => [
-                    ['key' => 'integrations.google_places_key', 'type' => 'text', 'label' => 'Google Maps / Places API key', 'help' => 'Powers address autocomplete on Moving From / Moving To. Restrict the key to your domain in Google Cloud.', 'rules' => ['nullable', 'string', 'max:100']],
+                    ['key' => 'integrations.address_api_url', 'type' => 'text', 'label' => 'Address search server (Photon)', 'help' => 'Address suggestions on Moving From / Moving To, from the open-source Photon geocoder (OpenStreetMap data, no key). The default is the free public server at https://photon.komoot.io (fair use). For heavy traffic, run your own Photon server and enter its URL. Leave empty to turn suggestions off.', 'rules' => ['nullable', 'url:https', 'max:255']],
                     ['key' => 'integrations.gtm_id', 'type' => 'text', 'label' => 'Google Tag Manager ID', 'width' => 'half', 'help' => 'e.g. GTM-ABC1234. When set, load GA4 through GTM.', 'rules' => ['nullable', 'regex:/^GTM-[A-Z0-9]{4,10}$/']],
                     ['key' => 'integrations.ga4_id', 'type' => 'text', 'label' => 'GA4 Measurement ID', 'width' => 'half', 'help' => 'e.g. G-ABC123XYZ. Ignored when a GTM ID is set.', 'rules' => ['nullable', 'regex:/^G-[A-Z0-9]{4,12}$/']],
                     ['key' => 'integrations.search_console_verification', 'type' => 'text', 'label' => 'Search Console verification', 'help' => 'Paste the full <meta> tag or just its content value.', 'rules' => ['nullable', 'string', 'max:255']],

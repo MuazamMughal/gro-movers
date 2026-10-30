@@ -7,10 +7,23 @@ use Illuminate\Validation\Rule;
 
 /**
  * The public quote form: exactly Full Name, Email, Phone, Moving From, Moving To,
- * Moving Date and Type of Move (plus hidden Places details and tracking fields).
+ * Moving Date and Type of Move (plus the hidden address parts from Photon and tracking fields).
  */
 class QuoteRequest extends PublicFormRequest
 {
+    /** Hidden parts filled when the visitor picks a Photon suggestion; all optional (typed addresses have none). */
+    public const ADDRESS_PARTS = ['house_number', 'street', 'neighborhood', 'city', 'county', 'state', 'state_name', 'zip', 'country', 'country_code', 'lat', 'lng', 'osm_id'];
+
+    /**
+     * The lead columns of one side: the full address string and its parts.
+     *
+     * @return list<string>
+     */
+    public static function addressFields(string $side): array
+    {
+        return ["{$side}_address", ...array_map(fn (string $part) => "{$side}_{$part}", self::ADDRESS_PARTS)];
+    }
+
     protected function formName(): string
     {
         return 'quote';
@@ -21,9 +34,14 @@ class QuoteRequest extends PublicFormRequest
         $this->merge([
             'full_name' => trim((string) $this->input('full_name')),
             'email' => strtolower(trim((string) $this->input('email'))),
-            'from_state' => strtoupper((string) $this->input('from_state')) ?: null,
-            'to_state' => strtoupper((string) $this->input('to_state')) ?: null,
         ]);
+
+        foreach (['from', 'to'] as $side) {
+            $this->merge([
+                "{$side}_state" => strtoupper(trim((string) $this->input("{$side}_state"))) ?: null,
+                "{$side}_country_code" => strtoupper(trim((string) $this->input("{$side}_country_code"))) ?: null,
+            ]);
+        }
     }
 
     /**
@@ -36,11 +54,20 @@ class QuoteRequest extends PublicFormRequest
 
         $address = fn (string $p) => [
             "{$p}_address" => ['required', 'string', 'min:5', 'max:255'],
+            "{$p}_house_number" => ['nullable', 'string', 'max:20'],
+            "{$p}_street" => ['nullable', 'string', 'max:255'],
+            "{$p}_neighborhood" => ['nullable', 'string', 'max:100'],
             "{$p}_city" => ['nullable', 'string', 'max:100'],
+            "{$p}_county" => ['nullable', 'string', 'max:100'],
             "{$p}_state" => ['nullable', 'string', 'size:2', 'alpha'],
+            "{$p}_state_name" => ['nullable', 'string', 'max:100'],
             "{$p}_zip" => ['nullable', 'regex:/^\d{5}(-\d{4})?$/'],
+            "{$p}_country" => ['nullable', 'string', 'max:100'],
+            // Suggestions are limited to the US.
+            "{$p}_country_code" => ['nullable', 'in:US'],
             "{$p}_lat" => ['nullable', 'numeric', 'between:-90,90'],
             "{$p}_lng" => ['nullable', 'numeric', 'between:-180,180'],
+            "{$p}_osm_id" => ['nullable', 'regex:/^[NWR]\d{1,20}$/'],
         ];
 
         return [

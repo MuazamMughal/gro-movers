@@ -1,27 +1,27 @@
 import { enhanceForm, email, maskPhone, required, usPhone } from '../lib/form';
 import type { Rule } from '../lib/form';
-import { attachPlaces } from '../lib/places';
+import { ADDRESS_PARTS, attachAddressSearch } from '../lib/address';
 
-/** Quote form island: validation, phone mask, Places autocomplete and AJAX submit. */
+/** Quote form island: validation, phone mask, Photon address autocomplete and AJAX submit. */
 export default function mount(form: HTMLFormElement): void {
     const hidden = (side: string, part: string) => form.elements.namedItem(`${side}_${part}`) as HTMLInputElement | null;
-    const key = form.dataset.placesKey ?? '';
+    const server = form.dataset.addressApi ?? '';
 
     for (const side of ['from', 'to']) {
         const input = form.elements.namedItem(`${side}_address`) as HTMLInputElement | null;
         if (!input) continue;
 
-        attachPlaces(
+        attachAddressSearch(
             input,
-            key,
-            (place) => {
-                (['city', 'state', 'zip', 'lat', 'lng'] as const).forEach((part) => {
+            server,
+            (address) => {
+                ADDRESS_PARTS.forEach((part) => {
                     const el = hidden(side, part);
-                    if (el) el.value = place[part];
+                    if (el) el.value = address[part];
                 });
             },
-            // Typing after a selection makes the stored city/ZIP/coordinates stale.
-            () => ['city', 'state', 'zip', 'lat', 'lng'].forEach((part) => hidden(side, part)?.value && (hidden(side, part)!.value = '')),
+            // Typing after a selection makes the stored street/city/ZIP/coordinates stale.
+            () => ADDRESS_PARTS.forEach((part) => hidden(side, part)?.value && (hidden(side, part)!.value = '')),
         );
     }
 

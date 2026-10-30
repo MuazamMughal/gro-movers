@@ -39,7 +39,7 @@ The public site must deliver **fully rendered static HTML** for ranking and spee
 | HTML sanitize | `mews/purifier` for every rich-text field on save |
 | Queue | `database` driver, processed from cron |
 | Mail | Laravel Mail over SMTP, with credentials from admin Settings and `.env` as the fallback |
-| Address autocomplete | **Google Maps JS API, Places API (New)**: `AutocompleteSuggestion` with session tokens, `includedRegionCodes: ['us']`. **Do not use the legacy `places.Autocomplete`**, which is unavailable to new API keys. |
+| Address autocomplete | **Photon** (open-source OpenStreetMap geocoder, no key): `GET {server}/api/?q=…&countrycode=us&lang=en&layer=…`. Server URL in Settings, default `https://photon.komoot.io` (public, fair use); self-host for heavy traffic. *(Replaced Google Places on 2026-10-29.)* |
 | Testing | Pest (feature tests for forms, publisher, redirects, SEO output) |
 | **Dev environment** | **Laravel Sail (Docker)**. See §1.1. Production stays **cPanel without Docker**. |
 
@@ -189,8 +189,9 @@ faqables           faq_id, faqable_type, faqable_id, sort
 menus              id, location (header|footer_1|footer_2|footer_3|mobile) unique, title
 menu_items         id, menu_id, parent_id, label, link_type (page|service|area|post|category|url),
                    linkable_id, url, target_blank, sort
-leads              id, full_name, email, phone, from_address, from_city, from_state, from_zip,
-                   from_lat, from_lng, to_address, to_city, to_state, to_zip, to_lat, to_lng,
+leads              id, full_name, email, phone, then for each of from_ / to_: address (full string),
+                   house_number, street, neighborhood, city, county, state (USPS code), state_name,
+                   zip, country, country_code, lat, lng, osm_id (e.g. N123 / W123 / R123),
                    move_date, move_type_id FK, move_type_name (snapshot), status
                    (new|contacted|quoted|booked|lost), source_url, referrer, utm (json), ip,
                    user_agent, read_at                                                       (sd)
@@ -299,7 +300,7 @@ Use a sidebar layout. Every list has search, filters, pagination, sortable colum
     - **Branding:** logo (light and dark), favicon.
     - **Theme:** the 5 colors.
     - **Email:** SMTP host, port, user, password (encrypted), from name, from address, **lead notification recipients** (multiple), auto-reply on/off, subject and body (tokens `{name}` `{move_date}` …).
-    - **Integrations:** Google Places API key, GA4 ID, GTM ID, Search Console verification, Facebook Pixel, custom head and body scripts. Turnstile keys are added in T18.
+    - **Integrations:** Photon address search server URL, GA4 ID, GTM ID, Search Console verification, Facebook Pixel, custom head and body scripts. Turnstile keys are added in T18.
     - **Forms:** TCPA consent text, quote form button label, success message.
     - **Static Cache:** "Rebuild all", last build log, and an on/off toggle (off = live SSR, for debugging).
 
@@ -368,17 +369,16 @@ Validation (client and server, Laravel FormRequest):
 | full_name | required, 2–100 chars |
 | email | required, RFC + DNS email |
 | phone | required. US format, normalized to E.164 (`+1XXXXXXXXXX`). Input mask `(XXX) XXX-XXXX`. |
-| from_address, to_address | required, 5–255. Hidden fields: city, state, ZIP, lat, lng (filled from Places, nullable) |
+| from_address, to_address | required, 5–255: the full address string. Hidden fields (filled from Photon, nullable): house number, street, neighborhood, city, county, state code, state name, ZIP, country, country code (`US` only), lat, lng, OSM ID |
 | move_date | required date, ≥ today, ≤ today + 18 months. Native `<input type="date">` with `min`. |
 | move_type_id | required, `exists:move_types,id,is_active,1` |
 | website (honeypot) | must be empty (hidden off-screen, `tabindex=-1`, `autocomplete=off`) |
 
-**Google Places (Moving From / Moving To)**
-- Lazy-load the Maps JS **on the first focus** of either address field, never on page load, so the page stays fast.
-- Use the `AutocompleteSuggestion.fetchAutocompleteSuggestions` API with an `AutocompleteSessionToken`, `includedRegionCodes:['us']`, and a debounce of 250 ms.
-- Show a custom-styled, keyboard-accessible listbox: ARIA combobox, arrow keys and Enter.
-- On select, call `place.fetchFields({fields:['formattedAddress','addressComponents','location']})` and fill the hidden fields.
-- If the key is missing or the API fails, the fields keep working as plain text inputs.
+**Photon address search (Moving From / Moving To)** (`resources/js/site/lib/address.ts`)
+- No script to load: one `fetch` to the Photon server per pause in typing (300 ms debounce, 3+ characters, in-flight requests aborted). US only (`countrycode=us`), layers house, street, locality, district, city and postcode.
+- Show a custom-styled, keyboard-accessible listbox: ARIA combobox, arrow keys and Enter. Duplicate addresses (a shop inside a building) are listed once.
+- On select, build the full address string (`1200 Main Street, Dallas, TX 75202`) into the visible field and fill every hidden part. Photon's full state name is mapped to the USPS code; a messy OSM postcode is dropped rather than failing validation.
+- If the server URL is empty or the server fails three times in a row, the fields keep working as plain text inputs.
 
 **Submission**
 - `POST /forms/quote`, rate limited to **5 per IP per 10 minutes**. Stores a `leads` row with source URL, referrer, UTM (captured from the landing URL into `sessionStorage`), IP and user agent.
@@ -599,7 +599,7 @@ For every task: implement it, write or extend the Pest tests, run `sail test` an
 | **T9** | Blog: categories, authors, tags, posts, TipTap, scheduling, TOC, reading time | A scheduled post appears on time |
 | **T10** | Reviews, FAQs (bank + attach), Menus editor | Menus render in the header and footer, and the dropdowns work |
 | **T11** | Public layout + all templates (§7), breadcrumbs, 404, responsive, mobile sticky bar | Visual QA at 375 / 768 / 1280 px |
-| **T12** | **Quote form** (exact fields), **Google Places**, contact form, leads + messages modules, CSV export, emails (queued), thank-you + GA event | A lead is saved, both emails are sent (use Mailpit locally), and the form works without JS |
+| **T12** | **Quote form** (exact fields), **address autocomplete** (now Photon), contact form, leads + messages modules, CSV export, emails (queued), thank-you + GA event | A lead is saved, both emails are sent (use Mailpit locally), and the form works without JS |
 | **T13** | JSON-LD (MovingCompany / LocalBusiness), sitemap, robots, redirects middleware, missing-SEO and duplicates report, uniqueness checks, noindex safeguards, HTTPS rules and HSTS, GA4 events, Search Console verification | Rich Results Test has no errors. The heading, uniqueness, indexability, CTA-presence and mixed-content tests pass. |
 | **T14** | **Static publisher**, URL registry, observers / dependency map, queue jobs, `.htaccess`, rebuild button, build log | Editing a service rebuilds only the mapped paths. On the **`apache` profile (`:8080`)**, the static files are served without PHP. Check this by adding a header `X-Served-By: static` from `public/static/.htaccess` and confirming no Laravel log entry appears. A trailing slash returns 301. |
 | **T15** | Performance and a11y pass: critical CSS, lazy Maps/GA, font preload, image audit | Lighthouse targets met (§11) |
@@ -654,7 +654,7 @@ Replaces rule 6 in §0 ("one admin role") and the "no roles" launch check. Built
 - [ ] Every item in `01-requirements-and-feasibility.md` §4 is implemented, and every task T0–T18 meets its acceptance criteria.
 - [ ] All 10 rows of the **Client Launch Checklist (§11.1)** pass.
 - [ ] No public page needs JS to show its content. Every public URL has an editable meta title and description.
-- [ ] The quote form has exactly the specified fields. Places autocomplete works, with a plain-text fallback.
+- [ ] The quote form has exactly the specified fields. Photon address autocomplete works, with a plain-text fallback.
 - [ ] Every image comes from the server media library through presets with WebP.
 - [ ] The static cache serves all pages. Publishing updates the affected pages within about a minute (cron) or instantly (sync for small sets).
 - [ ] The site runs on cPanel without Node. Development runs fully in Laravel Sail with one `sail up -d`.

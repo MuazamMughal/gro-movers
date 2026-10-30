@@ -48,12 +48,24 @@ class LeadsTest extends TestCase
 
     public function test_opening_a_lead_marks_it_read_and_status_and_notes_can_change()
     {
-        $lead = Lead::factory()->create(['phone' => '+12145550111']);
+        $lead = Lead::factory()->create([
+            'phone' => '+12145550111',
+            'from_house_number' => '1200', 'from_street' => 'Main Street', 'from_lat' => '32.7797528', 'from_lng' => '-96.8015566', 'from_osm_id' => 'W432096036',
+            'to_address' => 'Plano', 'to_city' => null, 'to_county' => null, 'to_state' => null, 'to_state_name' => null, 'to_zip' => null, 'to_country' => null, 'to_country_code' => null,
+        ]);
 
         $this->get(route('admin.leads.show', $lead))->assertInertia(fn (Assert $page) => $page
             ->component('leads/Show')
             ->where('lead.phone', '(214) 555-0111')
-            ->where('lead.phone_href', 'tel:+12145550111'));
+            ->where('lead.phone_href', 'tel:+12145550111')
+            ->where('lead.from.parts', [
+                'Street' => '1200 Main Street', 'City' => 'Dallas', 'County' => 'Dallas', 'State' => 'Texas (TX)',
+                'ZIP' => '75201', 'Country' => 'United States', 'Coordinates' => '32.7797528, -96.8015566',
+            ])
+            ->where('lead.from.osm', 'https://www.openstreetmap.org/way/432096036')
+            ->where('lead.to.address', 'Plano')
+            ->where('lead.to.parts', [])
+            ->where('lead.to.osm', null));
         $this->assertNotNull($lead->fresh()->read_at);
 
         $this->patch(route('admin.leads.update', $lead), ['status' => 'quoted']);
@@ -87,6 +99,8 @@ class LeadsTest extends TestCase
 
         $this->assertStringStartsWith("\xEF\xBB\xBF", $csv);
         $this->assertStringContainsString('"\'=HYPERLINK(""http://evil"")"', $csv);
+        $this->assertStringContainsString('"From county","From state","From state name"', $csv);
+        $this->assertStringContainsString(',Dallas,Dallas,TX,Texas,75201,"United States",US,', $csv);
         $this->assertStringNotContainsString('Lost Lead', $csv);
         $this->assertSame(2, substr_count(trim($csv), "\n") + 1);
     }

@@ -53,8 +53,8 @@ class FormController extends Controller
         $lead = Lead::query()->create([
             ...$request->safe()->only([
                 'full_name', 'email',
-                'from_address', 'from_city', 'from_state', 'from_zip', 'from_lat', 'from_lng',
-                'to_address', 'to_city', 'to_state', 'to_zip', 'to_lat', 'to_lng',
+                ...QuoteRequest::addressFields('from'),
+                ...QuoteRequest::addressFields('to'),
                 'move_date',
             ]),
             'phone' => $request->phoneE164(),

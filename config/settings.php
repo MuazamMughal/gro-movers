@@ -76,7 +76,8 @@ return [
         'email.auto_reply_body' => "Hi {name},\n\nThanks for requesting a free moving quote for {move_date}. A member of our team will contact you shortly.\n\n— {company}",
 
         // Integrations
-        'integrations.google_places_key' => null,
+        // Photon (OpenStreetMap) address search for Moving From / Moving To; empty turns suggestions off.
+        'integrations.address_api_url' => 'https://photon.komoot.io',
         'integrations.ga4_id' => null,
         'integrations.gtm_id' => null,
         'integrations.search_console_verification' => null,

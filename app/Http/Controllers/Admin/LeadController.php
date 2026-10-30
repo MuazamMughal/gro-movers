@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\LeadStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Forms\QuoteRequest;
 use App\Models\Lead;
 use App\Models\LeadNote;
 use App\Models\MoveType;
@@ -67,17 +68,14 @@ class LeadController extends Controller
 
         return Inertia::render('leads/Show', [
             'lead' => [
-                ...$lead->only([
-                    'id', 'full_name', 'email', 'from_address', 'from_city', 'from_state', 'from_zip',
-                    'to_address', 'to_city', 'to_state', 'to_zip', 'move_type_name', 'source_url', 'referrer', 'utm', 'ip', 'user_agent',
-                ]),
+                ...$lead->only(['id', 'full_name', 'email', 'move_type_name', 'source_url', 'referrer', 'utm', 'ip', 'user_agent']),
+                'from' => $this->address($lead, 'from'),
+                'to' => $this->address($lead, 'to'),
                 'phone' => $lead->phoneDisplay(),
                 'phone_href' => 'tel:'.$lead->phone,
                 'move_date' => $lead->move_date->format('l, F j, Y'),
                 'days_until' => (int) SiteTime::local(now())->startOfDay()->diffInDays($lead->move_date->startOfDay(), false),
                 'status' => $lead->status->value,
-                'from_map' => $lead->mapsUrl('from'),
-                'to_map' => $lead->mapsUrl('to'),
                 'created_at' => SiteTime::local($lead->created_at)->format('M j, Y \a\t g:i A'),
                 'notes' => $lead->notes->map(fn (LeadNote $note) => [
                     'id' => $note->id,
@@ -148,8 +146,8 @@ class LeadController extends Controller
             fwrite($out, "\xEF\xBB\xBF"); // UTF-8 BOM so Excel shows accents correctly
             fputcsv($out, [
                 'ID', 'Received', 'Status', 'Full name', 'Email', 'Phone',
-                'Moving from', 'From city', 'From state', 'From ZIP',
-                'Moving to', 'To city', 'To state', 'To ZIP',
+                ...static::csvAddressHeaders('From'),
+                ...static::csvAddressHeaders('To'),
                 'Moving date', 'Type of move', 'Source page', 'Referrer', 'UTM source', 'UTM medium', 'UTM campaign',
             ]);
 
@@ -162,8 +160,8 @@ class LeadController extends Controller
                         $lead->full_name,
                         $lead->email,
                         $lead->phoneDisplay(),
-                        $lead->from_address, $lead->from_city, $lead->from_state, $lead->from_zip,
-                        $lead->to_address, $lead->to_city, $lead->to_state, $lead->to_zip,
+                        ...array_map(fn (string $field) => $lead->{$field}, QuoteRequest::addressFields('from')),
+                        ...array_map(fn (string $field) => $lead->{$field}, QuoteRequest::addressFields('to')),
                         $lead->move_date->format('Y-m-d'),
                         $lead->move_type_name,
                         $lead->source_url,
@@ -177,6 +175,49 @@ class LeadController extends Controller
 
             fclose($out);
         }, $name, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
+    /**
+     * CSV headers for one side, in QuoteRequest::addressFields() order (keep the two in step).
+     *
+     * @return list<string>
+     */
+    private static function csvAddressHeaders(string $side): array
+    {
+        return [
+            $side === 'From' ? 'Moving from' : 'Moving to',
+            ...array_map(fn (string $label) => "{$side} {$label}", [
+                'house number', 'street', 'neighborhood', 'city', 'county', 'state', 'state name',
+                'ZIP', 'country', 'country code', 'latitude', 'longitude', 'OSM ID',
+            ]),
+        ];
+    }
+
+    /**
+     * One side of the move for the lead page: the full address string, its parts and a map link.
+     *
+     * @return array<string, mixed>
+     */
+    private function address(Lead $lead, string $side): array
+    {
+        $part = fn (string $name) => $lead->{"{$side}_{$name}"};
+        $osm = $part('osm_id');
+
+        return [
+            'address' => $part('address'),
+            'parts' => array_filter([
+                'Street' => trim($part('house_number').' '.$part('street')) ?: null,
+                'Neighborhood' => $part('neighborhood'),
+                'City' => $part('city'),
+                'County' => $part('county'),
+                'State' => $part('state_name') && $part('state') ? "{$part('state_name')} ({$part('state')})" : ($part('state_name') ?: $part('state')),
+                'ZIP' => $part('zip'),
+                'Country' => $part('country'),
+                'Coordinates' => $part('lat') !== null ? "{$part('lat')}, {$part('lng')}" : null,
+            ]),
+            'map' => $lead->mapsUrl($side),
+            'osm' => $osm ? 'https://www.openstreetmap.org/'.['N' => 'node', 'W' => 'way', 'R' => 'relation'][$osm[0]].'/'.substr($osm, 1) : null,
+        ];
     }
 
     /**

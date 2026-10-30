@@ -16,7 +16,7 @@
 | Root template | `layouts/site.blade.php` | `resources/views/site.blade.php`: `<head>` only (SEO tags, JSON-LD, favicon, fonts, theme vars, integrations) printed **from page props by PHP**, then `@inertia` |
 | Sections | `resources/views/sections/{type}.blade.php` | `resources/js/site/sections/{Type}.vue`, picked by a registry keyed by `type` |
 | Components | `components/site/*.blade.php` | `resources/js/site/components/*.vue` (Header, Footer, TopBar, MobileBar, Breadcrumbs, Button, CallButton, Icon, Picture, QuoteForm, ContactForm, FormGuard, ReviewCard, PostCard, Pagination, Prose, InlineCta, Stars…) |
-| Islands (`resources/js/site/islands`, `lib`) | Enhance static HTML | Logic moves into the Vue components (validation, phone mask, Places, Turnstile, analytics). `lib/*.ts` stays as plain modules. |
+| Islands (`resources/js/site/islands`, `lib`) | Enhance static HTML | Logic moves into the Vue components (validation, phone mask, address search, Turnstile, analytics). `lib/*.ts` stays as plain modules. |
 | Inertia apps | Admin only (`app.blade.php`) | Two apps: admin (unchanged) and site (`resources/js/site/app.ts` + `resources/js/site/ssr.ts`), separate Vite entries, separate root views and middleware |
 | Static cache | HTML from Blade | HTML from SSR (same publisher, same `.htaccess`) |
 
@@ -32,7 +32,7 @@
 
 ## 2. Server side
 
-1. `HandleSiteInertiaRequests` middleware for public routes: `rootView = 'site'`, shared props: company/contact info, menus (header, footer 1–3, mobile), theme flags, integrations needed client-side (Places key, Turnstile site key, analytics IDs), `quoteHref`.
+1. `HandleSiteInertiaRequests` middleware for public routes: `rootView = 'site'`, shared props: company/contact info, menus (header, footer 1–3, mobile), theme flags, integrations needed client-side (address search server, Turnstile site key, analytics IDs), `quoteHref`.
 2. Each site controller (`Site\PageController`, `ServiceController`, `AreaController`, `BlogController`, `ReviewController`, `FormController` invalid page, 404 handler, `SeoFileController` untouched) returns `Inertia::render('…', $props)` with the same data its Blade view used. Section data is serialized through one `SectionData` transformer (per type), reusing `SectionRenderer`/`AutoSections` logic.
 3. SSR config: `config/inertia.php` ssr enabled for the site app with the bundle `bootstrap/ssr/ssr.mjs`; `php artisan inertia:start-ssr` runs it. Admin stays client-rendered.
 4. **Static publisher safety:** if SSR is unreachable (Inertia falls back to client rendering), `StaticPublisher::build()` must **not** overwrite the existing file: detect the missing SSR body (e.g. empty `#app`/no `data-server-rendered` marker) and return `failed`, keeping the previous copy (same rule as 5xx).
@@ -54,7 +54,7 @@
 2. **HTML parity:** for each URL compare the old and new static HTML for: one H1, title/description/canonical/robots, JSON-LD graph, every link `href`, every form field name, image `srcset`s. No regressions.
 3. **PHP tests:** all existing tests pass (currently 344 passing, 4 skipped). HTML assertions on public pages become `assertInertia` prop assertions, plus SSR-backed checks where markup matters (run with the SSR server up; skip cleanly with a message when it is down).
 4. **Builds and checks:** `npm run build` (client + SSR), `vue-tsc --noEmit`, Pint, `php artisan static:build --now` builds all pages from SSR, no console errors and no hydration warnings in the browser.
-5. **Behaviour:** quote and contact forms submit with and without JS (lead saved, Mailpit emails), Places suggestions, Turnstile with Cloudflare test keys, mobile menu, dropdowns, review slider, FAQ accordion, `#quote-form` links, GA events (`window.dataLayer`).
+5. **Behaviour:** quote and contact forms submit with and without JS (lead saved, Mailpit emails), address suggestions, Turnstile with Cloudflare test keys, mobile menu, dropdowns, review slider, FAQ accordion, `#quote-form` links, GA events (`window.dataLayer`).
 6. **Performance:** Lighthouse mobile on home, a service and a city page: Performance ≥ 90, Accessibility, Best Practices and SEO 100.
 7. **Docs:** update `docs/deploy-cpanel.md` (Node.js App setup for SSR, update steps, troubleshooting), README, and the spec notes.
 

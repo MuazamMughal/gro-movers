@@ -373,7 +373,7 @@ The forms always have a hidden trap field, a minimum fill-in time and a rate lim
 - [ ] **Settings → Branding:** logo (light and dark backgrounds) and favicon.
 - [ ] **Settings → Email:** lead recipients set and a test email received.
 - [ ] **Settings → Integrations:**
-  - Google Places API key, restricted to `https://example.com/*` in Google Cloud;
+  - Address search server: the default public Photon server works; for heavy traffic, run your own Photon server and enter its URL;
   - GA4 or GTM ID;
   - Search Console verification;
   - Cloudflare Turnstile site and secret keys (see [Spam protection](#14b-spam-protection-cloudflare-turnstile)).

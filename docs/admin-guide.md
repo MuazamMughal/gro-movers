@@ -158,7 +158,7 @@ The **Google preview** shows the result as you type. A warning appears if anothe
 | **Branding** | Logo for light and dark backgrounds, favicon. |
 | **Theme** | Site colors: Primary (backgrounds), Secondary (text and dark sections) and Tertiary (buttons and accents). The preview shows a readability (contrast) check for each color pair. If your accent is too light for white text, buttons automatically use a darker shade of it. |
 | **Email** | Lead recipients, sending server (SMTP), sender name and address, the customer auto-reply text, and **Send test email**. |
-| **Integrations** | Google Places key (address suggestions in the quote form), Google Analytics 4 or Tag Manager, Search Console verification, Cloudflare Turnstile keys (spam check on the forms), Facebook Pixel, extra head and body scripts. |
+| **Integrations** | Address search server (Photon, the free OpenStreetMap address suggestions in the quote form), Google Analytics 4 or Tag Manager, Search Console verification, Cloudflare Turnstile keys (spam check on the forms), Facebook Pixel, extra head and body scripts. |
 | **Forms** | Consent text under the quote form, the button label and the success message. |
 | **SEO** | Site name added to titles, default description and share image, the main domain (with or without www). |
 | **Static Cache** | Turn the page cache off while troubleshooting (every page then renders live and the site is a little slower). Turn it back on afterwards. |
@@ -216,6 +216,6 @@ Only **Administrators** see **Users** and **Roles**.
 | I saved, but the site still shows the old version. | Wait a minute and refresh (on a phone, close and reopen the tab). Still old after 5 minutes? Click **Rebuild site** on the dashboard, and check for the red cron banner. |
 | A customer says the form asks them to "verify you are human". | That's the Cloudflare spam check (**Settings → Integrations**). Most people never see it; one tick is enough. If someone can't get past it, they can call instead. |
 | Quote emails stopped arriving. | **Settings → Email → Send test email**. If the test fails, the email password or server changed. Leads are always saved in **Quote Requests**, even when email fails. |
-| The address suggestions in the quote form stopped working. | The Google Places key expired, ran out of quota or doesn't allow your domain. Check it in Google Cloud. The form still works without suggestions. |
+| The address suggestions in the quote form stopped working. | The Photon server in **Settings → Integrations** is down or limiting requests (the free public server has a fair-use limit). Try again later, or run your own Photon server and enter its URL. The form still works without suggestions. |
 | A page disappeared from Google. | Open its SEO tab: is *Hidden from Google* ticked? Is the page published? Then use **URL Inspection** in Search Console. |
 | I deleted a page by mistake. | It can't be undone in the admin. Ask your host to restore last night's backup, or recreate the page and add a redirect from its old address. |
