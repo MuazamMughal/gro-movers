@@ -4,6 +4,7 @@ namespace Tests\Feature\Console;
 
 use App\Models\Service;
 use App\Models\User;
+use Illuminate\Console\Scheduling\CallbackEvent;
 use Illuminate\Console\Scheduling\Event;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -44,8 +45,10 @@ class DeployToolsTest extends TestCase
         $this->assertSame('* * * * *', $find('scheduler:heartbeat')->expression);
         $this->assertSame('30 3 * * *', $find('backup:run')->expression);
 
+        // No task may start a child process: shared hosts (Hostinger) disable proc_open.
+        $events->each(fn (Event $e) => $this->assertInstanceOf(CallbackEvent::class, $e, (string) $e->command));
+
         $worker = $find('queue:cron-worker');
-        $this->assertStringContainsString('--stop-when-empty', $worker->command);
         $this->assertTrue($worker->withoutOverlapping);
 
         config(['queue.cron_worker' => false]); // Sail runs its own worker

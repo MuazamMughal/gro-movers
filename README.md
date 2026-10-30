@@ -8,6 +8,7 @@ Specs:
 - [docs/01-requirements-and-feasibility.md](docs/01-requirements-and-feasibility.md): requirements and decisions
 - [docs/02-build-prompt.md](docs/02-build-prompt.md): build spec and task list (T0–T18)
 - [docs/deploy-cpanel.md](docs/deploy-cpanel.md): deploying to cPanel, cron, SSL, backups, Search Console
+- [docs/deploy-hostinger.md](docs/deploy-hostinger.md): the live Hostinger setup and its differences from cPanel
 - [docs/admin-guide.md](docs/admin-guide.md): using the admin day to day
 
 ## Stack
@@ -73,7 +74,7 @@ make dev                                   # Vite with hot reload
 - 6 services, 3 cities with all 18 city × service pages, 45 FAQs, 12 sample reviews, every system page, menus, 1 author, 9 blog posts.
 - Generated placeholder images (no stock photos).
 
-Copy lives in `database/seeders/content/*.php`. Re-running never overwrites admin edits.
+Copy lives in `database/seeders/Content/*.php`. Re-running never overwrites admin edits.
 - `SEED_CONTENT=false` skips it.
 - Sample reviews and the Privacy/Terms templates are flagged in the admin and must be replaced or reviewed before launch.
 
@@ -85,4 +86,4 @@ Public pages are pre-rendered to `public/static/{path}/index.html`, and Apache s
 - The Sail dev server ignores these files; test them with `make apache` (http://localhost:8080).
 
 ## Deployment
-cPanel. See [docs/deploy-cpanel.md](docs/deploy-cpanel.md).
+Live on Hostinger: see [docs/deploy-hostinger.md](docs/deploy-hostinger.md). For any cPanel host: [docs/deploy-cpanel.md](docs/deploy-cpanel.md).

@@ -37,7 +37,7 @@ use Illuminate\Support\Str;
  *
  * Runs once: if any service exists the content is considered installed and
  * nothing is touched, so admin edits are never overwritten. Copy lives in
- * database/seeders/content/*.php.
+ * database/seeders/Content/*.php.
  */
 class ContentSeeder extends Seeder
 {
@@ -62,17 +62,17 @@ class ContentSeeder extends Seeder
         $this->images = app(PlaceholderMedia::class);
         $this->sections = app(SectionSync::class);
 
-        $areas = require database_path('seeders/content/areas.php');
+        $areas = require database_path('seeders/Content/areas.php');
 
         DB::transaction(function () use ($areas) {
             $this->defaultShareImage();
             $this->faqBank($areas['faqs']);
-            $services = $this->services(require database_path('seeders/content/services.php'));
+            $services = $this->services(require database_path('seeders/Content/services.php'));
             $cities = $this->areas($areas['areas'], $services);
             $this->areaServices($areas['template'], $cities, $services);
             $this->reviews($areas['reviews'], $cities, $services);
-            $this->pages(require database_path('seeders/content/pages.php'));
-            $this->blog(require database_path('seeders/content/posts.php'));
+            $this->pages(require database_path('seeders/Content/pages.php'));
+            $this->blog(require database_path('seeders/Content/posts.php'));
             $this->menus($services, $cities);
         });
 
