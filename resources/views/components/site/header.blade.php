@@ -18,7 +18,7 @@
 @endphp
 <header class="sticky top-0 z-40 border-b border-border bg-primary/95 backdrop-blur supports-[backdrop-filter]:bg-primary/90">
     <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-lg focus:bg-secondary focus:px-4 focus:py-2 focus:text-primary">Skip to content</a>
-    <div class="mx-auto flex h-18 max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto flex h-18 max-w-7xl items-center gap-4 px-4 sm:px-6 xl:gap-6 xl:px-8">
         <a href="/" class="flex shrink-0 items-center" aria-label="{{ $company }} home">
             @if ($logo)
                 <x-picture :media="$logo" sizes="(min-width: 640px) 200px, 160px" eager :alt="$company" img-class="h-10 w-auto max-w-[200px] object-contain sm:h-12" />
@@ -29,18 +29,18 @@
 
         @if ($items)
             <nav class="hidden flex-1 justify-center lg:flex" aria-label="Main">
-                <ul class="flex items-center gap-1">
+                <ul class="flex items-center xl:gap-1">
                     @foreach ($items as $item)
                         @if ($item['children'])
                             <li class="group relative" data-dropdown>
                                 <div class="flex items-center">
                                     @if ($item['url'])
-                                        <a href="{{ $item['url'] }}" @if ($item['new_tab']) target="_blank" rel="noopener" @endif @if ($isCurrent($item['url'])) aria-current="page" @endif class="rounded-lg py-2 pr-1 pl-3 font-semibold hover:text-tertiary-strong aria-[current=page]:text-tertiary-strong">{{ $item['label'] }}</a>
+                                        <a href="{{ $item['url'] }}" @if ($item['new_tab']) target="_blank" rel="noopener" @endif @if ($isCurrent($item['url'])) aria-current="page" @endif class="rounded-lg py-2 pr-1 pl-2 font-semibold whitespace-nowrap hover:text-tertiary-strong xl:pl-3 aria-[current=page]:text-tertiary-strong">{{ $item['label'] }}</a>
                                         <button type="button" class="rounded-lg p-2 hover:text-tertiary-strong" aria-expanded="false" aria-label="{{ $item['label'] }} menu" data-dropdown-toggle>
                                             <x-site.icon name="chevron-down" class="size-4 transition-transform group-data-open:rotate-180" />
                                         </button>
                                     @else
-                                        <button type="button" class="flex items-center gap-1 rounded-lg px-3 py-2 font-semibold hover:text-tertiary-strong" aria-expanded="false" data-dropdown-toggle>
+                                        <button type="button" class="flex items-center gap-1 rounded-lg px-2 py-2 font-semibold whitespace-nowrap hover:text-tertiary-strong xl:px-3" aria-expanded="false" data-dropdown-toggle>
                                             {{ $item['label'] }} <x-site.icon name="chevron-down" class="size-4 transition-transform group-data-open:rotate-180" />
                                         </button>
                                     @endif
@@ -55,7 +55,7 @@
                             </li>
                         @else
                             <li>
-                                <a href="{{ $item['url'] }}" @if ($item['new_tab']) target="_blank" rel="noopener" @endif @if ($isCurrent($item['url'])) aria-current="page" @endif class="block rounded-lg px-3 py-2 font-semibold hover:text-tertiary-strong aria-[current=page]:text-tertiary-strong">{{ $item['label'] }}</a>
+                                <a href="{{ $item['url'] }}" @if ($item['new_tab']) target="_blank" rel="noopener" @endif @if ($isCurrent($item['url'])) aria-current="page" @endif class="block rounded-lg px-2 py-2 font-semibold whitespace-nowrap hover:text-tertiary-strong aria-[current=page]:text-tertiary-strong xl:px-3">{{ $item['label'] }}</a>
                             </li>
                         @endif
                     @endforeach
@@ -64,10 +64,11 @@
         @endif
 
         <div class="ml-auto flex items-center gap-2 lg:ml-0">
-            {{-- Call Now is always visible: below 768px in the mobile bar, then here (compact while the menu needs the room). --}}
-            <x-site.call-button variant="outline" location="header" class="hidden! md:inline-flex! lg:hidden! xl:inline-flex!" />
-            <x-site.call-button variant="outline" location="header" compact class="hidden! lg:inline-flex! xl:hidden!" />
-            <x-site.button :href="\App\Support\QuoteLink::href()" label="Get a Free Quote" class="hidden! sm:inline-flex!" />
+            {{-- Call Now is always visible: below 768px in the mobile bar, then here (compact while the menu needs the room).
+                 1024–1279px is tight: labels never wrap, and spacing shrinks until xl. --}}
+            <x-site.call-button variant="outline" location="header" class="hidden! whitespace-nowrap md:inline-flex! lg:hidden! xl:inline-flex!" />
+            <x-site.call-button variant="outline" location="header" compact class="hidden! whitespace-nowrap lg:inline-flex! lg:px-4 xl:hidden!" />
+            <x-site.button :href="\App\Support\QuoteLink::href()" label="Get a Free Quote" class="hidden! whitespace-nowrap sm:inline-flex! lg:px-4 xl:px-5" />
 
             @if ($mobileItems)
                 <details class="group/drawer lg:hidden" data-drawer>
