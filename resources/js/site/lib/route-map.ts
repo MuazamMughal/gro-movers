@@ -65,6 +65,17 @@ export function routeMap(svg: SVGSVGElement): RouteMap | null {
         label.setAttribute('y', String(at.y < 110 ? at.y + 44 : at.y - 72));
     }
 
+    /** A city's name stays hidden while a chosen place's name sits on top of it. */
+    function clearLabels(): void {
+        const pins = [fromLabel!, toLabel!].filter((l) => l.textContent).map((l) => l.getBBox());
+
+        svg.querySelectorAll<SVGTextElement>('.route-map-cities text').forEach((city) => {
+            const c = city.getBBox();
+            const covered = pins.some((p) => p.x < c.x + c.width && c.x < p.x + p.width && p.y < c.y + c.height && c.y < p.y + p.height);
+            city.style.visibility = covered ? 'hidden' : '';
+        });
+    }
+
     function arc(a: Point, b: Point): string {
         const mx = (a.x + b.x) / 2 + (b.y - a.y) * 0.18;
         const my = (a.y + b.y) / 2 - (b.x - a.x) * 0.18;
@@ -113,6 +124,7 @@ export function routeMap(svg: SVGSVGElement): RouteMap | null {
             if (!from && !to) {
                 place(fromPin, fromLabel, sample.from, '');
                 place(toPin, toLabel, sample.to, '');
+                clearLabels();
                 return draw(sample.d);
             }
 
@@ -121,6 +133,7 @@ export function routeMap(svg: SVGSVGElement): RouteMap | null {
 
             place(fromPin, fromLabel, a, from?.label ?? '');
             place(toPin, toLabel, b, to?.label ?? '');
+            clearLabels();
 
             if (a && b) return draw(arc(a, b));
 

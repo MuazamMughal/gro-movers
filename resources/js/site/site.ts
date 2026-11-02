@@ -71,7 +71,8 @@ function mountIslands(): void {
     forms.forEach((form) => {
         fillTracking(form, visit);
         form.addEventListener('focusin', () => mount(form), { once: true });
-        observer ? observer.observe(form) : mount(form);
+        // Answers from the hero's first step must fill the form right away, not when it scrolls into view.
+        observer && !form.hasAttribute('data-draft') ? observer.observe(form) : mount(form);
     });
 }
 
