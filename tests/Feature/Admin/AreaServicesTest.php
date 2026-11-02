@@ -63,7 +63,7 @@ class AreaServicesTest extends TestCase
     {
         $template = Page::system(SystemPage::AreaServiceTemplate);
 
-        $this->assertSame('{service} in {city}, {state_code} | {company}', $template->seo->meta_title);
+        $this->assertSame('{service} in {city}, {state_code} | Free Quote', $template->seo->meta_title);
         $this->assertTrue($template->seo->robots_index);
     }
 

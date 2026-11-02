@@ -93,7 +93,7 @@ const submit = () =>
 
         <section v-show="tab === 'seo'" class="max-w-3xl space-y-4" role="tabpanel">
             <p class="text-sm text-muted-foreground">
-                Write the meta title and description with tokens, e.g. “{service} in {city}, {state_code} | {company}”. The preview shows them unreplaced. The canonical URL is ignored here: each page is its own canonical.
+                Write the meta title and description with tokens, e.g. “{service} in {city}, {state_code} | Free Quote”. The preview shows them unreplaced. The canonical URL is ignored here: each page is its own canonical.
             </p>
             <SeoPanel v-model="form.seo" :fallbacks="seo.fallbacks" :url="seo.url" :errors="form.errors as Record<string, string>" />
         </section>

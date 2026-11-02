@@ -97,6 +97,16 @@ php artisan up
 php artisan static:build --now
 ```
 
+**New starter content on a live site** needs one extra command each, run once before `static:build`. They only add what is missing and leave existing content alone:
+
+```bash
+# New cities in database/seeders/Content/areas.php
+php artisan db:seed --class=AddServiceAreasSeeder --force
+
+# The How It Works page and its menu links
+php artisan db:seed --class=AddHowItWorksSeeder --force
+```
+
 The zip never contains `.env`, `storage/` uploads and backups, or `public/static`, so they survive the update. The `public/storage` link is not in the zip either and stays in place.
 
 **Rolling back the domain** (shows Hostinger's default page again):

@@ -161,8 +161,8 @@ return [
     ],
 
     'areas_index' => [
-        'meta_title' => 'Service Areas | Movers in Dallas, Plano & Irving, TX',
-        'meta_description' => 'We move homes and businesses in Dallas, Plano, Irving and across Dallas–Fort Worth, plus long-distance moves nationwide. Find movers in your city.',
+        'meta_title' => 'Service Areas | Movers Across Dallas–Fort Worth, TX',
+        'meta_description' => 'We move homes and businesses in Dallas, Fort Worth, Plano, Arlington, Frisco and across DFW, plus long-distance moves nationwide. Find your city.',
         'sections' => [
             ['type' => 'hero', 'data' => [
                 'eyebrow' => 'Service areas',

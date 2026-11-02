@@ -52,8 +52,8 @@ class LayoutTest extends TestCase
         // The body reserves room for the fixed bar on phones (no content hidden, no layout shift).
         $this->assertMatchesRegularExpression('/<body class="[^"]*pb-16 md:pb-0/', $html);
         $this->assertStringContainsString('Skip to content', $html);
-        // Tablet/desktop header: full number, plus a compact "Call Now" while the menu needs the room.
-        $this->assertStringContainsString('md:inline-flex! lg:hidden! xl:inline-flex!" data-call-location="header"', $html);
+        // Tablet header: full number. With the full menu: a compact "Call Now" (the number is in the top bar).
+        $this->assertStringContainsString('md:inline-flex! xl:hidden!" data-call-location="header"', $html);
         $this->assertStringContainsString('aria-label="Call (214) 555-0100" data-call-location="header"', $html);
     }
 

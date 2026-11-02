@@ -10,6 +10,7 @@ return [
         [
             'city' => 'Dallas', 'state_name' => 'Texas', 'state_code' => 'TX', 'slug' => 'dallas-tx',
             'lat' => 32.7767, 'lng' => -96.7970,
+            'nearby' => ['irving-tx', 'garland-tx', 'plano-tx', 'grand-prairie-tx'],
             'zip_codes' => ['75201', '75204', '75205', '75206', '75214', '75219', '75225', '75230', '75231', '75248'],
             'intro' => 'From Uptown high-rises to family homes in Lake Highlands and Preston Hollow, our Dallas movers handle every kind of move across the city.',
             'meta_title' => 'Movers in Dallas, TX | Local & Long-Distance Moving',
@@ -24,6 +25,7 @@ return [
         [
             'city' => 'Plano', 'state_name' => 'Texas', 'state_code' => 'TX', 'slug' => 'plano-tx',
             'lat' => 33.0198, 'lng' => -96.6989,
+            'nearby' => ['frisco-tx', 'mckinney-tx', 'garland-tx', 'dallas-tx'],
             'zip_codes' => ['75023', '75024', '75025', '75074', '75075', '75093', '75094'],
             'intro' => 'Family homes, new builds and corporate relocations: our Plano movers know West Plano, Legacy and every neighborhood in between.',
             'meta_title' => 'Movers in Plano, TX | Home & Corporate Relocation',
@@ -38,6 +40,7 @@ return [
         [
             'city' => 'Irving', 'state_name' => 'Texas', 'state_code' => 'TX', 'slug' => 'irving-tx',
             'lat' => 32.8140, 'lng' => -96.9489,
+            'nearby' => ['dallas-tx', 'grand-prairie-tx', 'arlington-tx'],
             'zip_codes' => ['75038', '75039', '75060', '75061', '75062', '75063'],
             'intro' => 'Apartments in Las Colinas, family homes in Valley Ranch and offices near DFW Airport: our Irving movers cover it all.',
             'meta_title' => 'Movers in Irving, TX | Las Colinas & Valley Ranch',
@@ -49,9 +52,114 @@ return [
             ],
             'icon' => 'pin',
         ],
+        [
+            'city' => 'Fort Worth', 'state_name' => 'Texas', 'state_code' => 'TX', 'slug' => 'fort-worth-tx',
+            'lat' => 32.7555, 'lng' => -97.3308,
+            'nearby' => ['arlington-tx', 'grand-prairie-tx', 'denton-tx'],
+            'zip_codes' => ['76102', '76104', '76107', '76109', '76116', '76132', '76137', '76179', '76244'],
+            'intro' => 'From lofts near Sundance Square to family homes around Alliance and the TCU area, our Fort Worth movers handle moves of every size.',
+            'meta_title' => 'Movers in Fort Worth, TX | Local & Long-Distance',
+            'meta_description' => 'Fort Worth movers for homes, apartments and offices, from Near Southside to Alliance. Packing, storage and long-distance moves. Get a free quote.',
+            'content' => '<p>Fort Worth has grown fast without losing its character, and moves here range just as widely. Older homes near the Cultural District and the TCU area often have narrow doorways and tight staircases. Newer neighborhoods up by Alliance have larger floor plans and wide driveways, but also strict HOA rules. Our Fort Worth crews plan each job around the home in front of them.</p><p>We check the details that decide how a moving day goes: where the truck can park near West 7th and Sundance Square, whether an apartment needs a reserved elevator, and how traffic on I-35W and I-30 will affect the drive between homes. Delicate items in older houses get extra wrapping and a clear path before anything is lifted.</p><h3>Moving between Fort Worth and Dallas</h3><p>Plenty of families move between the two sides of the Metroplex. {company} treats a cross-town move as one job with one written price, so you are not juggling two crews or two schedules.</p>',
+            'faqs' => [
+                ['Can you move older homes near the TCU area and Cultural District?', '<p>Yes. Older Fort Worth homes often have narrow doors and steep stairs. Tell us about them when you request a quote and we will bring the right crew size and equipment.</p>'],
+                ['Do you handle moves from Fort Worth to Dallas?', '<p>Yes. Moves across the Metroplex are common for us, and they are handled as one move with one written estimate.</p>'],
+            ],
+            'icon' => 'truck',
+        ],
+        [
+            'city' => 'Arlington', 'state_name' => 'Texas', 'state_code' => 'TX', 'slug' => 'arlington-tx',
+            'lat' => 32.7357, 'lng' => -97.1081,
+            'nearby' => ['grand-prairie-tx', 'fort-worth-tx', 'irving-tx'],
+            'zip_codes' => ['76001', '76002', '76006', '76010', '76011', '76012', '76013', '76014', '76015', '76016', '76017', '76018'],
+            'intro' => 'Student apartments near UTA, family homes in South Arlington and condos in Viridian: our Arlington movers plan around your place and the game-day traffic.',
+            'meta_title' => 'Movers in Arlington, TX | Homes, Apartments & UTA',
+            'meta_description' => 'Arlington movers for family homes, apartments and student moves near UTA. Careful crews, packing and storage in Arlington, TX. Request a free quote.',
+            'content' => '<p>Arlington sits in the middle of the Metroplex, halfway between Dallas and Fort Worth, which makes it a natural home for commuters, students and families. Our Arlington movers handle apartment moves near the University of Texas at Arlington, condos in Viridian and larger homes across South Arlington.</p><p>Timing matters here more than in most cities. Events at AT&amp;T Stadium and Globe Life Field can slow traffic around I-30 and State Highway 360 for hours, so we check the event calendar when we plan your move and adjust the route or the start time if we need to.</p><h3>Student and short-term moves</h3><p>Moving in or out around the UTA semester? Lease dates can be tight and apartment elevators get busy. Book early, and {company} will work within your community’s move-in rules. Our storage service can hold your things between leases.</p>',
+            'faqs' => [
+                ['Do game days affect moves in Arlington?', '<p>They can. Big events near AT&amp;T Stadium and Globe Life Field slow traffic around I-30, so we check the calendar and plan your route and start time around them.</p>'],
+                ['Do you move students near UTA?', '<p>Yes. We handle small apartment moves near campus, and our storage service can hold your belongings between leases.</p>'],
+            ],
+            'icon' => 'building',
+        ],
+        [
+            'city' => 'Frisco', 'state_name' => 'Texas', 'state_code' => 'TX', 'slug' => 'frisco-tx',
+            'lat' => 33.1507, 'lng' => -96.8236,
+            'nearby' => ['plano-tx', 'mckinney-tx', 'denton-tx'],
+            'zip_codes' => ['75033', '75034', '75035', '75036'],
+            'intro' => 'New builds, master-planned communities and growing families: our Frisco movers know how to protect a new home on moving day.',
+            'meta_title' => 'Movers in Frisco, TX | New Homes & Family Moves',
+            'meta_description' => 'Frisco movers for new builds, family homes and relocations across Frisco, TX. Floor protection, packing and storage with clear, written quotes.',
+            'content' => '<p>Frisco has grown quickly over the last two decades, and a large share of moves here end at a brand-new house. New builds need extra care: fresh paint, new hardwood and untouched door frames are easy to mark. Our Frisco crews lay floor runners and door-jamb protection before the first box comes in.</p><p>Many Frisco neighborhoods are master-planned communities with HOA rules about trucks and moving hours. We confirm those rules ahead of time and plan parking so your neighbors are not blocked in. We also schedule around traffic on the Dallas North Tollway and the Sam Rayburn Tollway, especially near The Star and Stonebriar on busy days.</p><h3>When your new home is not ready yet</h3><p>Construction dates slip. If your builder pushes back your closing, {company} can store your belongings and deliver them as soon as you have the keys.</p>',
+            'faqs' => [
+                ['Can you protect the floors and walls in a new-build home?', '<p>Yes. We use floor runners, door-jamb protectors and moving pads on every move, and we take extra care in newly finished homes.</p>'],
+                ['What if our Frisco builder delays the closing?', '<p>Our storage service covers the gap. We keep your belongings safe and deliver them as soon as your home is ready.</p>'],
+            ],
+            'icon' => 'house',
+        ],
+        [
+            'city' => 'McKinney', 'state_name' => 'Texas', 'state_code' => 'TX', 'slug' => 'mckinney-tx',
+            'lat' => 33.1972, 'lng' => -96.6398,
+            'nearby' => ['frisco-tx', 'plano-tx', 'garland-tx'],
+            'zip_codes' => ['75069', '75070', '75071', '75072'],
+            'intro' => 'Historic homes near the downtown square and large houses in Stonebridge Ranch and Craig Ranch: our McKinney movers take care of both.',
+            'meta_title' => 'Movers in McKinney, TX | Historic & Family Homes',
+            'meta_description' => 'McKinney movers for historic homes, Stonebridge Ranch and Craig Ranch. Careful local and long-distance moving, packing and storage. Get a free quote.',
+            'content' => '<p>McKinney offers two very different kinds of move. Near the historic downtown square, older homes have narrow staircases, original woodwork and limited street parking. Out in communities like Stonebridge Ranch and Craig Ranch, homes are larger, with long carries from the driveway and plenty of heavy furniture. Our McKinney crews prepare for whichever one you have.</p><p>We protect woodwork and banisters with pads, take furniture apart where it will not fit through older doorways, and put it back together at the other end. For larger homes, we size the crew so the day stays on schedule, and we plan the drive along US-75 and State Highway 121 to avoid the worst of rush hour.</p><h3>Moving to McKinney from out of state</h3><p>Many families move to Collin County from other parts of the country. {company} handles long-distance moves with a flat, written price and one point of contact from start to finish.</p>',
+            'faqs' => [
+                ['Can you move antiques from a historic McKinney home?', '<p>Yes. We wrap antiques and fragile pieces individually, and we can pack them for you. Mention them in your quote request so we plan the time and materials.</p>'],
+                ['Do you handle long-distance moves to McKinney?', '<p>Yes. We move families to McKinney from across the country, with a flat, written price based on your shipment and distance.</p>'],
+            ],
+            'icon' => 'house',
+        ],
+        [
+            'city' => 'Garland', 'state_name' => 'Texas', 'state_code' => 'TX', 'slug' => 'garland-tx',
+            'lat' => 32.9126, 'lng' => -96.6389,
+            'nearby' => ['dallas-tx', 'plano-tx', 'mckinney-tx'],
+            'zip_codes' => ['75040', '75041', '75042', '75043', '75044'],
+            'intro' => 'Established neighborhoods, homes near Lake Ray Hubbard and the Firewheel area: our Garland movers make local moves simple to plan.',
+            'meta_title' => 'Movers in Garland, TX | Local Home & Apartment Moves',
+            'meta_description' => 'Garland movers for homes and apartments from Firewheel to Lake Ray Hubbard. Hourly local moves, packing and storage. Request your free quote today.',
+            'content' => '<p>Garland is a city of established neighborhoods, where many families have lived in the same house for years. That means full garages, packed attics and a lifetime of belongings to sort through. Our Garland movers are patient with long-term homes, and our packing crews can take on as much or as little as you need.</p><p>We work across the city, from the Firewheel area in the north to the neighborhoods near Lake Ray Hubbard in the east. Single-story homes often move quickly, while garage contents and workshop tools need a little more planning. Tell us what is out there, and we will include it in your written estimate. We also plan our routes around I-635 and the President George Bush Turnpike at peak times.</p><h3>Downsizing in Garland</h3><p>Moving to a smaller place after many years? {company} can move just the items you are keeping and store the rest while you decide what to do with them.</p>',
+            'faqs' => [
+                ['Can you help us downsize from a long-term Garland home?', '<p>Yes. We can pack and move only what you are keeping, and store other items while you decide what to do with them.</p>'],
+                ['Do you move garage and workshop items?', '<p>Yes, including tools and heavy equipment. We cannot move hazardous items such as gasoline, propane or paint, so please set those aside.</p>'],
+            ],
+            'icon' => 'pin',
+        ],
+        [
+            'city' => 'Grand Prairie', 'state_name' => 'Texas', 'state_code' => 'TX', 'slug' => 'grand-prairie-tx',
+            'lat' => 32.7460, 'lng' => -96.9978,
+            'nearby' => ['arlington-tx', 'irving-tx', 'dallas-tx', 'fort-worth-tx'],
+            'zip_codes' => ['75050', '75051', '75052', '75054'],
+            'intro' => 'Between Dallas and Arlington, from homes near Joe Pool Lake to busy apartment communities: our Grand Prairie movers keep your move on schedule.',
+            'meta_title' => 'Movers in Grand Prairie, TX | Homes & Apartments',
+            'meta_description' => 'Grand Prairie movers for homes, apartments and offices, from Joe Pool Lake to I-30. Local and long-distance moves, packing and storage. Free quote.',
+            'content' => '<p>Grand Prairie stretches a long way from north to south, and a move across town can feel like a move between cities. Homes near Joe Pool Lake in the south are a good drive from the apartment communities and businesses near I-30 in the north. Our Grand Prairie crews plan the route first, so you pay for moving time and not time stuck in traffic on I-20 or State Highway 161.</p><p>Its central location also makes Grand Prairie popular with people who work on both sides of the Metroplex, so we regularly move customers here from Dallas, Arlington and Fort Worth. Apartment moves are planned around each community’s loading rules and hours, and larger homes near the lake get the crew size they need.</p><h3>Small business moves</h3><p>Grand Prairie has a strong base of small businesses and warehouses. {company} can move your office or shop after hours or at the weekend, to keep downtime as short as possible.</p>',
+            'faqs' => [
+                ['Do you move homes near Joe Pool Lake?', '<p>Yes. We move homes across Grand Prairie, including lakeside neighborhoods in the south of the city. Mention long driveways or tricky access when you request your quote.</p>'],
+                ['Can you move our Grand Prairie business after hours?', '<p>Yes. We plan commercial moves in the evenings and on weekends to keep your downtime short.</p>'],
+            ],
+            'icon' => 'truck',
+        ],
+        [
+            'city' => 'Denton', 'state_name' => 'Texas', 'state_code' => 'TX', 'slug' => 'denton-tx',
+            'lat' => 33.2148, 'lng' => -97.1331,
+            'nearby' => ['frisco-tx', 'fort-worth-tx', 'mckinney-tx'],
+            'zip_codes' => ['76201', '76205', '76207', '76208', '76209', '76210'],
+            'intro' => 'Students at UNT and TWU, homes around the Courthouse Square and retirees at Robson Ranch: our Denton movers handle moves of every size.',
+            'meta_title' => 'Movers in Denton, TX | Student, Home & Senior Moves',
+            'meta_description' => 'Denton movers for UNT and TWU students, family homes and seniors at Robson Ranch. Careful local moves, packing and storage. Get your free quote.',
+            'content' => '<p>Denton has its own rhythm. Two universities, the University of North Texas and Texas Woman’s University, mean apartments turn over quickly around each semester. Older houses near the Courthouse Square have character and narrow doorways. And active-adult communities like Robson Ranch bring their own needs and their own community rules. Our Denton movers work with all of them.</p><p>August and May are the busiest months, so we recommend booking early if your lease ends near the start or end of a semester. For seniors, we take moves at a steady pace, and we can pack, unpack and set up furniture so the new home is ready to live in.</p><h3>Moving between Denton and the Metroplex</h3><p>Denton sits where I-35E and I-35W split, so we know both routes to Dallas and Fort Worth. {company} chooses the better one for your moving day and gives you a clear, written estimate up front.</p>',
+            'faqs' => [
+                ['When should students book a move in Denton?', '<p>As early as you can. Weeks around the start and end of the UNT and TWU semesters fill up fast, especially in May and August.</p>'],
+                ['Do you offer senior moves in Denton?', '<p>Yes. We go at a comfortable pace and can pack, unpack and set up furniture so your new home is ready when we leave.</p>'],
+            ],
+            'icon' => 'pin',
+        ],
     ],
 
-    // Shared city × service template (all 18 combinations use it).
+    // Shared city × service template (every city × service combination uses it).
     'template' => [
         ['type' => 'rich_text', 'data' => [
             'heading' => '{service} in {city}, {state_code}',
@@ -79,7 +187,7 @@ return [
             'background' => 'light',
         ]],
         ['type' => 'reviews_slider', 'data' => [
-            'heading' => 'What our customers in {city} say',
+            'heading' => 'What our customers say',
             'mode' => 'context',
             'limit' => 6,
             'show_summary' => true,
@@ -103,7 +211,7 @@ return [
         ['What happens if something is damaged?', '<p>We take great care to prevent damage. If it does happen, contact us right away and we will walk you through the valuation coverage and claims process.</p>'],
         ['How do you protect my home during the move?', '<p>We use floor runners, door-jamb protectors and moving pads to protect your floors, walls and furniture at both homes.</p>'],
         ['Can I change my moving date?', '<p>Yes. Let us know as early as possible and we will do our best to move your date. Short-notice changes depend on availability.</p>'],
-        ['Which areas do you serve?', '<p>We serve Dallas, Plano, Irving and the wider Dallas–Fort Worth area, and we handle long-distance moves to destinations across the United States.</p>'],
+        ['Which areas do you serve?', '<p>We serve Dallas, Fort Worth, Plano, Irving, Arlington, Frisco, McKinney, Garland, Grand Prairie, Denton and the wider Dallas–Fort Worth area, and we handle long-distance moves to destinations across the United States.</p>'],
     ],
 
     // Sample reviews (flagged as samples: replace with real ones before launch).

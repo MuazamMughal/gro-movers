@@ -60,7 +60,7 @@ class PublicAreasTest extends TestCase
 
         $this->assertMatchesRegularExpression('#<h1[^>]*>Local Moving in Plano, TX</h1>#', $html);
         $this->assertStringContainsString('Why Plano picks us for Local Moving', $html);
-        $this->assertStringContainsString('<title>Local Moving in Plano, TX | Grosolve Moving Network</title>', $html);
+        $this->assertStringContainsString('<title>Local Moving in Plano, TX | Free Quote</title>', $html);
         $this->assertStringContainsString('Looking for Local Moving in Plano, TX?', $html);
         $this->assertStringContainsString('<link rel="canonical" href="http://localhost/service-areas/plano-tx/local-moving">', $html);
         $this->assertStringContainsString('<meta name="robots" content="index,follow">', $html);

@@ -245,7 +245,7 @@ Admin UX:
 - The admin edits ONE default Area×Service template (sections and SEO stored on `pages` with system key `area_service_template`).
 - Each `area_service_pages` row either uses that template or overrides it (`use_template=0` → its own sections and SEO).
 - The grid view (areas × services) has toggles to switch combinations on or off and an "Override content" button.
-- Default meta template: `"{service} in {city}, {state_code} | {company}"`.
+- Default meta template: `"{service} in {city}, {state_code} | Free Quote"`.
 
 ---
 

@@ -37,7 +37,7 @@ class SystemPagesSeeder extends Seeder
             // "{service} in {city}" page, so it must stay indexable.
             if ($key === SystemPage::AreaServiceTemplate) {
                 $page->seo()->create([
-                    'meta_title' => '{service} in {city}, {state_code} | {company}',
+                    'meta_title' => '{service} in {city}, {state_code} | Free Quote',
                     'meta_description' => 'Looking for {service} in {city}, {state_code}? {company} provides licensed, insured movers with upfront pricing. Get your free quote today.',
                     'robots_index' => true,
                     'robots_follow' => true,

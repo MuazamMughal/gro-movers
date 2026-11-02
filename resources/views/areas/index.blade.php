@@ -13,9 +13,10 @@
                     @else
                         <x-site.heading :heading="'Cities we serve in '.$state" />
                     @endif
-                    <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    {{-- Centered rows: a leftover card sits in the middle, not alone on the left. --}}
+                    <ul class="flex flex-wrap justify-center gap-6">
                         @foreach ($areas as $area)
-                            <li class="group relative overflow-hidden rounded-2xl border border-border bg-white shadow-sm transition-shadow hover:shadow-lg">
+                            <li class="group relative w-full overflow-hidden rounded-2xl border border-border bg-white shadow-sm transition-shadow hover:shadow-lg sm:w-[calc((100%-1.5rem)/2)] lg:w-[calc((100%-3rem)/3)]">
                                 @if ($area->image)
                                     <x-picture :media="$area->image" sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" class="block aspect-[3/2] overflow-hidden" img-class="size-full object-cover transition-transform duration-300 group-hover:scale-105" alt="" />
                                 @endif

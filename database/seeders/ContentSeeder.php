@@ -31,22 +31,22 @@ use Illuminate\Support\Once;
 use Illuminate\Support\Str;
 
 /**
- * SEO-ready starter content (spec §12): 6 services, 3 cities with all 18 city ×
+ * SEO-ready starter content (spec §12): 6 services, 10 cities with all 60 city ×
  * service pages, the FAQ bank, 12 sample reviews, every system page, menus,
  * 1 author, 9 blog posts and generated placeholder images.
  *
  * Runs once: if any service exists the content is considered installed and
  * nothing is touched, so admin edits are never overwritten. Copy lives in
- * database/seeders/Content/*.php.
+ * database/seeders/Content/*.php. AddServiceAreasSeeder adds new cities to a live site.
  */
 class ContentSeeder extends Seeder
 {
-    private PlaceholderMedia $images;
+    protected PlaceholderMedia $images;
 
-    private SectionSync $sections;
+    protected SectionSync $sections;
 
     /** @var array<string, Faq> global FAQ bank by position */
-    private array $faqBank = [];
+    protected array $faqBank = [];
 
     public function run(): void
     {
@@ -69,22 +69,31 @@ class ContentSeeder extends Seeder
             $this->faqBank($areas['faqs']);
             $services = $this->services(require database_path('seeders/Content/services.php'));
             $cities = $this->areas($areas['areas'], $services);
-            $this->areaServices($areas['template'], $cities, $services);
+            $this->linkNearby($areas['areas']);
+            $this->syncSections(Page::system(SystemPage::AreaServiceTemplate), $areas['template']);
+            $this->areaServicePages($cities, $services);
             $this->reviews($areas['reviews'], $cities, $services);
             $this->pages(require database_path('seeders/Content/pages.php'));
+            $this->howItWorksPage(require database_path('seeders/Content/how-it-works.php'));
             $this->blog(require database_path('seeders/Content/posts.php'));
             $this->menus($services, $cities);
         });
 
         config(['static.auto' => $auto]);
+        $this->finish($auto, 'Starter content installed.');
+    }
+
+    /** Back to normal after a bulk insert: one full rebuild instead of hundreds of small ones. */
+    protected function finish(bool $auto, string $message): void
+    {
         Once::flush();
         Settings::flush();
 
         if ($auto && app(StaticPublisher::class)->enabled()) {
             $count = app(StaticPublisher::class)->buildAll();
-            $this->command?->info("Starter content installed. Static rebuild of {$count} pages queued.");
+            $this->command?->info("{$message} Static rebuild of {$count} pages queued.");
         } else {
-            $this->command?->info('Starter content installed.');
+            $this->command?->info($message);
         }
     }
 
@@ -152,7 +161,7 @@ class ContentSeeder extends Seeder
      * @param  array<string, Service>  $services
      * @return array<string, Area>
      */
-    private function areas(array $data, array $services): array
+    protected function areas(array $data, array $services): array
     {
         $cities = [];
 
@@ -164,7 +173,7 @@ class ContentSeeder extends Seeder
                 ...collect($item)->only(['city', 'state_name', 'state_code', 'slug', 'intro', 'lat', 'lng', 'zip_codes'])->all(),
                 'hero_media_id' => $hero->id,
                 'image_media_id' => $card->id,
-                'sort' => $i,
+                'sort' => $item['sort'] ?? $i,
                 'is_active' => true,
                 'show_in_menu' => true,
             ]);
@@ -184,23 +193,30 @@ class ContentSeeder extends Seeder
             $cities[$item['slug']] = $area;
         }
 
-        // Every city lists the others as nearby.
-        foreach ($cities as $area) {
-            $area->neighbors()->sync(collect($cities)->reject(fn (Area $a) => $a->is($area))->pluck('id'));
-        }
-
         return $cities;
+    }
+
+    /**
+     * Each city's "nearby" list (real neighbors). Only ever adds links.
+     *
+     * @param  list<array<string, mixed>>  $data
+     */
+    protected function linkNearby(array $data): void
+    {
+        $ids = Area::query()->pluck('id', 'slug');
+
+        foreach ($data as $item) {
+            Area::query()->where('slug', $item['slug'])->first()
+                ?->neighbors()->syncWithoutDetaching($ids->only($item['nearby'])->values()->all());
+        }
     }
 
     /**
      * @param  array<string, Area>  $cities
      * @param  array<string, Service>  $services
      */
-    private function areaServices(array $template, array $cities, array $services): void
+    protected function areaServicePages(array $cities, array $services): void
     {
-        $page = Page::system(SystemPage::AreaServiceTemplate);
-        $this->syncSections($page, $template);
-
         foreach ($cities as $area) {
             foreach ($services as $service) {
                 AreaServicePage::query()->updateOrCreate(
@@ -268,6 +284,24 @@ class ContentSeeder extends Seeder
         }
     }
 
+    /** @param  array<string, mixed>  $data */
+    protected function howItWorksPage(array $data): Page
+    {
+        $page = Page::query()->create([
+            'title' => $data['title'],
+            'slug' => $data['slug'],
+            'status' => PageStatus::Published,
+            'template' => 'default',
+            'published_at' => now(),
+        ]);
+
+        $this->syncSections($page, $data['sections']);
+        $this->seo($page, $data['meta_title'], $data['meta_description']);
+        $page->faqs()->sync(collect($data['faqs'])->mapWithKeys(fn (int $i, int $sort) => [$this->faqBank[$i]->id => ['sort' => $sort]])->all());
+
+        return $page;
+    }
+
     private function blog(array $data): void
     {
         $photo = $this->images->make('author-'.$data['author']['slug'], 'square', 'person', $data['author']['name'], PlaceholderMedia::SKY, PlaceholderMedia::NAVY);
@@ -322,11 +356,14 @@ class ContentSeeder extends Seeder
             'label' => $label, 'link_type' => $type, 'linkable_id' => $id, 'url' => $url, 'auto_children' => $auto,
         ];
 
+        $howItWorks = Page::query()->where('slug', 'how-it-works')->value('id');
+
         $menus = [
             MenuLocation::Header->value => ['Main menu', [
                 $item('About', MenuLinkType::Page, $page(SystemPage::About)),
                 $item('Services', MenuLinkType::Page, $page(SystemPage::ServicesIndex), auto: 'services'),
                 $item('Service Areas', MenuLinkType::Page, $page(SystemPage::AreasIndex), auto: 'areas'),
+                $item('How It Works', MenuLinkType::Page, $howItWorks),
                 $item('Reviews', MenuLinkType::Page, $page(SystemPage::ReviewsIndex)),
                 $item('Blog', MenuLinkType::Page, $page(SystemPage::BlogIndex)),
                 $item('Contact', MenuLinkType::Page, $page(SystemPage::Contact)),
@@ -338,6 +375,7 @@ class ContentSeeder extends Seeder
             ]],
             MenuLocation::Footer3->value => ['Company', [
                 $item('About Us', MenuLinkType::Page, $page(SystemPage::About)),
+                $item('How It Works', MenuLinkType::Page, $howItWorks),
                 $item('Reviews', MenuLinkType::Page, $page(SystemPage::ReviewsIndex)),
                 $item('Moving Guides', MenuLinkType::Page, $page(SystemPage::BlogIndex)),
                 $item('Contact Us', MenuLinkType::Page, $page(SystemPage::Contact)),
@@ -367,7 +405,7 @@ class ContentSeeder extends Seeder
      * @param  list<array{type: string, data: array<string, mixed>}>  $sections
      * @param  array<string, int>  $media  placeholders such as "@card" => media ID
      */
-    private function syncSections(Model $owner, array $sections, array $media = []): void
+    protected function syncSections(Model $owner, array $sections, array $media = []): void
     {
         $replace = function ($value) use (&$replace, $media) {
             if (is_array($value)) {
@@ -384,7 +422,7 @@ class ContentSeeder extends Seeder
         ], $sections));
     }
 
-    private function seo(Model $model, string $title, string $description): void
+    protected function seo(Model $model, string $title, string $description): void
     {
         $model->seo()->updateOrCreate([], [
             'meta_title' => $title,
@@ -400,7 +438,7 @@ class ContentSeeder extends Seeder
      * @param  list<array{0: string, 1: string}>  $faqs
      * @param  list<Faq>  $extra
      */
-    private function attachFaqs(Model $model, array $faqs, array $extra = []): void
+    protected function attachFaqs(Model $model, array $faqs, array $extra = []): void
     {
         $sort = count($this->faqBank) + Faq::query()->count();
         $records = array_map(fn (array $f) => Faq::query()->create(['question' => $f[0], 'answer' => $f[1], 'sort' => $sort++, 'is_active' => true]), $faqs);

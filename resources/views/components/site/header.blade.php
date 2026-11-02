@@ -28,19 +28,19 @@
         </a>
 
         @if ($items)
-            <nav class="hidden flex-1 justify-center lg:flex" aria-label="Main">
-                <ul class="flex items-center xl:gap-1">
+            <nav class="hidden flex-1 justify-center xl:flex" aria-label="Main">
+                <ul class="flex items-center gap-1">
                     @foreach ($items as $item)
                         @if ($item['children'])
                             <li class="group relative" data-dropdown>
                                 <div class="flex items-center">
                                     @if ($item['url'])
-                                        <a href="{{ $item['url'] }}" @if ($item['new_tab']) target="_blank" rel="noopener" @endif @if ($isCurrent($item['url'])) aria-current="page" @endif class="rounded-lg py-2 pr-1 pl-2 font-semibold whitespace-nowrap hover:text-tertiary-strong xl:pl-3 aria-[current=page]:text-tertiary-strong">{{ $item['label'] }}</a>
+                                        <a href="{{ $item['url'] }}" @if ($item['new_tab']) target="_blank" rel="noopener" @endif @if ($isCurrent($item['url'])) aria-current="page" @endif class="rounded-lg py-2 pr-1 pl-3 font-semibold whitespace-nowrap hover:text-tertiary-strong aria-[current=page]:text-tertiary-strong">{{ $item['label'] }}</a>
                                         <button type="button" class="rounded-lg p-2 hover:text-tertiary-strong" aria-expanded="false" aria-label="{{ $item['label'] }} menu" data-dropdown-toggle>
                                             <x-site.icon name="chevron-down" class="size-4 transition-transform group-data-open:rotate-180" />
                                         </button>
                                     @else
-                                        <button type="button" class="flex items-center gap-1 rounded-lg px-2 py-2 font-semibold whitespace-nowrap hover:text-tertiary-strong xl:px-3" aria-expanded="false" data-dropdown-toggle>
+                                        <button type="button" class="flex items-center gap-1 rounded-lg px-3 py-2 font-semibold whitespace-nowrap hover:text-tertiary-strong" aria-expanded="false" data-dropdown-toggle>
                                             {{ $item['label'] }} <x-site.icon name="chevron-down" class="size-4 transition-transform group-data-open:rotate-180" />
                                         </button>
                                     @endif
@@ -55,7 +55,7 @@
                             </li>
                         @else
                             <li>
-                                <a href="{{ $item['url'] }}" @if ($item['new_tab']) target="_blank" rel="noopener" @endif @if ($isCurrent($item['url'])) aria-current="page" @endif class="block rounded-lg px-2 py-2 font-semibold whitespace-nowrap hover:text-tertiary-strong aria-[current=page]:text-tertiary-strong xl:px-3">{{ $item['label'] }}</a>
+                                <a href="{{ $item['url'] }}" @if ($item['new_tab']) target="_blank" rel="noopener" @endif @if ($isCurrent($item['url'])) aria-current="page" @endif class="block rounded-lg px-3 py-2 font-semibold whitespace-nowrap hover:text-tertiary-strong aria-[current=page]:text-tertiary-strong">{{ $item['label'] }}</a>
                             </li>
                         @endif
                     @endforeach
@@ -63,15 +63,14 @@
             </nav>
         @endif
 
-        <div class="ml-auto flex items-center gap-2 lg:ml-0">
-            {{-- Call Now is always visible: below 768px in the mobile bar, then here (compact while the menu needs the room).
-                 1024–1279px is tight: labels never wrap, and spacing shrinks until xl. --}}
-            <x-site.call-button variant="outline" location="header" class="hidden! whitespace-nowrap md:inline-flex! lg:hidden! xl:inline-flex!" />
-            <x-site.call-button variant="outline" location="header" compact class="hidden! whitespace-nowrap lg:inline-flex! lg:px-4 xl:hidden!" />
-            <x-site.button :href="\App\Support\QuoteLink::href()" label="Get a Free Quote" class="hidden! whitespace-nowrap sm:inline-flex! lg:px-4 xl:px-5" />
+        <div class="ml-auto flex items-center gap-2 xl:ml-0">
+            {{-- Call Now is always visible: below 768px in the mobile bar, then here with the number. With the full menu (xl) it is compact: the number is in the top bar just above. --}}
+            <x-site.call-button variant="outline" location="header" class="hidden! whitespace-nowrap md:inline-flex! xl:hidden!" />
+            <x-site.call-button variant="outline" location="header" compact class="hidden! whitespace-nowrap xl:inline-flex!" />
+            <x-site.button :href="\App\Support\QuoteLink::href()" label="Get a Free Quote" class="hidden! whitespace-nowrap sm:inline-flex!" />
 
             @if ($mobileItems)
-                <details class="group/drawer lg:hidden" data-drawer>
+                <details class="group/drawer xl:hidden" data-drawer>
                     <summary class="flex size-11 cursor-pointer list-none items-center justify-center rounded-lg border border-border [&::-webkit-details-marker]:hidden" aria-label="Menu">
                         <x-site.icon name="menu" class="size-6 group-open/drawer:hidden" />
                         <x-site.icon name="x" class="hidden size-6 group-open/drawer:block" />

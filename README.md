@@ -71,7 +71,7 @@ make dev                                   # Vite with hot reload
 
 ## Starter content
 `db:seed` (and `make fresh`) installs SEO-ready placeholder content once:
-- 6 services, 3 cities with all 18 city × service pages, 45 FAQs, 12 sample reviews, every system page, menus, 1 author, 9 blog posts.
+- 6 services, 10 cities with all 60 city × service pages, 45 FAQs, 12 sample reviews, every system page, a How It Works page, menus, 1 author, 9 blog posts.
 - Generated placeholder images (no stock photos).
 
 Copy lives in `database/seeders/Content/*.php`. Re-running never overwrites admin edits.

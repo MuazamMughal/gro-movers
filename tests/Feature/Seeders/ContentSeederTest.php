@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Seeders;
 
+use App\Enums\MenuLinkType;
 use App\Enums\MenuLocation;
 use App\Enums\SystemPage;
 use App\Models\Area;
@@ -17,6 +18,8 @@ use App\Models\Tag;
 use App\Seo\SeoAudit;
 use App\Seo\SiteIndex;
 use App\Support\Settings;
+use Database\Seeders\AddHowItWorksSeeder;
+use Database\Seeders\AddServiceAreasSeeder;
 use Database\Seeders\ContentSeeder;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -48,6 +51,88 @@ class ContentSeederTest extends TestCase
         $this->check_menus_and_legal_notes();
         $this->check_seo_report_is_clean_and_every_page_renders();
         $this->check_sample_reviews_are_never_review_markup();
+        $this->check_new_cities_can_be_added_to_a_live_site();
+        $this->check_how_it_works_can_be_added_to_a_live_site();
+    }
+
+    /** Header and footer links land next to the right items; admin menu order is kept. */
+    private function check_how_it_works_can_be_added_to_a_live_site(): void
+    {
+        $header = Menu::query()->where('location', MenuLocation::Header->value)->sole();
+        $footer = Menu::query()->where('location', MenuLocation::Footer3->value)->sole();
+        $page = Page::query()->where('slug', 'how-it-works')->sole();
+        $this->assertSame('How It Works', $header->items()->whereNull('parent_id')->orderBy('sort')->pluck('label')->get(3));
+
+        // Back to a site from before the page existed.
+        $header->items()->where('label', 'How It Works')->delete();
+        $footer->items()->where('label', 'How It Works')->delete();
+        $page->faqs()->detach();
+        $page->forceDelete();
+
+        $this->seed(AddHowItWorksSeeder::class);
+        Once::flush();
+
+        $page = Page::query()->where('slug', 'how-it-works')->sole();
+        $this->assertSame(['About', 'Services', 'Service Areas', 'How It Works', 'Reviews', 'Blog', 'Contact'], $header->items()->whereNull('parent_id')->orderBy('sort')->pluck('label')->all());
+        $this->assertSame(['About Us', 'How It Works', 'Reviews', 'Moving Guides', 'Contact Us', 'Get a Free Quote'], $footer->items()->orderBy('sort')->pluck('label')->all());
+        $this->assertSame(5, $page->faqs()->count());
+
+        $html = $this->get('/how-it-works')->assertOk()->getContent();
+        $this->assertSame(1, substr_count($html, '<h1'));
+        $this->assertStringContainsString('How Your Move Works, Step by Step', $html);
+        $this->assertStringContainsString('href="/how-it-works"', $html);
+        $this->assertStringContainsString('"FAQPage"', $html);
+
+        // Running it again changes nothing.
+        $this->seed(AddHowItWorksSeeder::class);
+        $this->assertSame(1, Page::query()->where('slug', 'how-it-works')->count());
+        $this->assertSame(1, $header->items()->where('label', 'How It Works')->count());
+    }
+
+    /** A live site with the original 3 cities gains the rest; nothing the admin changed moves. */
+    private function check_new_cities_can_be_added_to_a_live_site(): void
+    {
+        $original = ['dallas-tx', 'plano-tx', 'irving-tx'];
+        $footer = Menu::query()->where('location', MenuLocation::Footer2->value)->sole();
+        $added = Area::query()->whereNotIn('slug', $original);
+        $footer->items()->whereIn('linkable_id', (clone $added)->pluck('id'))->where('link_type', MenuLinkType::Area)->delete();
+        (clone $added)->get()->each->forceDelete();
+        $removedByAdmin = Area::factory()->create(['slug' => 'denton-tx', 'city' => 'Old Denton']);
+        $removedByAdmin->delete();
+
+        $dallas = Area::query()->where('slug', 'dallas-tx')->sole();
+        $dallas->update(['intro' => 'Edited in admin']);
+        $template = Page::system(SystemPage::AreaServiceTemplate);
+        $templateSections = $template->sections()->count();
+        $reviews = $template->sections()->where('type', 'reviews_slider')->sole();
+        $reviews->update(['data' => [...$reviews->data, 'heading' => 'What our customers in {city} say']]);
+        $this->assertSame(18, AreaServicePage::query()->active()->count());
+
+        $this->seed(AddServiceAreasSeeder::class);
+        Once::flush();
+
+        $this->assertSame(['Dallas', 'Plano', 'Irving', 'Fort Worth', 'Arlington', 'Frisco', 'McKinney', 'Garland', 'Grand Prairie'], Area::query()->ordered()->pluck('city')->all(), 'deleted cities stay deleted');
+        $this->assertSame(54, AreaServicePage::query()->active()->count());
+        $this->assertSame('Edited in admin', $dallas->fresh()->intro);
+        $this->assertSame($templateSections, $template->sections()->count());
+        $this->assertSame('What our customers say', $reviews->fresh()->data['heading']);
+        $this->assertTrue($dallas->neighbors()->where('slug', 'garland-tx')->exists(), 'existing cities link to their new neighbors');
+        $this->assertSame(
+            ['Movers in Dallas', 'Movers in Plano', 'Movers in Irving', 'Movers in Fort Worth', 'Movers in Arlington', 'Movers in Frisco', 'Movers in McKinney', 'Movers in Garland', 'Movers in Grand Prairie', 'All service areas'],
+            $footer->items()->orderBy('sort')->pluck('label')->all(),
+        );
+
+        $fortWorth = Area::query()->where('slug', 'fort-worth-tx')->sole();
+        $this->assertSame(4, $fortWorth->faqs()->count());
+        $this->assertSame(6, $fortWorth->services()->count());
+        $this->get('/service-areas/fort-worth-tx')->assertOk()->assertSee('Moving in Fort Worth');
+        $this->get('/service-areas/fort-worth-tx/local-moving')->assertOk();
+
+        // Running it again changes nothing.
+        $faqs = Faq::count();
+        $this->seed(AddServiceAreasSeeder::class);
+        $this->assertSame(9, Area::query()->count());
+        $this->assertSame($faqs, Faq::count());
     }
 
     private function check_it_installs_the_agreed_content(): void
@@ -56,8 +141,8 @@ class ContentSeederTest extends TestCase
             ['Local Moving', 'Long-Distance Moving', 'Residential Moving', 'Commercial Moving', 'Packing Services', 'Storage Services'],
             Service::query()->ordered()->pluck('title')->all(),
         );
-        $this->assertSame(['Dallas', 'Plano', 'Irving'], Area::query()->ordered()->pluck('city')->all());
-        $this->assertSame(18, AreaServicePage::query()->active()->count());
+        $this->assertSame(['Dallas', 'Plano', 'Irving', 'Fort Worth', 'Arlington', 'Frisco', 'McKinney', 'Garland', 'Grand Prairie', 'Denton'], Area::query()->ordered()->pluck('city')->all());
+        $this->assertSame(60, AreaServicePage::query()->active()->count());
         $this->assertSame(9, Post::query()->published()->count());
         $this->assertSame(5, Tag::count());
         $this->assertSame(12, Review::query()->where('is_sample', true)->count());
@@ -71,7 +156,7 @@ class ContentSeederTest extends TestCase
 
         foreach (Area::all() as $area) {
             $this->assertSame(6, $area->services()->count());
-            $this->assertSame(2, $area->neighbors()->count());
+            $this->assertGreaterThanOrEqual(2, $area->neighbors()->count());
             $this->assertNotEmpty($area->zip_codes);
         }
 
@@ -97,7 +182,7 @@ class ContentSeederTest extends TestCase
     private function check_menus_and_legal_notes(): void
     {
         $header = Menu::query()->where('location', MenuLocation::Header)->sole();
-        $this->assertSame(['About', 'Services', 'Service Areas', 'Reviews', 'Blog', 'Contact'], $header->tree()->pluck('label')->all());
+        $this->assertSame(['About', 'Services', 'Service Areas', 'How It Works', 'Reviews', 'Blog', 'Contact'], $header->tree()->pluck('label')->all());
         $this->assertSame(['services', 'areas'], $header->tree()->get()->pluck('auto_children')->filter()->values()->all());
 
         foreach ([MenuLocation::Footer1, MenuLocation::Footer2, MenuLocation::Footer3] as $location) {
