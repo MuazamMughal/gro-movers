@@ -154,7 +154,7 @@ The **Google preview** shows the result as you type. A warning appears if anothe
 
 | Tab | What's in it |
 |---|---|
-| **General** | Company and legal name, phone, email, address and map location, business hours, USDOT and MC numbers, founded year, service area line, footer text, social profiles. These appear across the site and in Google's business data, so keep them exact. |
+| **General** | Company and legal name, phone, email, address and map location, business hours, USDOT and MC numbers, founded year, service area line, footer text, social profiles (Facebook, Instagram, Pinterest, LinkedIn and others: paste the full link and its icon appears in the footer and top bar). These appear across the site and in Google's business data, so keep them exact. |
 | **Branding** | Logo for light and dark backgrounds, favicon. |
 | **Theme** | Site colors: Primary (backgrounds), Secondary (text and dark sections) and Tertiary (buttons and accents). The preview shows a readability (contrast) check for each color pair. If your accent is too light for white text, buttons automatically use a darker shade of it. |
 | **Email** | Lead recipients, sending server (SMTP), sender name and address, the customer auto-reply text, and **Send test email**. |

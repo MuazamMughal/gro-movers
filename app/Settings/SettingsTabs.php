@@ -46,8 +46,8 @@ class SettingsTabs
                     ['key' => 'general.timezone', 'type' => 'select', 'label' => 'Time zone', 'width' => 'half', 'help' => 'Blog publish times and dates on the website use this zone.', 'options' => SiteTime::ZONES, 'rules' => ['required', 'in:'.implode(',', array_keys(SiteTime::ZONES))]],
                     ['key' => 'general.service_radius_text', 'type' => 'text', 'label' => 'Service area line', 'help' => 'Shown in the top contact bar.', 'rules' => ['nullable', 'string', 'max:150']],
                     ['key' => 'general.footer_blurb', 'type' => 'textarea', 'label' => 'Footer text', 'help' => 'Short description under the logo in the footer.', 'rules' => ['nullable', 'string', 'max:300']],
-                    ['key' => 'general.social', 'type' => 'social', 'label' => 'Social profiles', 'help' => 'Full URLs. Used for footer icons and schema sameAs.', 'rules' => ['nullable', 'array'], 'item_rules' => ['*' => ['nullable', 'url:https', 'max:255']],
-                        'options' => ['facebook' => 'Facebook', 'instagram' => 'Instagram', 'google' => 'Google Business', 'yelp' => 'Yelp', 'youtube' => 'YouTube', 'linkedin' => 'LinkedIn']],
+                    ['key' => 'general.social', 'type' => 'social', 'label' => 'Social profiles', 'help' => 'Full URLs. Each one adds an icon to the footer and top bar (and to the company schema). Leave empty to hide that network.', 'rules' => ['nullable', 'array'], 'item_rules' => ['*' => ['nullable', 'url:https', 'max:255']],
+                        'options' => ['facebook' => 'Facebook', 'instagram' => 'Instagram', 'pinterest' => 'Pinterest', 'linkedin' => 'LinkedIn', 'youtube' => 'YouTube', 'google' => 'Google Business', 'yelp' => 'Yelp']],
                 ],
             ],
             'branding' => [

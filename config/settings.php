@@ -44,6 +44,7 @@ return [
         'general.social' => [
             'facebook' => null,
             'instagram' => null,
+            'pinterest' => null,
             'google' => null,
             'yelp' => null,
             'youtube' => null,

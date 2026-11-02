@@ -15,10 +15,6 @@
     $columns = collect([MenuLocation::Footer1, MenuLocation::Footer2, MenuLocation::Footer3])
         ->map(fn ($location) => ['title' => Menus::title($location), 'items' => Menus::for($location)])
         ->filter(fn ($column) => $column['items'] !== []);
-    $social = collect((array) Settings::get('general.social', []))->filter()
-        ->only(['facebook', 'instagram', 'youtube', 'linkedin', 'google', 'yelp']);
-    $socialLabels = ['facebook' => 'Facebook', 'instagram' => 'Instagram', 'youtube' => 'YouTube', 'linkedin' => 'LinkedIn', 'google' => 'Google', 'yelp' => 'Yelp'];
-    $socialIcons = ['facebook' => 'facebook', 'instagram' => 'instagram', 'youtube' => 'youtube', 'linkedin' => 'linkedin', 'google' => 'star', 'yelp' => 'star'];
     $legal = collect([SystemPage::Privacy, SystemPage::Terms])
         ->map(fn ($key) => Page::system($key))
         ->filter(fn ($page) => $page?->isPublished());
@@ -38,17 +34,7 @@
             @if ($blurb = Settings::get('general.footer_blurb'))
                 <p class="text-primary/75">{{ $blurb }}</p>
             @endif
-            @if ($social->isNotEmpty())
-                <ul class="flex gap-2" aria-label="Social media">
-                    @foreach ($social as $network => $url)
-                        <li>
-                            <a href="{{ $url }}" target="_blank" rel="noopener" class="flex size-10 items-center justify-center rounded-full bg-white/10 hover:bg-tertiary" aria-label="{{ $company }} on {{ $socialLabels[$network] }}">
-                                <x-site.icon :name="$socialIcons[$network]" class="size-5" />
-                            </a>
-                        </li>
-                    @endforeach
-                </ul>
-            @endif
+            <x-site.social-links class="pt-1" />
         </div>
 
         @foreach ($columns as $column)

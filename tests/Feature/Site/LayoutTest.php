@@ -10,6 +10,7 @@ use App\Models\Page;
 use App\Models\Post;
 use App\Models\Review;
 use App\Models\Service;
+use App\Support\Settings;
 use Database\Seeders\BlogCategorySeeder;
 use Database\Seeders\MenuSeeder;
 use Database\Seeders\SettingsSeeder;
@@ -54,6 +55,22 @@ class LayoutTest extends TestCase
         // Tablet/desktop header: full number, plus a compact "Call Now" while the menu needs the room.
         $this->assertStringContainsString('md:inline-flex! lg:hidden! xl:inline-flex!" data-call-location="header"', $html);
         $this->assertStringContainsString('aria-label="Call (214) 555-0100" data-call-location="header"', $html);
+    }
+
+    public function test_social_icons_show_only_for_networks_with_a_url()
+    {
+        $this->assertStringNotContainsString('aria-label="Social media"', $this->get('/services')->getContent());
+
+        Settings::set('general.social', ['facebook' => 'https://facebook.com/grosolve', 'pinterest' => 'https://pinterest.com/grosolve', 'instagram' => null]);
+
+        $html = $this->get('/services')->assertOk()->getContent();
+
+        $this->assertSame(2, substr_count($html, 'aria-label="Social media"'), 'footer and top bar');
+        $this->assertStringContainsString('href="https://facebook.com/grosolve"', $html);
+        $this->assertStringContainsString('href="https://pinterest.com/grosolve"', $html);
+        $this->assertStringContainsString(' on Pinterest"', $html);
+        $this->assertStringNotContainsString(' on Instagram"', $html);
+        $this->assertStringNotContainsString(' on LinkedIn"', $html);
     }
 
     public function test_home_has_no_breadcrumbs_and_inner_pages_do()
