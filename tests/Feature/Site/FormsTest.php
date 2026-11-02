@@ -7,9 +7,11 @@ use App\Http\Requests\Forms\QuoteRequest;
 use App\Mail\ContactReceived;
 use App\Mail\LeadAutoReply;
 use App\Mail\LeadReceived;
+use App\Models\Area;
 use App\Models\ContactMessage;
 use App\Models\Lead;
 use App\Models\MoveType;
+use App\Models\Page;
 use App\Support\FormGuard;
 use App\Support\Settings;
 use Database\Seeders\MenuSeeder;
@@ -228,6 +230,51 @@ class FormsTest extends TestCase
         // Exactly the agreed visible fields.
         preg_match_all('/<(input|select|textarea)(?![^>]*type="hidden")[^>]*name="([a-z_]+)"/', $html, $m);
         $this->assertSame(['full_name', 'email', 'phone', 'from_address', 'to_address', 'move_date', 'move_type_id', 'website'], array_values(array_unique($m[2])));
+    }
+
+    public function test_hero_first_step_keeps_addresses_out_of_the_url_and_works_without_js()
+    {
+        $page = Page::factory()->create(['slug' => 'hero-step']);
+        $page->sections()->create([
+            'type' => 'hero', 'sort' => 0, 'is_visible' => true,
+            'data' => ['heading' => 'Moving made easy', 'show_quote_form' => true],
+        ]);
+        Area::factory()->create(['city' => 'Fort Worth', 'slug' => 'fort-worth-tx', 'lat' => 32.7555, 'lng' => -97.3308, 'is_active' => true]);
+        Area::factory()->create(['city' => 'Denton', 'slug' => 'denton-tx', 'lat' => 33.2148, 'lng' => -97.1331, 'is_active' => true]);
+        Area::factory()->create(['city' => 'Denver', 'slug' => 'denver-co', 'lat' => 39.7392, 'lng' => -104.9903, 'is_active' => true]);
+
+        $html = $this->get('/hero-step')->assertOk()->getContent();
+        $form = substr($html, strpos($html, 'data-island="quick-quote"') - 100);
+        $form = substr($form, 0, strpos($form, '</form>'));
+
+        $this->assertStringContainsString('method="get"', $form);
+        $this->assertStringContainsString('action="/get-a-quote#quote-form"', $form);
+        // No field names: a no-JS submit opens the full form without putting addresses in the URL.
+        $this->assertStringNotContainsString(' name="', $form);
+        foreach (['Moving from', 'Moving to', 'Moving date', 'Type of move', $this->moveType->name, 'Get a Free Quote'] as $text) {
+            $this->assertStringContainsString($text, $form);
+        }
+        $this->assertStringNotContainsString('data-island="quote-form"', $html);
+
+        // The map plots cities in the area and leaves out anything beyond it.
+        $this->assertStringContainsString('data-route-map', $html);
+        $this->assertStringContainsString('>Fort Worth</text>', $html);
+        $this->assertStringContainsString('>Denton</text>', $html);
+        $this->assertStringNotContainsString('>Denver</text>', $html);
+        $this->assertSame(1, substr_count($html, '<h1'));
+    }
+
+    public function test_the_full_form_has_the_second_step_summary_and_stays_open_without_js()
+    {
+        $html = $this->get('/get-a-quote')->assertOk()->getContent();
+        $form = substr($html, strpos($html, 'data-island="quote-form"') - 100);
+        $form = substr($form, 0, strpos($form, '</form>'));
+
+        $this->assertStringContainsString('data-move-summary', $form);
+        $this->assertSame(4, substr_count($form, 'data-move-field'));
+        // Only the inline script can collapse the fields, so a no-JS visitor always sees all of them.
+        $this->assertStringNotContainsString('data-draft="', $form);
+        $this->assertStringContainsString("sessionStorage.getItem('quoteDraft')", $form);
     }
 
     public function test_thank_you_page_confirms_and_is_noindex()

@@ -16,6 +16,8 @@ export type FormOptions = {
     event: string;
     /** Called before validation (e.g. to normalise the phone field). */
     beforeSubmit?: (form: HTMLFormElement) => void;
+    /** Called after the server accepts the form, before the redirect. */
+    onSuccess?: () => void;
 };
 
 const field = (form: HTMLFormElement, name: string) =>
@@ -26,6 +28,8 @@ export function setError(form: HTMLFormElement, name: string, message: string | 
     const slot = form.querySelector<HTMLElement>(`[data-error-for="${name}"]`);
 
     if (input) {
+        // A problem in the quote form's collapsed "Your move" fields: show them again.
+        if (message) form.removeAttribute('data-draft');
         if (message) input.setAttribute('aria-invalid', 'true');
         else input.removeAttribute('aria-invalid');
     }
@@ -131,6 +135,7 @@ export function enhanceForm(form: HTMLFormElement, options: FormOptions): void {
 
             if (response.ok && data.ok) {
                 track(options.event, { form_id: form.id, page_path: location.pathname });
+                options.onSuccess?.();
                 location.assign(data.redirect || '/thank-you');
 
                 return;

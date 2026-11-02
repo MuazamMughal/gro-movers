@@ -52,7 +52,7 @@ return [
                 $button('primary_button', 'Primary button'),
                 $button('secondary_button', 'Secondary button'),
                 ['key' => 'background_image', 'type' => 'image', 'label' => 'Background image', 'preset' => 'hero'],
-                ['key' => 'show_quote_form', 'type' => 'toggle', 'label' => 'Show the quote form next to the heading', 'default' => false],
+                ['key' => 'show_quote_form', 'type' => 'toggle', 'label' => 'Quote hero: map of your cities and a first-step quote form', 'help' => 'Replaces the buttons, background image and small label above the heading. Always uses the navy style.', 'default' => false],
                 ['key' => 'theme', 'type' => 'select', 'label' => 'Style', 'options' => ['dark' => 'Dark (navy)', 'light' => 'Light'], 'default' => 'dark'],
             ],
             'defaults' => [

@@ -165,6 +165,7 @@ The **Google preview** shows the result as you type. A warning appears if anothe
 
 **Analytics events.** GA4 records these events, so you can see which pages bring in work:
 
+- `quote_start`: someone finished the first step of the quote in the home hero.
 - `generate_lead`: a quote request was sent.
 - `contact_submit`: a contact message was sent.
 - `click_to_call`: someone tapped a phone number.

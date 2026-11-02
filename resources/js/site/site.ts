@@ -10,6 +10,7 @@ import { initAnalytics, track, trackClicks } from './lib/analytics';
 
 const islands: Record<string, () => Promise<{ default: (el: HTMLFormElement) => void }>> = {
     'quote-form': () => import('./islands/quote-form'),
+    'quick-quote': () => import('./islands/quick-quote'),
     'contact-form': () => import('./islands/contact-form'),
 };
 

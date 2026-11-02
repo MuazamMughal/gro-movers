@@ -374,6 +374,11 @@ Validation (client and server, Laravel FormRequest):
 | move_type_id | required, `exists:move_types,id,is_active,1` |
 | website (honeypot) | must be empty (hidden off-screen, `tabindex=-1`, `autocomplete=off`) |
 
+**Quote in two steps from the home hero** (added 2026-11-02)
+- The hero (`sections/hero-route`, used when a hero has `show_quote_form`) shows a map of the active cities and a first step: Moving From, Moving To, Moving Date, Type of Move. Picking both addresses draws the route on the map.
+- The answers are kept in `sessionStorage`, never the URL, so addresses stay out of logs and analytics. The quote page shows them as a "Your move" summary with Edit, and asks for name, email and phone. A problem with a saved answer reopens the fields.
+- Without JS, the button opens the full form.
+
 **Photon address search (Moving From / Moving To)** (`resources/js/site/lib/address.ts`)
 - No script to load: one `fetch` to the Photon server per pause in typing (300 ms debounce, 3+ characters, in-flight requests aborted). US only (`countrycode=us`), layers house, street, locality, district, city and postcode.
 - Show a custom-styled, keyboard-accessible listbox: ARIA combobox, arrow keys and Enter. Duplicate addresses (a shop inside a building) are listed once.

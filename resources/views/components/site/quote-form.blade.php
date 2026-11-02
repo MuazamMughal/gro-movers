@@ -32,6 +32,23 @@
     @endif
     <p class="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm font-semibold text-red-800 empty:hidden" role="alert" data-form-error>{{ $errors?->first('form') }}</p>
 
+    {{-- Set before the form paints, so answers from the hero's first step never flash as empty fields. --}}
+    <script>try{if(sessionStorage.getItem('quoteDraft'))document.currentScript.parentElement.setAttribute('data-draft','1')}catch(e){}</script>
+
+    <div class="move-summary mb-5 rounded-xl border border-border bg-muted p-4" data-move-summary>
+        <div class="flex items-start justify-between gap-4">
+            <p class="font-bold">Your move</p>
+            <button type="button" class="text-sm font-semibold text-tertiary-strong underline underline-offset-2 hover:no-underline" data-move-edit>Edit</button>
+        </div>
+        <dl class="mt-2 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
+            <div><dt class="text-secondary-light">From</dt><dd class="font-semibold" data-summary="from"></dd></div>
+            <div><dt class="text-secondary-light">To</dt><dd class="font-semibold" data-summary="to"></dd></div>
+            <div><dt class="text-secondary-light">Date</dt><dd class="font-semibold" data-summary="when"></dd></div>
+            <div><dt class="text-secondary-light">Type of move</dt><dd class="font-semibold" data-summary="type"></dd></div>
+        </dl>
+        <p class="mt-3 text-sm text-secondary-light">Just your contact details left.</p>
+    </div>
+
     <div class="grid gap-4 sm:grid-cols-2">
         <div class="sm:col-span-2">
             <label for="{{ $id }}-name" class="{{ $labelClass }}">Full Name</label>
@@ -49,7 +66,7 @@
             <x-site.form-error field="phone" :id="$id.'-phone'" :errors="$errors" />
         </div>
         @foreach (['from' => 'Moving From', 'to' => 'Moving To'] as $side => $label)
-            <div data-address="{{ $side }}">
+            <div data-address="{{ $side }}" data-move-field>
                 <label for="{{ $id }}-{{ $side }}" class="{{ $labelClass }}">{{ $label }}</label>
                 <div class="relative">
                     <x-site.icon :name="$side === 'from' ? 'map-pin' : 'map-pin-check'" class="pointer-events-none absolute top-1/2 left-3.5 size-5 -translate-y-1/2 text-tertiary-strong" />
@@ -61,12 +78,12 @@
                 <x-site.form-error :field="$side.'_address'" :id="$id.'-'.$side" :errors="$errors" />
             </div>
         @endforeach
-        <div>
+        <div data-move-field>
             <label for="{{ $id }}-date" class="{{ $labelClass }}">Moving Date</label>
             <input id="{{ $id }}-date" name="move_date" type="date" required min="{{ $today }}" max="{{ $latest }}" value="{{ $old['move_date'] ?? '' }}" aria-invalid="{{ $invalid('move_date') }}" aria-describedby="{{ $id }}-date-error" class="{{ $inputClass }}">
             <x-site.form-error field="move_date" :id="$id.'-date'" :errors="$errors" />
         </div>
-        <div>
+        <div data-move-field>
             <label for="{{ $id }}-type" class="{{ $labelClass }}">Type of Move</label>
             <select id="{{ $id }}-type" name="move_type_id" required aria-invalid="{{ $invalid('move_type_id') }}" aria-describedby="{{ $id }}-type-error" class="{{ $inputClass }}">
                 <option value="">Select…</option>
