@@ -234,30 +234,6 @@
     stroke-width: 7px;
 }
 
-/* First-step form: dividers between fields on one line; a dotted trip line when stacked. */
-@media (min-width: 64rem) {
-    .quick-quote-cell + .quick-quote-cell::before {
-        content: '';
-        position: absolute;
-        top: 22%;
-        bottom: 22%;
-        left: -0.125rem;
-        width: 1px;
-        background: var(--color-border);
-    }
-}
-
-@media (max-width: 47.99rem) {
-    .quick-quote [data-stop='from']::after {
-        content: '';
-        position: absolute;
-        bottom: -0.5rem;
-        left: 1.45rem;
-        height: 1.25rem;
-        border-left: 2px dotted var(--color-tertiary);
-    }
-}
-
 /* Quote form with answers from the first step: the summary replaces those fields. */
 form:not([data-draft]) [data-move-summary],
 form[data-draft] [data-move-field] {
