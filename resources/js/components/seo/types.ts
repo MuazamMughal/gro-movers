@@ -7,6 +7,9 @@ export type SeoValues = {
     og_image_id: number | null;
     robots_index: boolean;
     robots_follow: boolean;
+    /** Third-party code for this page only (needs the custom_code permission to change). */
+    head_code?: string | null;
+    body_code?: string | null;
 };
 
 /** Props built by App\Support\SeoForm::props(). */
@@ -37,4 +40,6 @@ export const emptySeo = (): SeoValues => ({
     og_image_id: null,
     robots_index: true,
     robots_follow: true,
+    head_code: null,
+    body_code: null,
 });

@@ -5,6 +5,7 @@ namespace App\Support;
 use App\Models\SeoMeta;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 
 /**
@@ -22,6 +23,9 @@ class SeoForm
         'meta_title', 'meta_description', 'canonical_url', 'og_title',
         'og_description', 'og_image_id', 'robots_index', 'robots_follow',
     ];
+
+    /** Third-party code for this page only; saved only for users with the custom_code permission. */
+    public const CODE_FIELDS = ['head_code', 'body_code'];
 
     // Soft limits shown in the panel; the hard limits below only stop abuse.
     public const TITLE_LIMIT = 60;
@@ -44,6 +48,8 @@ class SeoForm
             "{$prefix}.og_image_id" => ['nullable', 'integer', 'exists:media,id'],
             "{$prefix}.robots_index" => ['boolean'],
             "{$prefix}.robots_follow" => ['boolean'],
+            "{$prefix}.head_code" => ['nullable', 'string', 'max:20000'],
+            "{$prefix}.body_code" => ['nullable', 'string', 'max:20000'],
         ];
     }
 
@@ -59,6 +65,8 @@ class SeoForm
             "{$prefix}.og_title" => 'social title',
             "{$prefix}.og_description" => 'social description',
             "{$prefix}.og_image_id" => 'social share image',
+            "{$prefix}.head_code" => '<head> code',
+            "{$prefix}.body_code" => '<body> code',
         ];
     }
 
@@ -80,6 +88,14 @@ class SeoForm
             };
         }
 
+        // Without the permission the code stays as it was, whatever the form sent.
+        if (Gate::allows('custom_code')) {
+            foreach (self::CODE_FIELDS as $field) {
+                $value = $data[$field] ?? null;
+                $values[$field] = is_string($value) && trim($value) !== '' ? trim($value) : null;
+            }
+        }
+
         $seo = $model->seo()->updateOrCreate([], $values);
         $model->setRelation('seo', $seo);
 
@@ -98,7 +114,7 @@ class SeoForm
 
         return [
             'values' => [
-                ...Arr::mapWithKeys(self::FIELDS, fn (string $f) => [$f => $meta?->{$f}]),
+                ...Arr::mapWithKeys([...self::FIELDS, ...self::CODE_FIELDS], fn (string $f) => [$f => $meta?->{$f}]),
                 'robots_index' => $meta?->robots_index ?? true,
                 'robots_follow' => $meta?->robots_follow ?? true,
             ],

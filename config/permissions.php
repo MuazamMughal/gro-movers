@@ -18,6 +18,7 @@ return [
             'reviews' => 'Reviews',
             'faqs' => 'FAQs',
             'media' => 'Media Library (manage, replace and delete images)',
+            'custom_code' => 'Custom page code (third-party scripts in a page’s SEO tab)',
         ],
         'Blog' => [
             'blog' => 'Posts, categories, authors and tags',
@@ -44,7 +45,7 @@ return [
     'defaults' => [
         'Content Editor' => [
             'description' => 'Edits pages, services, areas, blog, reviews, FAQs, images and menus.',
-            'permissions' => ['pages', 'services', 'areas', 'blog', 'reviews', 'faqs', 'media', 'menus'],
+            'permissions' => ['pages', 'services', 'areas', 'blog', 'reviews', 'faqs', 'media', 'menus', 'custom_code'],
         ],
         'Sales' => [
             'description' => 'Works quote requests and contact messages.',
@@ -52,7 +53,7 @@ return [
         ],
         'SEO Manager' => [
             'description' => 'Runs SEO Tools and edits page content and SEO fields.',
-            'permissions' => ['seo', 'pages', 'services', 'areas', 'blog', 'media', 'static'],
+            'permissions' => ['seo', 'pages', 'services', 'areas', 'blog', 'media', 'static', 'custom_code'],
         ],
     ],
 ];

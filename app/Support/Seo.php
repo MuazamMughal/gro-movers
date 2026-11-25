@@ -47,6 +47,8 @@ class Seo
             ogDescription: filled($meta?->og_description) ? Str::squish($meta->og_description) : $description,
             image: $model->seoImage(),
             siteName: static::siteName(),
+            headCode: $meta?->head_code,
+            bodyCode: $meta?->body_code,
         );
     }
 

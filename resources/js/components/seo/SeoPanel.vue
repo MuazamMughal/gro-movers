@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { ChevronDown, EyeOff, Monitor, Smartphone } from '@lucide/vue';
+import { ChevronDown, Code, EyeOff, Monitor, Smartphone } from '@lucide/vue';
 import { computed, ref, watch } from 'vue';
 import ConfirmDialog from '@/components/ConfirmDialog.vue';
 import MediaPicker from '@/components/media/MediaPicker.vue';
@@ -10,6 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { useAccess } from '@/composables/useAccess';
 import { request } from '@/lib/http';
 import { show as showMedia } from '@/routes/admin/media';
 import { check as checkSeo } from '@/routes/admin/seo';
@@ -145,6 +146,13 @@ function toggleIndex(checked: boolean | 'indeterminate') {
         setTimeout(() => (confirmNoindex.value = true));
     }
 }
+
+// ---- Custom code (custom_code permission) ------------------------------------
+const { can } = useAccess();
+const canEditCode = computed(() => can('custom_code'));
+const hasCode = computed(() => !!(model.value.head_code || model.value.body_code));
+const codeOpen = ref(hasCode.value);
+const code = (v: string | number) => (String(v).trim() === '' ? null : String(v));
 
 const advancedOpen = ref(!!(model.value.canonical_url || model.value.og_title || model.value.og_description));
 </script>
@@ -367,6 +375,67 @@ const advancedOpen = ref(!!(model.value.canonical_url || model.value.og_title ||
                 </div>
             </div>
         </section>
+
+        <!-- Custom code -->
+        <section v-if="canEditCode" class="border-t pt-6">
+            <button
+                type="button"
+                class="flex w-full items-center justify-between text-sm font-semibold"
+                :aria-expanded="codeOpen"
+                aria-controls="seo-code"
+                @click="codeOpen = !codeOpen"
+            >
+                <span class="flex items-center gap-2">
+                    Custom code
+                    <Badge v-if="hasCode" variant="secondary">In use</Badge>
+                </span>
+                <ChevronDown class="size-4 transition-transform" :class="{ 'rotate-180': codeOpen }" />
+            </button>
+
+            <div v-show="codeOpen" id="seo-code" class="mt-4 space-y-6">
+                <p class="text-xs text-muted-foreground">
+                    Third-party code for this page only, such as a tracking tag, a widget or extra schema. Code for every page goes in
+                    Settings → Integrations. Paste code only from a source you trust: it runs for every visitor of this page.
+                </p>
+
+                <div class="grid gap-2">
+                    <Label for="seo-head-code">&lt;head&gt; code</Label>
+                    <Textarea
+                        id="seo-head-code"
+                        :model-value="model.head_code ?? ''"
+                        rows="5"
+                        spellcheck="false"
+                        class="font-mono text-xs"
+                        placeholder="<script>…</script>"
+                        :aria-invalid="!!error('head_code')"
+                        @update:model-value="(v) => set('head_code', code(v))"
+                    />
+                    <p class="text-xs text-muted-foreground">Printed at the end of the page's &lt;head&gt;, after the site-wide code.</p>
+                    <p v-if="error('head_code')" class="text-sm text-destructive">{{ error('head_code') }}</p>
+                </div>
+
+                <div class="grid gap-2">
+                    <Label for="seo-body-code">&lt;body&gt; code</Label>
+                    <Textarea
+                        id="seo-body-code"
+                        :model-value="model.body_code ?? ''"
+                        rows="5"
+                        spellcheck="false"
+                        class="font-mono text-xs"
+                        placeholder="<script>…</script>"
+                        :aria-invalid="!!error('body_code')"
+                        @update:model-value="(v) => set('body_code', code(v))"
+                    />
+                    <p class="text-xs text-muted-foreground">Printed just before &lt;/body&gt;, after the page content.</p>
+                    <p v-if="error('body_code')" class="text-sm text-destructive">{{ error('body_code') }}</p>
+                </div>
+            </div>
+        </section>
+
+        <p v-else-if="hasCode" class="flex items-center gap-2 border-t pt-6 text-xs text-muted-foreground">
+            <Code class="size-4 shrink-0" aria-hidden="true" />
+            This page has custom code. Only users with the "Custom page code" permission can change it.
+        </p>
     </div>
 
     <ConfirmDialog

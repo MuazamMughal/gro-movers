@@ -139,6 +139,7 @@ Upload images once and reuse them anywhere.
 | **Social sharing** | Title, description and image for Facebook, LinkedIn and texts. Empty fields use the meta title and description. |
 | **Canonical URL** | Leave empty unless an expert tells you otherwise. |
 | **Hidden from Google (noindex)** | Only for pages that must not appear in search (like Thank You). The site asks you to confirm. |
+| **Custom code** | Third-party code for this page only: a tracking tag, a booking widget, extra schema. The **&lt;head&gt; code** box goes at the end of the page's head; the **&lt;body&gt; code** box goes just before the end of the page. Code for every page goes in **Settings → Integrations** instead. On the Area × Service template, the code runs on every city page that uses the template. Needs the **Custom page code** permission. Paste code only from a source you trust. |
 
 The **Google preview** shows the result as you type. A warning appears if another page already uses the same title or description, because duplicates compete with each other.
 
@@ -185,9 +186,9 @@ Only **Administrators** see **Users** and **Roles**.
 | Role | Can use |
 |---|---|
 | **Administrator** | Everything, including Users and Roles. Built in; it can't be changed. |
-| **Content Editor** | Pages, services, areas, blog, reviews, FAQs, images and menus. |
+| **Content Editor** | Pages, services, areas, blog, reviews, FAQs, images, menus and custom page code. |
 | **Sales** | Quote requests (view, update, export) and contact messages. |
-| **SEO Manager** | SEO Tools, page content and SEO fields, images, and rebuilding the site. |
+| **SEO Manager** | SEO Tools, page content and SEO fields, custom page code, images, and rebuilding the site. |
 
 - **Your own role:** click **Add role** to make your own, or edit the three editable ones.
 - **Images:** anyone who edits content can add images from inside their editor. The **Media Library** page itself (replacing and deleting images) needs the Media Library permission.

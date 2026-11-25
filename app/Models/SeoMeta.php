@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 #[Table('seo_meta')]
 #[Fillable([
     'meta_title', 'meta_description', 'canonical_url', 'og_title', 'og_description',
-    'og_image_id', 'robots_index', 'robots_follow', 'schema_extra',
+    'og_image_id', 'robots_index', 'robots_follow', 'schema_extra', 'head_code', 'body_code',
 ])]
 class SeoMeta extends Model
 {

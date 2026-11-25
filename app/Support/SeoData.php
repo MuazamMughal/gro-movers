@@ -20,6 +20,9 @@ final class SeoData
         public readonly ?string $ogDescription,
         public readonly ?Media $image,
         public readonly string $siteName,
+        // Custom code from the record's SEO tab, printed as is (layouts/site.blade.php).
+        public readonly ?string $headCode = null,
+        public readonly ?string $bodyCode = null,
     ) {}
 
     public function robots(): string

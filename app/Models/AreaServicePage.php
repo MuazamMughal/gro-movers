@@ -102,6 +102,9 @@ class AreaServicePage extends Model
         $seo->og_image_id = $templateSeo->og_image_id;
         $seo->robots_index = $templateSeo->robots_index;
         $seo->robots_follow = $templateSeo->robots_follow;
+        // The template's custom code runs on every page that uses it.
+        $seo->head_code = $templateSeo->head_code;
+        $seo->body_code = $templateSeo->body_code;
 
         $this->setRelation('seo', $seo);
     }

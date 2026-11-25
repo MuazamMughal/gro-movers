@@ -27,6 +27,8 @@
         :faqs="collect([$rendered ?? null, $closing ?? null, $reviews ?? null])->filter(fn ($r) => $r instanceof \App\Sections\RenderedSections)->flatMap->faqs"
     />
     <x-site.integrations-head :preview="$preview ?? false" />
+    {{-- This page's own code (SEO tab → Custom code), after the site-wide code. --}}
+    {!! $seo->headCode !!}
     @stack('head')
 </head>
 <body @class(['font-sans', 'pb-16 md:pb-0' => ! ($bare ?? false)])>
@@ -55,5 +57,6 @@
     @endunless
 
     @stack('body-end')
+    {!! $seo->bodyCode !!}
 </body>
 </html>
